@@ -6,8 +6,8 @@ module.exports = async (ctx) => {
   const msg = ctx[0]
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
-  if (msg.content.indexOf(prefix) === 0) {
-    let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
+  let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
+  if (msg.content.indexOf(prefix) === 0 && commands[cmd]) {
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
     const suffix = msg.content.substr(prefix.length).split(' ').slice(1).join(' ')
     if (!msg.channel.guild && commands[cmd].meta.noDM) return
