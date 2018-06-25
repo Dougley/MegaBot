@@ -20,7 +20,8 @@
     "chalk": "^2.4.1",
     "dotenv": "^6.0.0",
     "eris": "^0.8.6",
-    "raven": "^2.6.3"
+    "raven": "^2.6.3",
+    "uservoice-nodejs": "0.0.13"
   },
   "devDependencies": {
     "eslint": "^4.19.1",

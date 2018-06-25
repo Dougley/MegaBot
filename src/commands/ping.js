@@ -1,6 +1,6 @@
 module.exports = {
   meta: {
-    level: 0,
+    level: 2,
     timeout: 10
   },
   fn: (msg) => {
