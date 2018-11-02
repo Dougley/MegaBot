@@ -1,10 +1,10 @@
 require('dotenv').config()
-global.logger = require('./src/internal/logger')
-require('./src/internal/env-check')
+global.logger = require('./src/wildbeast-internals/logger')
+require('./src/wildbeast-internals/env-check')
 
 const Eris = require('eris')
-const bot = new Eris(process.env.BOT_TOKEN)
-const Events = require('./src/internal/directory-loader')('./src/events')
+global.bot = new Eris(process.env.BOT_TOKEN)
+const Events = require('./src/wildbeast-internals/directory-loader')('./src/events')
 
 bot._ogEmit = bot.emit
 bot.emit = function emit () {

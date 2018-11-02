@@ -1,7 +1,7 @@
-const commands = require('../internal/command-loader').commands
-const aliases = require('../internal/command-loader').alias
-const timeout = require('../engines/timeout')
-const perms = require('../engines/perms')
+const commands = require('../wildbeast-internals/command-loader').commands
+const aliases = require('../wildbeast-internals/command-loader').alias
+const timeout = require('../features/timeout')
+const perms = require('../features/perms')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
