@@ -1,18 +1,25 @@
 const { Message } = require('eris')
-const IDS = require('./ids')
+const ids = require('./ids')
 
 const db = require('../databases/lokijs')
 
 module.exports = {
-  create: (msg, opts) => {
-    const stand = {wb_id: msg.id}
-    const ins = {...stand, ...opts}
-    return db.create('questions', ins)
+  create: (channel, opts) => {
+    channel.createMessage(generateEmbed(opts, 'created')).then(c => {
+      c.addReaction(`${ids.confirm.name}:${ids.confirm.id}`)
+      c.addReaction(`${ids.dismiss.name}:${ids.dismiss.id}`)
+      const stand = {wb_id: c.id}
+      const ins = {...stand, ...opts}
+      return db.create('questions', ins)
+    })
   },
   verify: async (ctx) => {
     let msg = ctx[0]
     let emoji = ctx[1]
     let userID = ctx[2]
+
+    // dont process our own reactions
+    if (userID === global.bot.user.id) return
 
     // the message object can be incomplete
     // check for that first and complete it
@@ -49,18 +56,39 @@ module.exports = {
           // some questions are locked to 1 user
           if (question.user && question.user !== userID) return
 
-          if (emoji.id === IDS.confirm.id) {
+          if (emoji.id === ids.confirm.id) {
             db.delete('questions', msg.id)
-            msg.edit(question.messages.confirm)
+            msg.edit(generateEmbed(question, 'confirm'))
           }
-          if (emoji.id === IDS.dismiss.id) {
+          if (emoji.id === ids.dismiss.id) {
             db.delete('questions', msg.id)
-            msg.edit(question.messages.dismiss)
+            msg.edit(generateEmbed(question, 'dismiss'))
           }
+          // we can now safely remove the reactions
+          msg.removeReactions()
           // no ids matched? just discard
           break
         }
       }
     })
+  }
+}
+
+function generateEmbed (data, state) {
+  const colors = {
+    created: 0x7289DA, // blurple
+    expired: 0xf47a37, // orange-ish
+    dismiss: 0xe51a23, // red
+    confirm: 0x00693f // green
+  }
+  return {
+    embed: {
+      color: colors[state],
+      description: state === 'created' ? data.question : data.messages[state],
+      timestamp: new Date(),
+      footer: {
+        text: 'Last updated on'
+      }
+    }
   }
 }

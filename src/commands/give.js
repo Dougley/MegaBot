@@ -6,7 +6,7 @@ module.exports = {
     timeout: 10
   },
   fn: async (msg) => {
-    await exp.grantEXP(msg.author.id, 10)
+    await exp.grantEXP(msg.author.id, 10, 'give command')
     msg.channel.createMessage(`You got 10 EXP`)
   }
 }

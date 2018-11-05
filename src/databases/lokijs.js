@@ -14,6 +14,11 @@ function loadCollections () {
 }
 
 module.exports = {
+  get: async (coll, id) => {
+    return db.getCollection(coll).findOne({
+      wb_id: id
+    })
+  },
   create: async (coll, data) => {
     if (data._key) {
       data.wb_id = data._key
@@ -57,6 +62,7 @@ function ensureUser (id) {
       },
       entitlements: [],
       overrides: [],
+      transactions: [],
       blocked: false
     }
     users.insert(shim)

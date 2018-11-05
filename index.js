@@ -3,7 +3,9 @@ global.logger = require('./src/wildbeast-internals/logger')
 require('./src/wildbeast-internals/env-check')
 
 const Eris = require('eris')
-global.bot = new Eris(process.env.BOT_TOKEN)
+global.bot = new Eris(process.env.BOT_TOKEN, {
+  restMode: true
+})
 const Events = require('./src/wildbeast-internals/directory-loader')('./src/events')
 
 bot._ogEmit = bot.emit

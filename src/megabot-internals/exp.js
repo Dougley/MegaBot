@@ -5,12 +5,14 @@ module.exports = {
     const data = await database.getUser(id)
     return data.properties.exp
   },
-  grantEXP: async (id, granted) => {
-    const currentexp = await module.exports.getEXP(id)
+  grantEXP: async (id, granted, msg) => {
+    const userinfo = await database.getUser(id)
+    userinfo.transactions.push({modified: granted, reason: msg})
     return database.edit(id, {
       properties: {
-        exp: currentexp + granted
-      }
+        exp: userinfo.properties.exp + granted
+      },
+      transactions: userinfo.transactions
     })
   }
 }

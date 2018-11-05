@@ -12,11 +12,15 @@ const modroles = [
 const custodianrole = '268815388882632704'
 // no need to add the other custodian roles, everyone has this role regardless
 
+const db = require('../databases/lokijs')
+
 module.exports = (level, user, msg) => {
   if (supers.includes(user.id)) return true // supers can do anything
-  if (!user.roles && user.roles.length === 0) return level === 0 // no roles = no elevated access
   if (!msg.channel.guild) return level === 0 // this is a dm, only general commands allowed
-  // we need to iterate over roles now
+  if (!user.roles || user.roles.length === 0) return level === 0 // no roles = no elevated access
+  const userdata = db.getUser(user.id)
+  if (userdata.blocked) return false // blocked users dont get to run commands
+  // check role permissions now
   for (const role of user.roles) {
     if (role === custodianrole) return level <= 1
     if (modroles.includes(role)) return level <= 2

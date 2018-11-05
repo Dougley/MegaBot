@@ -1,5 +1,4 @@
 const inq = require('../megabot-internals/inquirer')
-const ids = require('../megabot-internals/ids')
 
 module.exports = {
   meta: {
@@ -7,12 +6,10 @@ module.exports = {
     timeout: 0
   },
   fn: async (msg) => {
-    const x = await msg.channel.createMessage('hello test')
-    x.addReaction(`${ids.confirm.name}:${ids.confirm.id}`)
-    x.addReaction(`${ids.dismiss.name}:${ids.dismiss.id}`)
-    inq.create(x, {
+    inq.create(msg.channel, {
       user: msg.author.id,
       type: 5,
+      question: 'are you sure you want to do the thing?',
       messages: {
         confirm: 'you did the thing!',
         dismiss: 'you didnt do the thing :('

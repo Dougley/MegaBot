@@ -4,7 +4,7 @@
   "description": "This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -22,8 +22,7 @@
     "eris": "^0.8.6",
     "lokijs": "^1.5.5",
     "raven": "^2.6.4",
-    "uservoice-nodejs": "0.0.13",
-    "moment": "latest"
+    "uservoice-nodejs": "0.0.13"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
