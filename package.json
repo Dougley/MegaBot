@@ -22,7 +22,7 @@
     "eris": "^0.8.6",
     "lokijs": "^1.5.5",
     "raven": "^2.6.4",
-    "uservoice-nodejs": "0.0.13"
+    "superagent": "^4.0.0-beta.5"
   },
   "devDependencies": {
     "eslint": "^4.19.1",
