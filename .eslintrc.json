@@ -2,6 +2,7 @@
   "extends": "standard",
   "globals": {
     "logger": false,
-    "bot": false
+    "bot": false,
+    "MB_CONSTANTS": false
   }
 }

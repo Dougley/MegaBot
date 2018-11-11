@@ -32,7 +32,7 @@ module.exports = async (ctx) => {
           })
         }
       } else {
-        msg.channel.createMessage('You have no permission to run this command!')
+        // msg.channel.createMessage('You have no permission to run this command!')
       }
     }
   }

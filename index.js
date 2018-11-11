@@ -1,5 +1,6 @@
 require('dotenv').config()
 global.logger = require('./src/wildbeast-internals/logger')
+global.MB_CONSTANTS = require('./src/megabot-internals/constants')
 require('./src/wildbeast-internals/env-check')
 
 const Eris = require('eris')

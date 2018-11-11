@@ -146,7 +146,7 @@ async function getUserDetails (id) {
   const data = await SA
     .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({query: id})}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-  if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE) return data.body.users[0]
+  if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')
   else return data.body.users.find(x => x.external_id === id)
 }

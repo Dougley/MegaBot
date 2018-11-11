@@ -1,5 +1,5 @@
 const Base = require('./Base')
-const ZD = require('../zendesk')
+const Submission = require('./Submission')
 
 /**
  * Represents a vote
@@ -24,11 +24,13 @@ class Vote extends Base {
 
   /**
    * Get the corresponding submission if possible
-   * @returns {Promise<Submission?>}
+   * @returns {Promise<Submission>}
    */
-  get submission () {
-    if (this.itemType === 'Post') return ZD.getSubmission(this.itemId)
-    else return null
+  async getSubmission () {
+    const res = await require('superagent')
+      .get(`${process.env.ZENDESK_ROOT_URL}/api/v2/community/posts/${this.itemId}.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    return new Submission(res.body, res.body.post)
   }
 }
 
