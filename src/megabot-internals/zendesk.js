@@ -18,7 +18,7 @@ module.exports = {
    */
   getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({sort_by: sort, include: includes, filter_by: filter, page: page})}`)
+      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes, filter_by: filter, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.posts.map(x => new Submission(res.body, x))
   },
@@ -30,7 +30,7 @@ module.exports = {
    */
   getSubmission: async (id, includes = ['users']) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({include: includes})}`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return new Submission(res.body, res.body.post)
   },
@@ -42,11 +42,11 @@ module.exports = {
    */
   postSubmission: async (userid, data) => {
     const userdata = await getUserDetails(userid)
-    data = {...data, author_id: userdata.id, notify_subscribers: false}
+    data = { ...data, author_id: userdata.id, notify_subscribers: false }
     const res = await SA
       .post(`${ROOT_URL}/api/v2/community/posts.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({post: data})
+      .send({ post: data })
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -71,7 +71,7 @@ module.exports = {
     const res = await SA
       .post(`${ROOT_URL}/api/v2/community/posts/${cardid}/${type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({vote: {user_id: userinfo.id}})
+      .send({ vote: { user_id: userinfo.id } })
     return new Vote(res.body, res.body.vote)
   },
   /**
@@ -82,7 +82,7 @@ module.exports = {
    */
   getVotes: async (id, page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({page: page})}`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.votes.map(x => new Vote(res.body, x))
   },
@@ -96,7 +96,7 @@ module.exports = {
    */
   listComments: async (id, type = 'posts', includes = ['users'], page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({include: includes, page: page})}`)
+      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.comments.map(x => new Comment(res.body, x))
   },
@@ -109,7 +109,7 @@ module.exports = {
    */
   getComment: async (postid, commentid, includes = ['users']) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({include: includes})}`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return new Comment(res.body, res.body.comment)
   },
@@ -125,7 +125,7 @@ module.exports = {
     const res = await SA
       .post(`${ROOT_URL}/api/v2/community/posts/${id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({comment: {body: comment, author_id: userinfo.id}, notify_subscribers: false})
+      .send({ comment: { body: comment, author_id: userinfo.id }, notify_subscribers: false })
     return new Comment(res.body, res.body.comment)
   },
   /**
@@ -144,7 +144,7 @@ module.exports = {
 async function getUserDetails (id) {
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE) id = process.env.DEBUG_USER_SEARCH_OVERRIDE
   const data = await SA
-    .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({query: id})}`)
+    .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({ query: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')

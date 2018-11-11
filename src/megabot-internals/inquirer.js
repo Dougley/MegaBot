@@ -8,8 +8,8 @@ module.exports = {
     channel.createMessage(generateEmbed(opts, 'created')).then(c => {
       c.addReaction(`${ids.confirm.name}:${ids.confirm.id}`)
       c.addReaction(`${ids.dismiss.name}:${ids.dismiss.id}`)
-      const stand = {wb_id: c.id}
-      const ins = {...stand, ...opts}
+      const stand = { wb_id: c.id }
+      const ins = { ...stand, ...opts }
       return db.create('questions', ins)
     })
   },
