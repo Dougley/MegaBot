@@ -22,6 +22,7 @@
     "eris": "^0.8.6",
     "lokijs": "^1.5.5",
     "raven": "^2.6.4",
+    "striptags": "^3.1.1",
     "superagent": "^4.0.0-beta.5"
   },
   "devDependencies": {
