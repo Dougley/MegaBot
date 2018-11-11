@@ -7,6 +7,7 @@ module.exports = {
     timeout: 10
   },
   fn: (msg, suffix) => {
+    if (!IDs.channels[msg.channel.id]) return
     const chunks = suffix.split(' | ').map(x => x.trim())
     if (suffix.trim().length < 5 || chunks.length === 0) return msg.channel.createMessage('Please enter a suggestion, at least a title is required')
     ZD.postSubmission(msg.author.id, {
