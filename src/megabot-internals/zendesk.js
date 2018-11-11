@@ -13,11 +13,12 @@ module.exports = {
    * @param {String} sort - How posts should be sorted, defaults to 'created_at'
    * @param {Array} includes - Sideloads for extra records
    * @param {String} filter - List only posts with a certain state
+   * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Submission[]>} - Zendesk response
    */
-  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '') => {
+  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({sort_by: sort, include: includes, filter_by: filter})}`)
+      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({sort_by: sort, include: includes, filter_by: filter, page: page})}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.posts.map(x => new Submission(res.body, x))
   },
@@ -61,7 +62,7 @@ module.exports = {
   /**
    * Create a vote on a submission
    * @param {String} user - Discord ID of the user you're acting on behalf on
-   * @param {String} cardid - ID of the submission
+   * @param {Number | String} cardid - ID of the submission
    * @param {String} [type=up] - Type of vote, can be 'down' or 'up', defaults to 'up'
    * @returns {Promise<Object>} - Zendesk response
    */
@@ -75,12 +76,13 @@ module.exports = {
   },
   /**
    * Get all votes for a submission
-   * @param id - The ID of the submission
+   * @param {Number | String} id - The ID of the submission
+   * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Vote[]>}
    */
-  getVotes: async (id) => {
+  getVotes: async (id, page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({page: page})}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.votes.map(x => new Vote(res.body, x))
   },
@@ -89,18 +91,19 @@ module.exports = {
    * @param {Number | String} id - ID of the record to query
    * @param {String} [type=posts] - Type of record to query, can be 'users' or 'posts', defaults to 'posts'
    * @param {Array} includes - Sideloads for extra records
+   * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Comment[]>} - Zendesk response
    */
-  listComments: async (id, type = 'posts', includes = ['users']) => {
+  listComments: async (id, type = 'posts', includes = ['users'], page = 0) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({include: includes})}`)
+      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({include: includes, page: page})}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     return res.body.comments.map(x => new Comment(res.body, x))
   },
   /**
    * Return information on a single comment
-   * @param {String} postid - ID of the submission
-   * @param {String} commentid - ID of the comment
+   * @param {Number | String} postid - ID of the submission
+   * @param {Number | String} commentid - ID of the comment
    * @param {Array} includes - Sideloads for extra records
    * @returns {Promise<Comment>} - Zendesk response
    */
@@ -127,8 +130,8 @@ module.exports = {
   },
   /**
    * Permanently delete a comment
-   * @param {String} postid - Submission ID
-   * @param {String} commentid - Comment ID
+   * @param {Number | String} postid - Submission ID
+   * @param {Number | String} commentid - Comment ID
    * @returns {Promise<Request>} - Zendesk response
    */
   deleteComment: async (postid, commentid) => {
