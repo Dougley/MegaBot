@@ -12,7 +12,7 @@ module.exports = async (ctx) => {
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
     if (commands[cmd]) {
       const suffix = msg.content.substr(prefix.length).split(' ').slice(1).join(' ')
-      if (!msg.channel.guild && commands[cmd].meta.noDM) return
+      if (!msg.channel.guild && commands[cmd].meta.noDM) return msg.channel.createMessage('You cannot use this command in DMs')
       let time = true
       if (commands[cmd].meta.timeout) time = timeout.calculate((msg.channel.guild ? msg.channel.guild.id : msg.author.id), cmd, commands[cmd].meta.timeout)
       if (time !== true) return msg.channel.createMessage(`This command is still on cooldown, try again in ${Math.floor(time)} seconds.`)

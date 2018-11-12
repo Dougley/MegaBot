@@ -4,7 +4,8 @@ const IDs = require('../megabot-internals/ids')
 module.exports = {
   meta: {
     level: 0,
-    timeout: 10
+    timeout: 10,
+    noDM: true
   },
   fn: (msg, suffix) => {
     if (!IDs.channels[msg.channel.id]) return
