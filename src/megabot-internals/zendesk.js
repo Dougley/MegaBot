@@ -16,7 +16,7 @@ module.exports = {
    * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Submission[]>} - Zendesk response
    */
-  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 0) => {
+  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1) => {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes, filter_by: filter, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
@@ -84,7 +84,7 @@ module.exports = {
    * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Vote[]>}
    */
-  getVotes: async (id, page = 0) => {
+  getVotes: async (id, page = 1) => {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
@@ -99,7 +99,7 @@ module.exports = {
    * @param {Number} page - Pagination, the page number to get
    * @returns {Promise<Comment[]>} - Zendesk response
    */
-  listComments: async (id, type = 'posts', includes = ['users'], page = 0) => {
+  listComments: async (id, type = 'posts', includes = ['users'], page = 1) => {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
