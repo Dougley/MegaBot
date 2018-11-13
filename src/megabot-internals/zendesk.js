@@ -20,6 +20,7 @@ module.exports = {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes, filter_by: filter, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    logger.trace(res)
     return res.body.posts.map(x => new Submission(res.body, x))
   },
   /**
@@ -32,6 +33,7 @@ module.exports = {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    logger.trace(res)
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -47,6 +49,7 @@ module.exports = {
       .post(`${ROOT_URL}/api/v2/community/posts.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ post: data })
+    logger.trace(res)
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -72,6 +75,7 @@ module.exports = {
       .post(`${ROOT_URL}/api/v2/community/posts/${cardid}/${type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ vote: { user_id: userinfo.id } })
+    logger.trace(res)
     return new Vote(res.body, res.body.vote)
   },
   /**
@@ -84,6 +88,7 @@ module.exports = {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    logger.trace(res)
     return res.body.votes.map(x => new Vote(res.body, x))
   },
   /**
@@ -98,6 +103,7 @@ module.exports = {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    logger.trace(res)
     return res.body.comments.map(x => new Comment(res.body, x))
   },
   /**
@@ -111,6 +117,7 @@ module.exports = {
     const res = await SA
       .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    logger.trace(res)
     return new Comment(res.body, res.body.comment)
   },
   /**
@@ -126,6 +133,7 @@ module.exports = {
       .post(`${ROOT_URL}/api/v2/community/posts/${id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ comment: { body: comment, author_id: userinfo.id }, notify_subscribers: false })
+    logger.trace(res)
     return new Comment(res.body, res.body.comment)
   },
   /**
@@ -146,6 +154,7 @@ async function getUserDetails (id) {
   const data = await SA
     .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({ query: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+  logger.trace(data)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')
   else return data.body.users.find(x => x.external_id === id)
