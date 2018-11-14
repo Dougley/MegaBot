@@ -8,7 +8,7 @@ const Striptags = require('striptags')
  * @property {Date} createdAt - The time at which the submission was created
  * @property {Date} updatedAt - The time at which the submission was last updated
  * @property {Object} sideloads - Any data you might have sideloaded
- * @property {String} htmlUrl - The corresponding Community URL
+ * @property {String?} htmlUrl - The corresponding Community URL
  * @property {String} rawContent - The raw content of the submission, be aware that this might include HTML tags
  * @property {String} title - The title of the submission
  * @property {Number} authorId - The ID of the author that created this submission

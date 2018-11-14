@@ -5,7 +5,7 @@ const Striptags = require('striptags')
  * Represents a comment
  * @property {Number} id - The ID of the comment
  * @property {String} apiUrl - The corresponding API URL
- * @property {String} htmlUrl - The corresponding Community URL
+ * @property {String?} htmlUrl - The corresponding Community URL
  * @property {Date} createdAt - The time at which the comment was created
  * @property {Date} updatedAt - The time at which the comment was last updated
  * @property {Object} sideloads - Any data you might have sideloaded
