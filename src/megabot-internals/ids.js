@@ -7,6 +7,18 @@ const debug = {
     id: '459710143370756096',
     name: 'no'
   },
+  upvote: {
+    id: '512217422418280448',
+    name: 'up'
+  },
+  downvote: {
+    id: '512217422464548865',
+    name: 'down'
+  },
+  report: {
+    id: '512218443383177216',
+    name: 'rep'
+  },
   channels: {
     '459298531480567809': 360000872832
   }
@@ -20,6 +32,18 @@ const production = {
   dismiss: {
     id: '302137375113609219',
     name: 'deny'
+  },
+  upvote: {
+    id: '302138464986595339',
+    name: 'upvote'
+  },
+  downvote: {
+    id: '302138465426997248',
+    name: 'downvote'
+  },
+  report: {
+    id: '302137374920671233',
+    name: 'report'
   },
   channels: {
     '268813057449263104': 360000786192, // IOS

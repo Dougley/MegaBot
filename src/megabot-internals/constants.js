@@ -1,5 +1,6 @@
 module.exports = {
   regex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
+  isID: (input) => { return /\d{12,}/.test(input) },
   generateErrorMessage: (e) => {
     switch (e.message) {
       case 'No such user' : {

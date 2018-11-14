@@ -2,9 +2,10 @@ const { Message } = require('eris')
 const ids = require('./ids')
 
 const db = require('../databases/lokijs')
+const zd = require('./zendesk')
 
 module.exports = {
-  create: (channel, opts) => {
+  createQuestion: (channel, opts) => {
     channel.createMessage(generateEmbed(opts, 'created')).then(c => {
       c.addReaction(`${ids.confirm.name}:${ids.confirm.id}`)
       c.addReaction(`${ids.dismiss.name}:${ids.dismiss.id}`)
@@ -12,6 +13,17 @@ module.exports = {
       const ins = { ...stand, ...opts }
       return db.create('questions', ins)
     })
+  },
+  createChatvote: (msg, id) => {
+    msg.addReaction(`${ids.upvote.name}:${ids.upvote.id}`)
+    msg.addReaction(`${ids.downvote.name}:${ids.downvote.id}`)
+    // msg.addReaction(`${ids.report.name}:${ids.report.id}`)
+    const ins = {
+      type: 4,
+      wb_id: msg.id,
+      zd_id: id
+    }
+    return db.create('questions', ins)
   },
   verify: async (ctx) => {
     let msg = ctx[0]
@@ -40,6 +52,7 @@ module.exports = {
           break
         }
         case 4: { // chat vote
+          zd.applyVote(userID, question.zd_id, (emoji.id === ids.upvote.id) ? 'up' : 'down')
           break
         }
         case 5: { // inquiry

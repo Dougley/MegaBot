@@ -2,11 +2,13 @@ const commands = require('../wildbeast-internals/command-loader').commands
 const aliases = require('../wildbeast-internals/command-loader').alias
 const timeout = require('../features/timeout')
 const perms = require('../features/perms')
+const inq = require('../megabot-internals/inquirer')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
+  if (!msg.content.startsWith(prefix) && msg.channel.guild && msg.content.match(MB_CONSTANTS.regex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.regex)[1])
   if (msg.content.indexOf(prefix) === 0) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
