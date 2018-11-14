@@ -1,7 +1,6 @@
 module.exports = {
   meta: {
-    level: 2,
-    timeout: 10
+    level: 2
   },
   fn: (msg) => {
     let start = new Date(msg.timestamp)

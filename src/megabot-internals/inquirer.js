@@ -7,18 +7,19 @@ const zd = require('./zendesk')
 module.exports = {
   createQuestion: (channel, opts) => {
     channel.createMessage(generateEmbed(opts, 'created')).then(c => {
-      c.addReaction(`${ids.confirm.name}:${ids.confirm.id}`)
-      c.addReaction(`${ids.dismiss.name}:${ids.dismiss.id}`)
+      c.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
+      c.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
       const stand = { wb_id: c.id }
       const ins = { ...stand, ...opts }
       return db.create('questions', ins)
     })
   },
   createChatvote: (msg, id) => {
-    msg.addReaction(`${ids.upvote.name}:${ids.upvote.id}`)
-    msg.addReaction(`${ids.downvote.name}:${ids.downvote.id}`)
-    // msg.addReaction(`${ids.report.name}:${ids.report.id}`)
+    msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
+    msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
+    // msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
     const ins = {
+      expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
       wb_id: msg.id,
       zd_id: id
@@ -33,6 +34,10 @@ module.exports = {
     // dont process our own reactions
     if (userID === global.bot.user.id) return
 
+    // the emoji must be a whitelisted one
+    const emojiids = Object.keys(ids.emojis).map(x => ids.emojis[x].id)
+    if (!emojiids.includes(emoji.id)) return
+
     // the message object can be incomplete
     // check for that first and complete it
     if (!(msg instanceof Message)) msg = await global.bot.getMessage(msg.channel.id, msg.id)
@@ -41,6 +46,18 @@ module.exports = {
     db.getQuestion(msg.id).then(async question => {
       if (!question) return
       global.logger.trace(question)
+
+      // this notification might be expired if it has an expiry
+      if (question.expire) {
+        const then = new Date(question.expire)
+        const now = new Date()
+        if (now > then) {
+          // this notification has definitely expired
+          msg.removeReactions()
+          return db.delete('questions', msg.id)
+        }
+      }
+
       switch (question.type) {
         case 1: { // feed vote
           break
@@ -52,28 +69,18 @@ module.exports = {
           break
         }
         case 4: { // chat vote
-          zd.applyVote(userID, question.zd_id, (emoji.id === ids.upvote.id) ? 'up' : 'down')
+          zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
           break
         }
         case 5: { // inquiry
-          // this notification might be expired if it has an expiry
-          if (question.expire) {
-            const then = new Date(question.expire)
-            const now = new Date()
-            if (now > then) {
-              // this notification has definitely expired
-              return msg.edit('Notification expired!')
-            }
-          }
-
           // some questions are locked to 1 user
           if (question.user && question.user !== userID) return
 
-          if (emoji.id === ids.confirm.id) {
+          if (emoji.id === ids.emojis.confirm.id) {
             db.delete('questions', msg.id)
             msg.edit(generateEmbed(question, 'confirm'))
           }
-          if (emoji.id === ids.dismiss.id) {
+          if (emoji.id === ids.emojis.dismiss.id) {
             db.delete('questions', msg.id)
             msg.edit(generateEmbed(question, 'dismiss'))
           }

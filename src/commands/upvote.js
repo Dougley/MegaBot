@@ -11,7 +11,14 @@ module.exports = {
     ZD.applyVote(msg.author.id, id).then(x => {
       return x.getSubmission()
     }).then(x => {
-      msg.channel.createMessage(`Your vote for \`${x.title}\` was applied successfully!`)
+      msg.channel.createMessage({
+        content: 'Your vote was applied successfully!',
+        embed: {
+          title: x.title,
+          url: x.htmlUrl,
+          color: 0x3498db
+        }
+      })
     }).catch(e => {
       msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
     })

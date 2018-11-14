@@ -3,7 +3,6 @@ const db = require('../databases/lokijs')
 module.exports = {
   meta: {
     level: 2,
-    timeout: 10,
     alias: ['lookup'] // legacy
   },
   fn: async (msg, suffix) => {

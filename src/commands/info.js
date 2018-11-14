@@ -9,8 +9,7 @@ module.exports = {
   fn: (msg, suffix) => {
     const id = suffix.match(MB_CONSTANTS.regex) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix
     if (MB_CONSTANTS.isID(id)) {
-      ZD.getSubmission(id).then(x => {
-        console.log(x.sideloads.users[0])
+      ZD.getSubmission(id, ['users', 'topics']).then(x => {
         return msg.channel.createMessage({
           embed: {
             color: 0x3498db,
@@ -22,6 +21,9 @@ module.exports = {
             description: x.cleanContent,
             url: x.htmlUrl,
             timestamp: x.createdAt,
+            footer: {
+              text: x.sideloads.topics[0].name
+            },
             fields: [
               {
                 name: 'Opinion',

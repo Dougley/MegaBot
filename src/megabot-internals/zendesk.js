@@ -1,5 +1,6 @@
 const SA = require('superagent')
 const QS = require('querystring')
+const DB = require('../databases/lokijs')
 
 const ROOT_URL = process.env.ZENDESK_ROOT_URL
 
@@ -18,7 +19,7 @@ module.exports = {
    */
   getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes, filter_by: filter, page: page })}`)
+      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes.join(','), filter_by: filter, page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     // logger.trace(res)
     return res.body.posts.map(x => new Submission(res.body, x))
@@ -31,7 +32,7 @@ module.exports = {
    */
   getSubmission: async (id, includes = ['users']) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes })}`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     // logger.trace(res)
     return new Submission(res.body, res.body.post)
@@ -101,7 +102,7 @@ module.exports = {
    */
   listComments: async (id, type = 'posts', includes = ['users'], page = 1) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes, page: page })}`)
+      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes.join(','), page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     // logger.trace(res)
     return res.body.comments.map(x => new Comment(res.body, x))
@@ -115,7 +116,7 @@ module.exports = {
    */
   getComment: async (postid, commentid, includes = ['users']) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes })}`)
+      .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     // logger.trace(res)
     return new Comment(res.body, res.body.comment)
@@ -159,11 +160,28 @@ module.exports = {
 
 async function getUserDetails (id) {
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE) id = process.env.DEBUG_USER_SEARCH_OVERRIDE
+  const cache = await DB.get('cache', `zd_u:${id}`)
+  if (cache) {
+    // this cache might be expired
+    if (new Date(cache.expire) > new Date()) {
+      logger.debug('Returning user cache')
+      return DB.get('cache', `zd_u:${id}`)
+    } else {
+      DB.delete('cache', `zd_u:${id}`)
+    }
+  }
   const data = await SA
     .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({ query: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
   // logger.trace(data)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')
-  else return data.body.users.find(x => x.external_id === id)
+  else {
+    await DB.create('cache', {
+      expire: Date.now() + 604800000, // 1 week
+      wb_id: `zd_u:${id}`,
+      ...data.body.users.find(x => x.external_id === id)
+    })
+    return data.body.users.find(x => x.external_id === id)
+  }
 }
