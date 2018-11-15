@@ -1,4 +1,5 @@
 const debug = {
+  top10channel: '512580399923200001',
   emojis: {
     confirm: {
       id: '459710143484002304',
@@ -27,6 +28,7 @@ const debug = {
 }
 
 const production = {
+  top10channel: '268812972401360906',
   emojis: {
     confirm: {
       id: '302137375092375553',

@@ -14,10 +14,10 @@ module.exports = {
       return db.create('questions', ins)
     })
   },
-  createChatvote: (msg, id) => {
+  createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
-    // msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+    // if (reportable) msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
     const ins = {
       expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
