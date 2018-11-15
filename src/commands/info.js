@@ -34,6 +34,11 @@ module.exports = {
                 name: 'Voters',
                 value: x.voteCount,
                 inline: true
+              },
+              {
+                name: 'Comments',
+                value: x.commentCount,
+                inline: true
               }
             ]
           }
