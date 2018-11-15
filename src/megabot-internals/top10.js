@@ -19,8 +19,8 @@ module.exports = {
       const toedit = editable.slice(0, 10)
       submissions.slice(0, 10).forEach(c => {
         let x = toedit.pop()
-        if (x) x.edit(generateEmbed(c)).then(x => inq.createChatvote(x, c.id, false, false))
-        else channel.createMessage(generateEmbed(c)).then(x => inq.createChatvote(x, c.id, false, false))
+        if (x) x.edit(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
+        else channel.createMessage(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
       })
     })
   }

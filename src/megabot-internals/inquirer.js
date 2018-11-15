@@ -14,17 +14,28 @@ module.exports = {
       return db.create('questions', ins)
     })
   },
-  createChatvote: (msg, id, reportable = true, expire = true) => {
+  createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
     if (reportable) msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
     const ins = {
-      expire: expire ? Date.now() + 432000000 : undefined, // expire in 5 days
+      expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
       wb_id: msg.id,
       zd_id: id
     }
     return db.create('questions', ins)
+  },
+  createTopvote: async (msg, id) => {
+    msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
+    msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
+    const ins = {
+      type: 4,
+      wb_id: msg.id,
+      zd_id: id
+    }
+    if (await db.get('questions', msg.id)) return db.edit(msg.id, ins, 'questions')
+    else return db.create('questions', ins)
   },
   verify: async (ctx) => {
     let msg = ctx[0]
