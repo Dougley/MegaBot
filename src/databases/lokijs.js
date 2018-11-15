@@ -7,7 +7,7 @@ const db = new Loki('wildbeast.db', {
 })
 
 function loadCollections () {
-  const collections = ['users', 'questions', 'cache'] // extend this to add more, beware that this might add extra strain
+  const collections = ['users', 'questions', 'cache', 'bonuses'] // extend this to add more, beware that this might add extra strain
   collections.forEach(x => {
     if (!db.getCollection(x)) db.addCollection(x)
   })
