@@ -7,6 +7,7 @@ module.exports = {
     timeout: 30
   },
   fn: async (msg, suffix) => {
+    if (db.count('bonuses') === 0) return msg.channel.createMessage('There are no reward codes active right now')
     const data = await db.get('bonuses', suffix.toLowerCase())
     if (!data) return msg.channel.createMessage('Sorry, no such reward code')
     else {

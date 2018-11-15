@@ -43,6 +43,9 @@ module.exports = {
       wb_id: id
     })
   },
+  count: (coll) => {
+    return db.getCollection(coll).chain().count()
+  },
   _driver: db
 }
 
