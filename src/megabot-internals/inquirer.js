@@ -100,12 +100,11 @@ module.exports = {
         }
         case 4: { // chat vote
           if (emoji === ids.emojis.upvote.id || emoji.id === ids.emojis.downvote.id) zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
-          else {
+          else if (emoji.id === ids.emojis.report.id) {
             // this is likely the report reaction
             const perms = require('../features/perms')
             const queue = require('./admin-queue')
             const zd = require('./zendesk')
-            console.log(msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count)
             if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
             else if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports + 1) {
               queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']))

@@ -8,7 +8,7 @@ module.exports = {
   },
   fn: async (msg) => {
     const m = await msg.channel.createMessage('Starting update process, updating git tree...')
-    execAsync('git pull').then(x => {
+    execAsync('git fetch origin && git reset --hard origin/master').then(x => {
       logger.trace(x)
       m.edit('Git tree updated, updating modules...')
       return execAsync('npm i --production')

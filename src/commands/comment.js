@@ -2,7 +2,7 @@ const ZD = require('../megabot-internals/zendesk')
 
 module.exports = {
   meta: {
-    level: 2
+    level: 0
   },
   fn: async (msg, suffix) => {
     msg.channel.sendTyping()
