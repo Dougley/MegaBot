@@ -76,5 +76,5 @@ function generateInformationalEmbed (userdata, userinfo) {
 }
 
 function transactionTranslator (tx) {
-  return `Applied ${tx.modified} for ${tx.reason}`
+  return `Applied ${tx.modified}: \`${tx.reason}\``
 }

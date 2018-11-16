@@ -37,6 +37,15 @@ module.exports = {
     if (await db.get('questions', msg.id)) return db.edit(msg.id, ins, 'questions')
     else return db.create('questions', ins)
   },
+  startAdminAction: async (data, msg) => {
+    msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
+    msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
+    const ins = {
+      wb_id: msg.id,
+      ...data
+    }
+    return db.create('questions', ins)
+  },
   verify: async (ctx) => {
     let msg = ctx[0]
     let emoji = ctx[1]
@@ -53,6 +62,8 @@ module.exports = {
     // check for that first and complete it
     if (!(msg instanceof Message)) msg = await global.bot.getMessage(msg.channel.id, msg.id)
     global.logger.trace(msg)
+
+    const user = msg.channel.guild.members.get(userID) ? msg.channel.guild.members.get(userID) : await msg.channel.guild.getRESTMember(userID)
 
     db.getQuestion(msg.id).then(async question => {
       if (!question) return
@@ -74,13 +85,32 @@ module.exports = {
           break
         }
         case 2: { // admin action: destruction
+          if (emoji.id === ids.emojis.confirm.id) {
+            msg.edit({ content: 'Report confirmed, submission will be destroyed.', embed: null }).then(x => setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete))
+            zd.destroySubmission(question.zd_id).then(() => db.delete('questions', msg.id))
+          }
+          if (emoji.id === ids.emojis.dismiss.id) {
+            msg.edit({ content: 'Report dismissed, no action taken.', embed: null }).then(x => setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete))
+            db.delete('questions', msg.id)
+          }
           break
         }
         case 3: { // admin action: merging
           break
         }
         case 4: { // chat vote
-          zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
+          if (emoji === ids.emojis.upvote.id || emoji.id === ids.emojis.downvote.id) zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
+          else {
+            // this is likely the report reaction
+            const perms = require('../features/perms')
+            const queue = require('./admin-queue')
+            const zd = require('./zendesk')
+            console.log(msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count)
+            if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
+            else if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports + 1) {
+              queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']))
+            }
+          }
           break
         }
         case 5: { // inquiry
