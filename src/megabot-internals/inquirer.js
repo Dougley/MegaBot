@@ -107,6 +107,7 @@ module.exports = {
             const zd = require('./zendesk')
             if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
             else if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports + 1) {
+              if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
               queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']))
             }
           }

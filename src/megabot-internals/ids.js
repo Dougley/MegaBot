@@ -51,6 +51,10 @@ const production = {
     report: {
       id: '302137374920671233',
       name: 'report'
+    },
+    reported: {
+      id: '323058409203171328',
+      name: 'reported'
     }
   },
   channels: {

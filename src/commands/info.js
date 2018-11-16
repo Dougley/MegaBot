@@ -4,7 +4,8 @@ const inquire = require('../megabot-internals/inquirer')
 module.exports = {
   meta: {
     level: 0,
-    timeout: 10
+    timeout: 10,
+    alias: ['url']
   },
   fn: (msg, suffix) => {
     const id = suffix.match(MB_CONSTANTS.regex) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix

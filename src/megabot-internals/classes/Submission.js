@@ -1,5 +1,7 @@
 const Base = require('./Base')
 const Striptags = require('striptags')
+const Entities = require('html-entities').AllHtmlEntities
+const decoder = new Entities()
 
 /**
  * Represents a submission
@@ -43,7 +45,7 @@ class Submission extends Base {
    * @returns {string}
    */
   get cleanContent () {
-    return Striptags(this.rawContent)
+    return decoder.decode(Striptags(this.rawContent))
   }
 }
 
