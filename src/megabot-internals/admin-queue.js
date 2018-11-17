@@ -17,8 +17,8 @@ module.exports = {
           name: suggestion.sideloads.users[0].name,
           icon_url: suggestion.sideloads.users[0].photo ? suggestion.sideloads.users[0].photo.content_url : undefined
         },
-        title: suggestion.title,
-        description: suggestion.cleanContent,
+        title: suggestion.title.length > 250 ? suggestion.title.substring(0, 250) + '...' : suggestion.title,
+        description: suggestion.cleanContent.length > 2048 ? '*Content too long*' : suggestion.cleanContent,
         url: suggestion.htmlUrl,
         timestamp: suggestion.createdAt,
         footer: {

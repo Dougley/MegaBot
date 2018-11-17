@@ -18,8 +18,8 @@ module.exports = {
               name: x.sideloads.users[0].name,
               icon_url: x.sideloads.users[0].photo ? x.sideloads.users[0].photo.content_url : undefined
             },
-            title: x.title,
-            description: x.cleanContent,
+            title: x.title.length > 250 ? x.title.substring(0, 250) + '...' : x.title,
+            description: x.cleanContent.length > 2048 ? '*Content too long*' : x.cleanContent,
             url: x.htmlUrl,
             timestamp: x.createdAt,
             footer: {
