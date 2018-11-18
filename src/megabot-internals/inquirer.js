@@ -108,7 +108,7 @@ module.exports = {
               if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
               queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']))
             }
-          }
+          } else if (emoji.id === ids.emoji.reported.id) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.reported.id}`, userID) // no one but us should add this emoji :angery:
           break
         }
         case 2: { // admin action: destruction
