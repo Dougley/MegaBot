@@ -6,7 +6,7 @@ module.exports = {
   },
   timeouts: {
     queueDelete: 2000,
-    feedScrape: 120000
+    feedScrape: 30000
   },
   generateErrorMessage: (e) => {
     switch (e.message) {
