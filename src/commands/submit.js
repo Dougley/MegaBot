@@ -11,6 +11,7 @@ module.exports = {
     if (!IDs.channels[msg.channel.id]) return
     const chunks = suffix.split(' | ').map(x => x.trim())
     if (suffix.trim().length < 5 || chunks.length === 0) return msg.channel.createMessage('Please enter a suggestion, at least a title is required')
+    if (chunks[0].length >= 255) return msg.channel.createMessage('Your title is too long, consider splitting more of your title into the description (`!submit title | description`)')
     ZD.postSubmission(msg.author.id, {
       title: chunks[0],
       details: chunks[1] ? chunks[1] : undefined,

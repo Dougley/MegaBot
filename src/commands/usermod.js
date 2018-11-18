@@ -20,6 +20,15 @@ module.exports = {
         case 'overrides': {
           break
         }
+        case 'exp':
+        case 'xp': {
+          const xp = require('../megabot-internals/exp')
+          if (isNaN(parseInt(chunks[2]))) return msg.channel.createMessage('3rd argument must be a number')
+          const reason = chunks.slice(3).join(' ')
+          if (reason.length < 1) return msg.channel.createMessage('Please provide a reason')
+          xp.grantEXP(chunks[0], parseInt(chunks[2]), reason)
+          return msg.channel.createMessage(`EXP modification applied, this user now has ${userinfo.properties.exp + parseInt(chunks[2])} EXP`)
+        }
         case 'blocked':
         case 'block': {
           await db.edit(chunks[0], {
@@ -68,7 +77,7 @@ function generateInformationalEmbed (userdata, userinfo) {
         },
         {
           name: 'Recent transactions',
-          value: (userinfo.transactions.length > 0) ? userinfo.transactions.slice(0, 5).map(transactionTranslator).join('\n') : 'None'
+          value: (userinfo.transactions.length > 0) ? userinfo.transactions.slice(Math.max(userinfo.transactions.length - 5, 0)).map(transactionTranslator).join('\n') : 'None'
         }
       ]
     }

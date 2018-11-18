@@ -1,6 +1,7 @@
 const debug = {
   top10channel: '512580399923200001',
   queue: '512952879485681684',
+  feed: '513433831089504266',
   emojis: {
     confirm: {
       id: '459710143484002304',
@@ -31,6 +32,7 @@ const debug = {
 const production = {
   top10channel: '268812972401360906',
   queue: '308655657786146817',
+  feed: '302112999794278400',
   emojis: {
     confirm: {
       id: '302137375092375553',

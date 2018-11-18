@@ -46,6 +46,18 @@ module.exports = {
     }
     return db.create('questions', ins)
   },
+  createFeedvote: async (msg, id) => {
+    msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
+    msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
+    msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+    const ins = {
+      expire: Date.now() + (604800000 * 2), // expire in 2 weeks
+      type: 1,
+      wb_id: msg.id,
+      zd_id: id
+    }
+    return db.create('questions', ins)
+  },
   verify: async (ctx) => {
     let msg = ctx[0]
     let emoji = ctx[1]
@@ -53,6 +65,9 @@ module.exports = {
 
     // dont process our own reactions
     if (userID === global.bot.user.id) return
+
+    // emojis must be custom
+    if (!emoji.id) return
 
     // the emoji must be a whitelisted one
     const emojiids = Object.keys(ids.emojis).map(x => ids.emojis[x].id)
@@ -82,6 +97,18 @@ module.exports = {
 
       switch (question.type) {
         case 1: { // feed vote
+          if (emoji === ids.emojis.upvote.id || emoji.id === ids.emojis.downvote.id) zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
+          else if (emoji.id === ids.emojis.report.id) {
+            // this is likely the report reaction
+            const perms = require('../features/perms')
+            const queue = require('./admin-queue')
+            const zd = require('./zendesk')
+            if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
+            else if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports + 1) {
+              if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
+              queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']))
+            }
+          }
           break
         }
         case 2: { // admin action: destruction

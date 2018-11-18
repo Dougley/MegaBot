@@ -22,6 +22,9 @@ module.exports = {
   find: async (coll, search) => {
     return db.getCollection(coll).findOne(search)
   },
+  findSync: (coll, search) => {
+    return db.getCollection(coll).findOne(search)
+  },
   create: async (coll, data) => {
     if (data._key) {
       data.wb_id = data._key
