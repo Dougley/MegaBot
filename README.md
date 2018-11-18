@@ -1,4 +1,4 @@
-# MegaBot v2 [![https://travis-ci.org/Dougley/MBv2](https://img.shields.io/travis/dougley/mbv2.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Dougley/MBv2)
+# MegaBot v2 [![https://travis-ci.org/Dougley/MBv2](https://img.shields.io/travis/Dougley/MBv2.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Dougley/MBv2)
 This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.
 
 ## Installation
