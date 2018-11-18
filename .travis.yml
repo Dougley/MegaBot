@@ -1,0 +1,12 @@
+language: node_js
+sudo: false
+cache: npm
+
+node_js:
+  - 10
+  - 9
+
+install:
+  - npm install
+script:
+  - npm test
