@@ -98,7 +98,7 @@ module.exports = {
       switch (question.type) {
         case 1: { // feed vote
           if (ids.emojis.reported && emoji.id === ids.emoji.reported.id) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.reported.id}`, userID) // no one but us should add this emoji :angery:
-          else if (emoji === ids.emojis.upvote.id || emoji.id === ids.emojis.downvote.id) zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
+          if (emoji === ids.emojis.upvote.id || emoji.id === ids.emojis.downvote.id) zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
           else if (emoji.id === ids.emojis.report.id) {
             // this is likely the report reaction
             const perms = require('../features/perms')
