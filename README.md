@@ -11,7 +11,7 @@ npm test
 ```
 
 ## Contributing
-At this time we're not accepting contributions, please wait until the project is feature complete.
+Thanks for taking the time to contribute! Please make sure you follow our [contribution guidelines](https://github.com/Dougley/MBv2/blob/master/.github/CONTRIBUTING.md)
 
 ## Acknowledgements
 Parts of this project are based on [WildBeast](https://github.com/TheSharks/WildBeast), used with permission.
