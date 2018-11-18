@@ -16,7 +16,7 @@ module.exports = {
     const channel = bot.getChannel(ids.feed)
     unknown.forEach(x => {
       // channel.createMessage(generateEmbed(x)).then(c => inq.createFeedvote(c, x.id))
-      bot.executeWebhook(process.env.DISCORD_WEBHOOK_ID, process.env.DISCORD_WEBHOOK_KEY, generateEmbed(x)).then(async z => inq.createFeedvote(await channel.getMessage(z.id), x.id))
+      bot.executeWebhook(process.env.DISCORD_WEBHOOK_ID, process.env.DISCORD_WEBHOOK_TOKEN, generateEmbed(x)).then(async z => inq.createFeedvote(await channel.getMessage(z.id), x.id))
     })
   }
 }
