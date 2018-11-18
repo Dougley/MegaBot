@@ -17,7 +17,13 @@ module.exports = {
   createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
-    if (reportable) msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+    if (reportable) {
+      if (!db.findSync('questions', { // prevent duplicates
+        type: 2,
+        zd_id: id
+      })) msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+      else if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
+    }
     const ins = {
       expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
