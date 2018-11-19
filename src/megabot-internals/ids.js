@@ -20,8 +20,8 @@ const debug = {
       name: 'down'
     },
     report: {
-      id: '512218443383177216',
-      name: 'rep'
+      id: '514024096368033793',
+      name: 'xyliumsfavorite'
     }
   },
   channels: {
@@ -51,8 +51,8 @@ const production = {
       name: 'downvote'
     },
     report: {
-      id: '302137374920671233',
-      name: 'report'
+      id: '514024096368033793',
+      name: 'xyliumsfavorite'
     },
     reported: {
       id: '323058409203171328',
