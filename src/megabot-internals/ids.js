@@ -20,8 +20,8 @@ const debug = {
       name: 'down'
     },
     report: {
-      id: '514024096368033793',
-      name: 'xyliumsfavorite'
+      id: '512218443383177216',
+      name: 'rep'
     }
   },
   channels: {
