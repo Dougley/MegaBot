@@ -1,7 +1,7 @@
 const zd = require('./zendesk')
-const ids = require('./ids')
 const db = require('../databases/lokijs')
 const inq = require('./inquirer')
+const { Message } = require('eris')
 
 module.exports = {
   refresh: async () => {
@@ -13,10 +13,8 @@ module.exports = {
     }
     const data = await zd.getSubmissions('created_at', ['users', 'topics'])
     const unknown = data.filter(filterer)
-    const channel = bot.getChannel(ids.feed)
     unknown.reverse().forEach(x => {
-      // channel.createMessage(generateEmbed(x)).then(c => inq.createFeedvote(c, x.id))
-      bot.executeWebhook(process.env.DISCORD_WEBHOOK_ID, process.env.DISCORD_WEBHOOK_TOKEN, generateEmbed(x)).then(async z => inq.createFeedvote(await channel.getMessage(z.id), x.id))
+      bot.executeWebhook(process.env.DISCORD_WEBHOOK_ID, process.env.DISCORD_WEBHOOK_TOKEN, generateEmbed(x)).then(z => inq.createFeedvote(new Message(z, bot), x.id))
     })
   }
 }
