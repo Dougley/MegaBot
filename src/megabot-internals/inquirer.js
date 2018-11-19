@@ -17,6 +17,7 @@ module.exports = {
   createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
+    msg.addReaction(`${ids.emojis.xyliumsfavorite.name}:${ids.emojis.xyliumsfavorite.id}`)
     if (reportable) {
       if (!db.findSync('questions', { // prevent duplicates
         type: 2,

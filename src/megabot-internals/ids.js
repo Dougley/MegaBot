@@ -51,12 +51,16 @@ const production = {
       name: 'downvote'
     },
     report: {
-      id: '514024096368033793',
-      name: 'xyliumsfavorite'
+      id: '302137374920671233',
+      name: 'report'
     },
     reported: {
       id: '323058409203171328',
       name: 'reported'
+    },
+    xyliumsfavorite: {
+      id: '514024096368033793',
+      name: 'xyliumsfavorite'
     }
   },
   channels: {
