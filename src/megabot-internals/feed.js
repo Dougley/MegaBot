@@ -23,7 +23,7 @@ function generateEmbed (suggestion) {
   return {
     wait: true,
     embeds: [{
-      color: 0xff00d4,
+      color: 0x7bffd3,
       title: suggestion.title.length > 250 ? suggestion.title.substring(0, 250) + '...' : suggestion.title,
       description: suggestion.cleanContent.length > 2048 ? '*Content too long*' : suggestion.cleanContent,
       url: suggestion.htmlUrl,
