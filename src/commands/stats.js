@@ -8,8 +8,8 @@ module.exports = {
   fn: async (msg) => {
     const data = db.getUser(msg.author.id)
     msg.author.getDMChannel().then(c => {
-      msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
-      return c.createMessage(generateEmbed(msg.author, data))
+      if (data.entitlements.includes('fake-stats')) msg.channel.createMessage(`<@${msg.author.id}>, an unexpected error occurred while getting your stats, try again later.`)
+      return c.createMessage(generateEmbed(msg.author, data)).then(() => { if (!data.entitlements.includes('fake-stats')) msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`) })
     }).catch(() => {
       msg.channel.createMessage("Failed to DM you, make sure you've enabled them")
     })

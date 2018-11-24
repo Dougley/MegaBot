@@ -15,9 +15,27 @@ module.exports = {
     } else {
       switch (chunks[1]) {
         case 'entitlements': {
+          if (userinfo.entitlements.includes(chunks[2])) {
+            userinfo.entitlements.splice(userinfo.entitlements.indexOf(chunks[2]), 1)
+            db.edit(chunks[0], userinfo)
+            msg.channel.createMessage('Removed entitlement')
+          } else {
+            userinfo.entitlements.push(chunks[2])
+            db.edit(chunks[0], userinfo)
+            msg.channel.createMessage('Granted entitlement')
+          }
           break
         }
         case 'overrides': {
+          if (userinfo.overrides.includes(chunks[2])) {
+            userinfo.overrides.splice(userinfo.overrides.indexOf(chunks[2]), 1)
+            db.edit(chunks[0], userinfo)
+            msg.channel.createMessage('Removed override')
+          } else {
+            userinfo.overrides.push(chunks[2])
+            db.edit(chunks[0], userinfo)
+            msg.channel.createMessage('Granted override')
+          }
           break
         }
         case 'exp':
