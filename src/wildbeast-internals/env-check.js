@@ -3,7 +3,9 @@ const required = [
   'BOT_PREFIX',
   'ZENDESK_ROOT_URL',
   'ZENDESK_DEFAULT_ACTOR',
-  'ZENDESK_API_KEY'
+  'ZENDESK_API_KEY',
+  'DISCORD_WEBHOOK_ID',
+  'DISCORD_WEBHOOK_TOKEN'
 ]
 
 for (let x of required) {

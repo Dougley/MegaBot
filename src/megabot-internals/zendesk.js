@@ -68,7 +68,7 @@ module.exports = {
    * @param {String} user - Discord ID of the user you're acting on behalf on
    * @param {Number | String} cardid - ID of the submission
    * @param {String} [type=up] - Type of vote, can be 'down' or 'up', defaults to 'up'
-   * @returns {Promise<Object>} - Zendesk response
+   * @returns {Promise<Vote>} - Zendesk response
    */
   applyVote: async (user, cardid, type = 'up') => {
     const userinfo = await getUserDetails(user)

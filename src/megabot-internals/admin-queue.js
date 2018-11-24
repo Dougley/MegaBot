@@ -1,9 +1,10 @@
 const db = require('../databases/lokijs')
 const ids = require('./ids')
 const inq = require('./inquirer')
+const xp = require('./exp')
 
 module.exports = {
-  createDeletionRequest: async (suggestion) => {
+  createDeletionRequest: async (suggestion, msg) => {
     if (await db.find('questions', {
       zd_id: suggestion.id,
       type: 2
@@ -42,7 +43,13 @@ module.exports = {
           }
         ]
       }
-    }).then(x => {
+    }).then(async x => {
+      const users = await msg.getReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+      xp.holdEXP(x.id, {
+        users: users.filter(x => x.id !== bot.user.id).map(x => x.id),
+        gain: 10, // TODO
+        message: 'Reported invalid submission'
+      })
       inq.startAdminAction({
         type: 2,
         zd_id: suggestion.id

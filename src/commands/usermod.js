@@ -9,7 +9,7 @@ module.exports = {
     const chunks = suffix.split(' ')
     const userinfo = await db.get('users', chunks[0])
     if (!userinfo) return msg.channel.createMessage('This user is unknown to me')
-    const userdata = await global.bot.getRESTUser(chunks[0])
+    const userdata = bot.users.get(chunks[0]) || await global.bot.getRESTUser(chunks[0])
     if (!chunks[1]) {
       msg.channel.createMessage(generateInformationalEmbed(userdata, userinfo))
     } else {
@@ -26,7 +26,7 @@ module.exports = {
           if (isNaN(parseInt(chunks[2]))) return msg.channel.createMessage('3rd argument must be a number')
           const reason = chunks.slice(3).join(' ')
           if (reason.length < 1) return msg.channel.createMessage('Please provide a reason')
-          xp.grantEXP(chunks[0], parseInt(chunks[2]), reason)
+          xp.applyEXP(chunks[0], parseInt(chunks[2]), reason)
           return msg.channel.createMessage(`EXP modification applied, this user now has ${userinfo.properties.exp + parseInt(chunks[2])} EXP`)
         }
         case 'blocked':
@@ -42,6 +42,11 @@ module.exports = {
 }
 
 function generateInformationalEmbed (userdata, userinfo) {
+  const pending = db.findManySync('holds', {
+    users: {
+      $contains: userdata.id
+    }
+  })
   return {
     embed: {
       title: `MegaBot lookup on ${userdata.username}#${userdata.discriminator}`,
@@ -76,7 +81,17 @@ function generateInformationalEmbed (userdata, userinfo) {
           inline: true
         },
         {
-          name: 'Recent transactions',
+          name: 'Pending transactions',
+          value: pending.length,
+          inline: true
+        },
+        {
+          name: 'Pending EXP',
+          value: pending.map(x => x.gain).reduce((a, b) => a + b, 0),
+          inline: true
+        },
+        {
+          name: 'Recently processed transactions',
           value: (userinfo.transactions.length > 0) ? userinfo.transactions.slice(Math.max(userinfo.transactions.length - 5, 0)).map(transactionTranslator).join('\n') : 'None'
         }
       ]

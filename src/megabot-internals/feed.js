@@ -13,7 +13,7 @@ module.exports = {
     }
     const data = await zd.getSubmissions('created_at', ['users', 'topics'])
     const unknown = data.filter(filterer)
-    unknown.reverse().forEach(x => {
+    unknown.reverse().forEach(x => { // we reverse this for reverse chronological order (newest last)
       bot.executeWebhook(process.env.DISCORD_WEBHOOK_ID, process.env.DISCORD_WEBHOOK_TOKEN, generateEmbed(x)).then(z => inq.createFeedvote(new Message(z, bot), x.id))
     })
   }

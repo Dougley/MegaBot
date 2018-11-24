@@ -7,7 +7,7 @@ const db = new Loki('wildbeast.db', {
 })
 
 function loadCollections () {
-  const collections = ['users', 'questions', 'cache', 'bonuses'] // extend this to add more, beware that this might add extra strain
+  const collections = ['users', 'questions', 'cache', 'bonuses', 'holds', 'system'] // extend this to add more, beware that this might add extra strain
   collections.forEach(x => {
     if (!db.getCollection(x)) db.addCollection(x)
   })
@@ -24,6 +24,12 @@ module.exports = {
   },
   findSync: (coll, search) => {
     return db.getCollection(coll).findOne(search)
+  },
+  findMany: async (coll, search) => {
+    return db.getCollection(coll).find(search)
+  },
+  findManySync: (coll, search) => {
+    return db.getCollection(coll).find(search)
   },
   create: async (coll, data) => {
     if (data._key) {
