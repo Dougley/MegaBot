@@ -5,7 +5,7 @@ module.exports = {
   meta: {
     level: 0
   },
-   fn: (msg) => {
+  fn: (msg) => {
     const data = db.getUser(msg.author.id)
     msg.author.getDMChannel().then(async c => {
       if (data.entitlements.includes('fake-stats')) msg.channel.createMessage(`<@${msg.author.id}>, an unexpected error occurred while getting your stats, try again later.`)
