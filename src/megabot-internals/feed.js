@@ -29,7 +29,7 @@ function generateEmbed (suggestion) {
       url: suggestion.htmlUrl,
       timestamp: suggestion.createdAt,
       footer: {
-        text: suggestion.sideloads.topics.find(x => x.id === suggestion.topicId).name
+        text: `${suggestion.sideloads.topics.find(x => x.id === suggestion.topicId).name} - ID: ${suggestion.id}`
       },
       author: {
         name: suggestion.sideloads.users.find(x => x.id === suggestion.authorId).name,

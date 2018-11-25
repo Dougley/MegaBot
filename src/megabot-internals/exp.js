@@ -21,6 +21,11 @@ module.exports = {
       })
     }
     database.delete('holds', id)
+  },
+  touch: async (id) => {
+    const data = database.getUser(id)
+    data.properties.lastSeen = Date.now()
+    database.edit(id, data)
   }
 }
 

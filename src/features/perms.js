@@ -14,11 +14,18 @@ const custodianrole = '268815388882632704'
 
 const db = require('../databases/lokijs')
 
-module.exports = (level, user, msg) => {
+module.exports = (level, user, msg, type) => {
+  const userdata = db.getUser(user.id)
   if (supers.includes(user.id)) return true // supers can do anything
   if (!msg.channel.guild) return level === 0 // this is a dm, only general commands allowed
+  if (type && userdata.overrides.includes(type)) {
+    switch (type) {
+      case 'admin-commands': {
+        return level <= 2
+      }
+    }
+  }
   if (!user.roles || user.roles.length === 0) return level === 0 // no roles = no elevated access
-  const userdata = db.getUser(user.id)
   if (userdata.blocked) return false // blocked users dont get to run commands
   // check role permissions now
   for (const role of user.roles) {

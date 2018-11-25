@@ -120,6 +120,7 @@ module.exports = {
           break
         }
         case 2: { // admin action: destruction
+          if (!perms(2, msg.member, msg, 'admin-commands')) return
           if (emoji.id === ids.emojis.confirm.id) {
             msg.edit({ content: 'Report confirmed, submission will be destroyed.', embed: null }).then(x => {
               xp.processHolds(msg.id, true)

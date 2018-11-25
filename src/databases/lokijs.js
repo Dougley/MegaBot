@@ -6,8 +6,9 @@ const db = new Loki('wildbeast.db', {
   autosaveInterval: 1000
 })
 
+const collections = ['users', 'questions', 'cache', 'bonuses', 'holds', 'system'] // extend this to add more, beware that this might add extra strain
+
 function loadCollections () {
-  const collections = ['users', 'questions', 'cache', 'bonuses', 'holds', 'system'] // extend this to add more, beware that this might add extra strain
   collections.forEach(x => {
     if (!db.getCollection(x)) db.addCollection(x)
   })
@@ -25,11 +26,11 @@ module.exports = {
   findSync: (coll, search) => {
     return db.getCollection(coll).findOne(search)
   },
-  findMany: async (coll, search) => {
-    return db.getCollection(coll).find(search)
+  findMany: async (coll, search, limit = Infinity) => {
+    return db.getCollection(coll).chain().find(search).limit(limit).data()
   },
-  findManySync: (coll, search) => {
-    return db.getCollection(coll).find(search)
+  findManySync: (coll, search, limit = Infinity) => {
+    return db.getCollection(coll).chain().find(search).limit(limit).data()
   },
   create: async (coll, data) => {
     if (data._key) {
@@ -45,9 +46,15 @@ module.exports = {
   },
   edit: async (handle, data, coll = 'users') => {
     const collection = db.getCollection(coll)
-    const orig = collection.find({ wb_id: handle })[0]
+    const orig = collection.findOne({ wb_id: handle })
     const newdata = { ...orig, ...data } // spread ops, fancy!
     return collection.update(newdata)
+  },
+  findAndRemove: (coll, query) => {
+    return db.getCollection(coll).findAndRemove(query)
+  },
+  listCollections: () => {
+    return db.listCollections()
   },
   getUser: ensureUser,
   getQuestion: async (id) => {
@@ -63,9 +70,9 @@ module.exports = {
 
 function ensureUser (id) {
   const users = db.getCollection('users')
-  const data = users.find({
+  const data = users.findOne({
     wb_id: id
-  })[0]
+  })
   if (data) {
     global.logger.trace(data)
     return data
@@ -73,14 +80,14 @@ function ensureUser (id) {
     const shim = {
       wb_id: id,
       properties: {
-        exp: 0
+        exp: 0,
+        lastSeen: Date.now()
       },
       entitlements: [],
       overrides: [],
       transactions: [],
       blocked: false
     }
-    users.insert(shim)
-    return shim
+    return users.insert(shim)
   }
 }

@@ -15,11 +15,12 @@ module.exports = {
    * @param {Array} includes - Sideloads for extra records
    * @param {String} filter - List only posts with a certain state
    * @param {Number} page - Pagination, the page number to get
+   * @param {Number} limit - Pagination, how many records to return, can't exceed 100
    * @returns {Promise<Submission[]>} - Zendesk response
    */
-  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1) => {
+  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1, limit = 20) => {
     const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes.join(','), filter_by: filter, page: page })}`)
+      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes.join(','), filter_by: filter, page: page, per_page: limit })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
     // logger.trace(res)
     return res.body.posts.map(x => new Submission(res.body, x))

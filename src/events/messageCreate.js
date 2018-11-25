@@ -3,12 +3,16 @@ const aliases = require('../wildbeast-internals/command-loader').alias
 const timeout = require('../features/timeout')
 const perms = require('../features/perms')
 const inq = require('../megabot-internals/inquirer')
+const { touch } = require('../megabot-internals/exp')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
-  if (!msg.content.startsWith(prefix) && msg.channel.guild && msg.content.match(MB_CONSTANTS.regex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.regex)[1])
+  if (msg.channel.guild) {
+    if (!msg.content.startsWith(prefix) && msg.content.match(MB_CONSTANTS.regex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.regex)[1])
+    if (perms(1, msg.member, msg)) touch(msg.author.id) // we only track this for custodians, no need to track this for normals
+  }
   if (msg.content.indexOf(prefix) === 0) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
@@ -18,7 +22,7 @@ module.exports = async (ctx) => {
       let time = true
       if (commands[cmd].meta.timeout) time = timeout.calculate(msg.author.id, cmd, commands[cmd].meta.timeout)
       if (time !== true) return msg.channel.createMessage(`This command is still on cooldown, try again in ${Math.floor(time)} seconds.`)
-      const allowed = perms(commands[cmd].meta.level, (msg.channel.guild ? msg.member : msg.author), msg)
+      const allowed = perms(commands[cmd].meta.level, (msg.channel.guild ? msg.member : msg.author), msg, (commands[cmd].meta.level === 2 ? 'admin-commands' : null))
       global.logger.debug(`Access: ${allowed}`)
       if (allowed) {
         try {
