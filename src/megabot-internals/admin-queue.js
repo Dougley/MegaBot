@@ -48,7 +48,9 @@ module.exports = {
       xp.holdEXP(x.id, {
         users: users.filter(x => x.id !== bot.user.id).map(x => x.id),
         gain: 10, // TODO
-        message: 'Reported invalid submission'
+        type: 1,
+        message: 'Reported invalid submission',
+        zd_id: suggestion.id
       })
       inq.startAdminAction({
         type: 2,

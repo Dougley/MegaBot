@@ -73,6 +73,9 @@ module.exports = {
     let emoji = ctx[1]
     let userID = ctx[2]
 
+    // only process guilds
+    if (!msg.channel.guild) return
+
     // dont process our own reactions
     if (userID === global.bot.user.id) return
 
@@ -120,7 +123,7 @@ module.exports = {
           break
         }
         case 2: { // admin action: destruction
-          if (!perms(2, msg.member, msg, 'admin-commands')) return
+          if (!perms(2, user, msg, 'admin-commands')) return
           if (emoji.id === ids.emojis.confirm.id) {
             msg.edit({ content: 'Report confirmed, submission will be destroyed.', embed: null }).then(x => {
               xp.processHolds(msg.id, true)

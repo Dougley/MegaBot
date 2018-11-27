@@ -20,6 +20,11 @@ module.exports = {
       wb_id: id
     })
   },
+  getSync: (coll, id) => {
+    return db.getCollection(coll).findOne({
+      wb_id: id
+    })
+  },
   find: async (coll, search) => {
     return db.getCollection(coll).findOne(search)
   },
@@ -81,7 +86,8 @@ function ensureUser (id) {
       wb_id: id,
       properties: {
         exp: 0,
-        lastSeen: Date.now()
+        lastSeen: Date.now(),
+        notifications: false
       },
       entitlements: [],
       overrides: [],

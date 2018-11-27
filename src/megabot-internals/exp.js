@@ -14,11 +14,22 @@ module.exports = {
   },
   processHolds: async (id, granted) => {
     const data = await database.get('holds', id)
+    const notify = require('../features/notifications')
     if (!data) return
     if (granted) {
       data.users.forEach(x => {
         giveEXP(x, data.gain, data.message)
       })
+    }
+    switch (data.type) {
+      case 1 : {
+        data.users.forEach(x => {
+          notify.send(granted ? 1 : 2, x, {
+            id: data.zd_id,
+            gain: data.gain
+          })
+        })
+      }
     }
     database.delete('holds', id)
   },
