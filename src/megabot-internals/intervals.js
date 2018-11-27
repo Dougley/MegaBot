@@ -39,8 +39,8 @@ setInterval(() => {
     zd.getSubmission(x.zd_id).catch(e => { // no 'then', we only care about errors right now
       if (e.message === 'Not Found') {
         logger.debug(`Failed to get ${x.zd_id}, removing`)
-        bot.deleteMessage(ids.feed, x.wb_id)
-        db.delete('questions', x.id)
+        bot.deleteMessage(ids.feed, x.wb_id).catch(() => {}) // who cares tbh
+        db.delete('questions', x.wb_id)
       }
     })
   })
