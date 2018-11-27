@@ -27,6 +27,11 @@ bot.onAny((ctx) => {
   }
 })
 
+bot.on('error', (e) => {
+  if (!(e instanceof Error)) global.logger.error(e.error)
+  else global.logger.error(e)
+})
+
 bot.connect()
 
 process.on('warn', global.logger.warn)
