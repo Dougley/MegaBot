@@ -6,7 +6,7 @@ module.exports = {
     level: 0,
     timeout: 10,
     noDM: true,
-    aliases: ['suggest']
+    alias: ['suggest']
   },
   fn: (msg, suffix) => {
     if (!IDs.channels[msg.channel.id]) return
