@@ -1,7 +1,7 @@
 module.exports = {
   meta: {
     level: 2,
-    aliases: ['reboot', 'restart']
+    alias: ['reboot', 'restart']
   },
   fn: (msg) => {
     msg.channel.createMessage('Shutting down...').then(() => {
