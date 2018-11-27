@@ -5,7 +5,8 @@ module.exports = {
   meta: {
     level: 0,
     timeout: 10,
-    noDM: true
+    noDM: true,
+    aliases: ['suggest']
   },
   fn: (msg, suffix) => {
     if (!IDs.channels[msg.channel.id]) return
