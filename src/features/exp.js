@@ -12,11 +12,12 @@ module.exports = {
       ...data
     })
   },
-  processHolds: async (id, granted) => {
+  processHolds: async (id, type) => {
     const data = await database.get('holds', id)
     const notify = require('./notifications')
     if (!data) return
-    if (granted) {
+    const rewardable = [1]
+    if (rewardable.includes(type)) {
       data.users.forEach(x => {
         giveEXP(x, data.gain, data.message)
       })
@@ -24,7 +25,7 @@ module.exports = {
     switch (data.type) {
       case 1 : {
         data.users.forEach(x => {
-          notify.send(granted ? 1 : 2, x, {
+          notify.send(type, x, {
             id: data.zd_id,
             gain: data.gain
           })

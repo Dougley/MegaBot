@@ -22,6 +22,10 @@ const debug = {
     report: {
       id: '512218443383177216',
       name: 'rep'
+    },
+    resolve: {
+      id: '518121642166190080',
+      name: 'bots2'
     }
   },
   channels: {
@@ -57,6 +61,10 @@ const production = {
     reported: {
       id: '323058409203171328',
       name: 'reported'
+    },
+    resolve: {
+      id: '401095659656183848',
+      name: 'f1'
     }
   },
   channels: {

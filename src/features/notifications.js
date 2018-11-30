@@ -22,6 +22,9 @@ module.exports = {
       case 2 : {
         return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and denied.`))
       }
+      case 3 : {
+        return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and was dealt with.\nYou gained ${props.gain} EXP`))
+      }
     }
   }
 }

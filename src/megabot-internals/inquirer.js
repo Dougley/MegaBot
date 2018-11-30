@@ -46,6 +46,7 @@ module.exports = {
   startAdminAction: async (data, msg) => {
     msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
+    msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
     const ins = {
       wb_id: msg.id,
       ...data
@@ -126,14 +127,21 @@ module.exports = {
           if (!perms(2, user, msg, 'admin-commands')) return
           if (emoji.id === ids.emojis.confirm.id) {
             msg.edit({ content: 'Report confirmed, submission will be destroyed.', embed: null }).then(x => {
-              xp.processHolds(msg.id, true)
+              xp.processHolds(msg.id, 1)
               setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
             })
             zd.destroySubmission(question.zd_id).then(() => db.delete('questions', msg.id))
           }
           if (emoji.id === ids.emojis.dismiss.id) {
-            msg.edit({ content: 'Report dismissed, no action taken.', embed: null }).then(x => {
-              xp.processHolds(msg.id, false)
+            msg.edit({ content: 'Report dismissed, left card untouched.', embed: null }).then(x => {
+              xp.processHolds(msg.id, 2)
+              setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
+            })
+            db.delete('questions', msg.id)
+          }
+          if (emoji.id === ids.emojis.resolve.id) {
+            msg.edit({ content: 'Report dismissed, left card untouched and rewarded EXP.', embed: null }).then(x => {
+              xp.processHolds(msg.id, 3)
               setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
             })
             db.delete('questions', msg.id)
