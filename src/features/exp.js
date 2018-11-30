@@ -16,7 +16,7 @@ module.exports = {
     const data = await database.get('holds', id)
     const notify = require('./notifications')
     if (!data) return
-    const rewardable = [1]
+    const rewardable = [1, 3]
     if (rewardable.includes(type)) {
       data.users.forEach(x => {
         giveEXP(x, data.gain, data.message)
