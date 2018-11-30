@@ -39,6 +39,18 @@ module.exports = {
     return new Submission(res.body, res.body.post)
   },
   /**
+   * Search for submissions
+   * @param {String | Number} query - Search query
+   * @returns {Promise<Submission[]>} - Zendesk response
+   */
+  searchSubmissions: async (query) => {
+    const res = await SA
+      .get(`${ROOT_URL}/api/v2/help_center/community_posts/search.json?${QS.stringify({ query: query })}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    // logger.trace(res)
+    return res.body.results.map(x => new Submission(res.body, x))
+  },
+  /**
    * Create a submission
    * @param {String} userid - Discord ID of the user you're acting on behalf on
    * @param {Object} data - Zendesk-compatible payload

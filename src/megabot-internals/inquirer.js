@@ -67,7 +67,7 @@ module.exports = {
   verify: async (ctx) => {
     const perms = require('../features/perms')
     const queue = require('./admin-queue')
-    const xp = require('./exp')
+    const xp = require('../features/exp')
 
     let msg = ctx[0]
     let emoji = ctx[1]

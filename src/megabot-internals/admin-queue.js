@@ -1,7 +1,7 @@
 const db = require('../databases/lokijs')
 const ids = require('./ids')
 const inq = require('./inquirer')
-const xp = require('./exp')
+const xp = require('../features/exp')
 
 module.exports = {
   createDeletionRequest: async (suggestion, msg) => {
@@ -47,7 +47,7 @@ module.exports = {
       const users = await msg.getReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
       xp.holdEXP(x.id, {
         users: users.filter(x => x.id !== bot.user.id).map(x => x.id),
-        gain: 10, // TODO
+        gain: MB_CONSTANTS.rewards.report,
         type: 1,
         message: 'Reported invalid submission',
         zd_id: suggestion.id

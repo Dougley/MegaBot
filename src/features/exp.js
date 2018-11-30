@@ -14,7 +14,7 @@ module.exports = {
   },
   processHolds: async (id, granted) => {
     const data = await database.get('holds', id)
-    const notify = require('../features/notifications')
+    const notify = require('./notifications')
     if (!data) return
     if (granted) {
       data.users.forEach(x => {

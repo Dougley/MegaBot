@@ -40,7 +40,7 @@ module.exports = {
         }
         case 'exp':
         case 'xp': {
-          const xp = require('../megabot-internals/exp')
+          const xp = require('../features/exp')
           if (isNaN(parseInt(chunks[2]))) return msg.channel.createMessage('3rd argument must be a number')
           const reason = chunks.slice(3).join(' ')
           if (reason.length < 1) return msg.channel.createMessage('Please provide a reason')

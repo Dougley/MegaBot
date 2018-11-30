@@ -1,5 +1,5 @@
 const db = require('../databases/lokijs')
-const xp = require('../megabot-internals/exp')
+const xp = require('../features/exp')
 
 module.exports = {
   meta: {
