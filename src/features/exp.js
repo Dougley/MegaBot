@@ -37,11 +37,13 @@ module.exports = {
           break
         }
         case 2 : {
-          const user = database.findManySync('users', {
-            wb_id: x.users[0]
-          })
-          if (!user) return
-          else giveEXP(x.users[0], x.gain, x.message)
+          if (type === 1) {
+            const user = database.findManySync('users', {
+              wb_id: x.users[0]
+            })
+            if (!user) return
+            else giveEXP(x.users[0], x.gain, x.message)
+          }
           break
         }
       }
