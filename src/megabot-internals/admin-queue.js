@@ -2,6 +2,7 @@ const db = require('../databases/lokijs')
 const ids = require('./ids')
 const inq = require('./inquirer')
 const xp = require('../features/exp')
+const zd = require('./zendesk')
 
 module.exports = {
   createDeletionRequest: async (suggestion, msg) => {
@@ -10,6 +11,7 @@ module.exports = {
       type: 2
     }) && process.env.NODE_ENV !== 'debug') return
     const channel = bot.getChannel(ids.queue)
+    const creator = await zd.getUser(suggestion.authorId)
     channel.createMessage({
       content: 'The following suggestion was marked for deletion, please confirm\n**Confirming this request destroys the suggestion IRREVERSIBLY, please be certain**',
       embed: {
@@ -50,6 +52,13 @@ module.exports = {
         gain: MB_CONSTANTS.rewards.report,
         type: 1,
         message: 'Reported invalid submission',
+        zd_id: suggestion.id
+      })
+      xp.holdEXP(x.id, {
+        users: [creator.external_id],
+        gain: -Math.abs(MB_CONSTANTS.rewards.submit),
+        type: 2,
+        message: 'A suggestion you submitted got deleted',
         zd_id: suggestion.id
       })
       inq.startAdminAction({

@@ -1,4 +1,5 @@
 const ZD = require('../megabot-internals/zendesk')
+const XP = require('../features/exp')
 
 module.exports = {
   meta: {
@@ -15,6 +16,7 @@ module.exports = {
       if (c.closed) throw new Error('Suggestion closed')
       else return ZD.createComment(msg.author.id, id, comment)
     }).then(() => {
+      if (!XP.contains(msg.author.id, `Commented on ${suggestion.id}`)) XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.comment, `Commented on ${suggestion.id}`)
       return msg.channel.createMessage({
         content: 'Your comment was added',
         embed: {

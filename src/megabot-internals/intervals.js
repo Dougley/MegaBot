@@ -2,6 +2,7 @@ const zd = require('../megabot-internals/zendesk')
 const ids = require('../megabot-internals/ids')
 const db = require('../databases/lokijs')
 const top10 = require('../megabot-internals/top10')
+const ar = require('./autorole')
 const feed = require('../megabot-internals/feed')
 
 logger.debug('Setting intervals')
@@ -55,3 +56,8 @@ setInterval(() => {
   logger.debug('Refreshing feed')
   feed.refresh()
 }, MB_CONSTANTS.timeouts.feedScrape)
+
+setInterval(() => {
+  logger.debug('Scanning for new custodians')
+  ar.check()
+}, 3600000) // 1 hour

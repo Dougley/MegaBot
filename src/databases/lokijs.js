@@ -58,6 +58,9 @@ module.exports = {
   findAndRemove: (coll, query) => {
     return db.getCollection(coll).findAndRemove(query)
   },
+  remove: (coll, doc) => {
+    return db.getCollection(coll).remove(doc)
+  },
   listCollections: () => {
     return db.listCollections()
   },

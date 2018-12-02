@@ -1,4 +1,7 @@
 const debug = {
+  guild: '258274103935369219',
+  custodianRole: '518849859822813206',
+  custodianChannel: '459298531480567809',
   top10channel: '512580399923200001',
   queue: '512952879485681684',
   feed: '513433831089504266',
@@ -34,6 +37,9 @@ const debug = {
 }
 
 const production = {
+  guild: '268811439588900865',
+  custodianRole: '268815388882632704',
+  custodianChannel: '284796966641205249',
   top10channel: '268812972401360906',
   queue: '308655657786146817',
   feed: '302112999794278400',

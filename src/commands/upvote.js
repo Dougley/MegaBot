@@ -1,4 +1,5 @@
 const ZD = require('../megabot-internals/zendesk')
+const XP = require('../features/exp')
 
 module.exports = {
   meta: {
@@ -11,6 +12,7 @@ module.exports = {
     ZD.applyVote(msg.author.id, id).then(x => {
       return x.getSubmission()
     }).then(x => {
+      if (!XP.contains(msg.author.id, `Voted on ${id}`)) XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.vote, `Voted on ${id}`)
       msg.channel.createMessage({
         content: 'Your vote was applied successfully!',
         embed: {

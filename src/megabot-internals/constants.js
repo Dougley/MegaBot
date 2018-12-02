@@ -2,7 +2,8 @@ module.exports = {
   regex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
   isID: (input) => { return /\d{12,}/.test(input) },
   thresholds: {
-    reports: 3
+    reports: 3,
+    custodian: 150
   },
   timeouts: {
     queueDelete: 2000,
@@ -12,7 +13,9 @@ module.exports = {
     submit: 10,
     report: 5,
     dupe: 20,
-    comment: 5
+    vote: 5,
+    comment: 5,
+    daily: 25
   },
   generateErrorMessage: (e) => {
     switch (e.message) {
