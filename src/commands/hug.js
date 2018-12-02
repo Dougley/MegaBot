@@ -5,7 +5,17 @@ const templates = [
   '{r}, {s} just gave you the best hug of your life!',
   '{s} gave {r} a friendly little hug.',
   '{s} tried to give {r} a hug but was denied.',
-  '{s} tackle-hugs {r}.'
+  '{s} tackle-hugs {r}.',
+  '{s} gave {r} a bog standard hug',
+  '{r} accidentally reported the wrong thing so {s} gave them a hug to stop {r} from crying',
+  '{s} gives {r} a cereal soupy hug',
+  '{s} hugged {r} so hard, they exploded in a cloud of pepperonis',
+  '{s} goes to hug {r}, what a good friendship.',
+  '{s} successfully hugs {r} with the power of the Wumpus.',
+  '{s} sent {r} some love, do I get some too?',
+  '{r} ducked when {s} tried to hug them.',
+  '{s} hugged {r} but {r} took it as an attack!',
+  '{s} fills {r} with sweet love'
 ]
 
 module.exports = {
