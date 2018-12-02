@@ -1,5 +1,6 @@
 const ZD = require('../megabot-internals/zendesk')
 const IDs = require('../megabot-internals/ids')
+const XP = require('../features/exp')
 
 module.exports = {
   meta: {
@@ -18,6 +19,7 @@ module.exports = {
       details: chunks[1] ? chunks[1] : undefined,
       topic_id: IDs.channels[msg.channel.id]
     }).then(x => {
+      XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.submit, 'Submitted suggestion')
       msg.delete()
       msg.channel.createMessage({
         content: `<@${msg.author.id}>, your suggestion was submitted!`,
