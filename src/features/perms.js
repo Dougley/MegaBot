@@ -28,9 +28,9 @@ module.exports = (level, user, msg, type) => {
   if (!user.roles || user.roles.length === 0) return level === 0 // no roles = no elevated access
   if (userdata.blocked) return false // blocked users dont get to run commands
   // check role permissions now
-  for (const role of user.roles) {
-    if (role === custodianrole) return level <= 1
-    if (modroles.includes(role)) return level <= 2
-  }
+  modroles.forEach(x => {
+    if (user.roles.includes(x)) return level <= 2
+  })
+  if (user.roles.includes(custodianrole)) return level <= 1
   return level === 0
 }
