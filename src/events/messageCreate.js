@@ -11,7 +11,7 @@ module.exports = async (ctx) => {
   const prefix = process.env.BOT_PREFIX
   if (msg.channel.guild) {
     if (!msg.content.startsWith(prefix) && msg.content.match(MB_CONSTANTS.regex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.regex)[1])
-    if (perms(1, msg.member, msg)) touch(msg.author.id) // we only track this for custodians, no need to track this for normals
+    if (perms(0, msg.member, msg)) touch(msg.author.id)
   }
   if (msg.content.indexOf(prefix) === 0) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()

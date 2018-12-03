@@ -66,6 +66,7 @@ module.exports = {
     return db.create('questions', ins)
   },
   verify: async (ctx) => {
+    const { touch } = require('../features/exp')
     const perms = require('../features/perms')
     const queue = require('./admin-queue')
     const xp = require('../features/exp')
@@ -86,6 +87,9 @@ module.exports = {
     // the emoji must be a whitelisted one
     const emojiids = Object.keys(ids.emojis).map(x => ids.emojis[x].id)
     if (!emojiids.includes(emoji.id)) return
+
+    // bump activity
+    if (perms(0, msg.member, msg)) touch(msg.author.id)
 
     // the message object can be incomplete
     // check for that first and complete it
