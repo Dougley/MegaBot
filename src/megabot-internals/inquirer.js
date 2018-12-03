@@ -88,15 +88,15 @@ module.exports = {
     const emojiids = Object.keys(ids.emojis).map(x => ids.emojis[x].id)
     if (!emojiids.includes(emoji.id)) return
 
-    // bump activity
-    if (perms(0, msg.member, msg)) touch(msg.author.id)
-
     // the message object can be incomplete
     // check for that first and complete it
     if (!(msg instanceof Message)) msg = await global.bot.getMessage(msg.channel.id, msg.id)
     global.logger.trace(msg)
 
     const user = msg.channel.guild.members.get(userID) ? msg.channel.guild.members.get(userID) : await msg.channel.guild.getRESTMember(userID)
+
+    // bump activity
+    if (perms(0, user, msg)) touch(msg.author.id)
 
     db.getQuestion(msg.id).then(async question => {
       if (!question) return
