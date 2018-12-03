@@ -70,6 +70,9 @@ module.exports = {
       wb_id: id
     })
   },
+  getRawCollection: (coll) => {
+    return db.getCollection(coll)
+  },
   count: (coll) => {
     return db.getCollection(coll).chain().count()
   },

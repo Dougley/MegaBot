@@ -123,7 +123,7 @@ module.exports = {
               action: 'vote',
               zd_id: question.zd_id
             })
-            if (!xp.contains(userID, `Voted on ${question.zd_id}`)) xp.applyEXP(userID, MB_CONSTANTS.rewards.vote, `Voted on ${question.zd_id}`)
+            if (!xp.contains(userID, `Voted on ${question.zd_id}`)) xp.applyLimitedReward(userID, 1, question.zd_id)
             zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
           } else if (emoji.id === ids.emojis.report.id) {
             // this is likely the report reaction
@@ -177,7 +177,7 @@ module.exports = {
               action: 'vote',
               zd_id: question.zd_id
             })
-            if (!xp.contains(userID, `Voted on ${question.zd_id}`)) xp.applyEXP(userID, MB_CONSTANTS.rewards.vote, `Voted on ${question.zd_id}`)
+            if (!xp.contains(userID, `Voted on ${question.zd_id}`)) xp.applyLimitedReward(userID, 1, question.zd_id)
             zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
           } else if (emoji.id === ids.emojis.report.id) {
             // this is likely the report reaction

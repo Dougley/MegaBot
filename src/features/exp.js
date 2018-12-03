@@ -7,6 +7,20 @@ module.exports = {
     return data.properties.exp
   },
   applyEXP: giveEXP,
+  applyLimitedReward: async (id, type, zdid) => {
+    const data = await database.getUser(id)
+    switch (type) {
+      case 1 : { // votes
+        const now = new Date()
+        const results = data.transactions.filter(x => {
+          const then = new Date(x.time)
+          return then.getDate() === now.getDate()
+        }).filter(x => /Voted on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        if (results.length < 4) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+      }
+    }
+  },
   holdEXP: async (queueid, data) => {
     return database.create('holds', {
       wb_id: queueid,
@@ -67,7 +81,7 @@ module.exports = {
 async function giveEXP (id, granted, msg) {
   const userinfo = await database.getUser(id)
   if (userinfo.entitlements.includes('gains-no-exp')) return
-  userinfo.transactions.push({ modified: granted, reason: msg })
+  userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
   userinfo.transactions = userinfo.transactions.slice(Math.max(userinfo.transactions.length - 50, 0))
   return database.edit(id, {
     properties: {
