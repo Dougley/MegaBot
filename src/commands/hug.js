@@ -18,6 +18,8 @@ const templates = [
   '{s} fills {r} with sweet love'
 ]
 
+const bothug = 'Aww, {s} thanks for hugging me!'
+
 module.exports = {
   meta: {
     level: 1,
@@ -27,6 +29,7 @@ module.exports = {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
     let id = suffix.match(/<@!?([0-9]*)>/)[1]
     if (id === msg.author.id) return msg.channel.createMessage("Can't execute this action on yourself")
+    if (id === bot.user.id) return msg.channel.createMessage(bothug.replace(/{s}/g, msg.author.username))
     const user = bot.users.get(id) || bot.getRESTUser(id)
     const random = templates[Math.floor(Math.random() * templates.length)].replace(/{s}/g, msg.author.username).replace(/{r}/g, user.username)
     msg.channel.createMessage(random)
