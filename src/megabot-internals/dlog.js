@@ -8,10 +8,16 @@ module.exports = (type, opts) => {
       return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` 🔧 ${opts.user.username}#${opts.user.discriminator} (\`${opts.user.id}\`) ran command \`${opts.cmd}\``)
     }
     case 2 : { // inquire action
-      return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` 🧾 ${opts.user.username}#${opts.user.discriminator} (\`${opts.user.id}\`) ran reaction action **${opts.action}** on ${opts.zd_id}`)
+      return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` 📑 ${opts.user.username}#${opts.user.discriminator} (\`${opts.user.id}\`) ran reaction action **${opts.action}** on ${opts.zd_id}`)
     }
     case 3 : { // permissions error
       return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` 🛑 ${opts.user.username}#${opts.user.discriminator} (\`${opts.user.id}\`) tried running a command they don't have access to (${opts.cmd})`)
+    }
+    case 4 : { // custom
+      return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` ℹ ${opts.message}`)
+    }
+    case 5 : { // admin queue
+      return channel.createMessage(`\`[${now.toLocaleTimeString()}]\` 🆔 ${opts.user.username}#${opts.user.discriminator} (\`${opts.user.id}\`) ${opts.action} an admin-queue report with ID ${opts.zd_id}`)
     }
   }
 }

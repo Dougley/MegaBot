@@ -1,5 +1,6 @@
 const db = require('../databases/lokijs')
 const ids = require('./ids')
+const dlog = require('./dlog')
 
 module.exports = {
   check: () => {
@@ -17,6 +18,9 @@ module.exports = {
         return db.delete('users', x.wb_id)
       }
       if (!user.roles.includes(ids.custodianRole)) {
+        dlog(4, {
+          message: `Granting ${user.username}#${user.discriminator} custodian, they passed the EXP threshold`
+        })
         logger.debug(`Granting ${x.wb_id} custodian due to autorole`)
         user.addRole(ids.custodianRole, 'Autorole: EXP threshold reached')
       }
