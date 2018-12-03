@@ -29,12 +29,9 @@ module.exports = {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
     let id = suffix.match(/<@!?([0-9]*)>/)[1]
     if (id === msg.author.id) return msg.channel.createMessage("Can't execute this action on yourself")
+    if (id === bot.user.id) return msg.channel.createMessage(bothug.replace(/{s}/g, msg.author.username))
     const user = bot.users.get(id) || bot.getRESTUser(id)
-    let random = templates[Math.floor(Math.random() * templates.length)].replace(/{s}/g, msg.author.username).replace(/{r}/g, user.username)
-    
-    if (id === bot.user.id)
-      random = bothug
-    
+    const random = templates[Math.floor(Math.random() * templates.length)].replace(/{s}/g, msg.author.username).replace(/{r}/g, user.username)
     msg.channel.createMessage(random)
   }
 }
