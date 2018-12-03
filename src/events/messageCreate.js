@@ -4,6 +4,7 @@ const timeout = require('../features/timeout')
 const perms = require('../features/perms')
 const inq = require('../megabot-internals/inquirer')
 const { touch } = require('../features/exp')
+const dlog = require('../megabot-internals/dlog')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
@@ -35,14 +36,21 @@ module.exports = async (ctx) => {
           global.logger.error(e)
           msg.channel.createMessage('An error occurred processing this command, please try again later.')
         } finally {
+          dlog(1, {
+            user: msg.author,
+            cmd: msg.content
+          })
           global.logger.command({
             cmd: cmd,
             opts: suffix,
             m: msg
           })
         }
-      // } else {
-        // msg.channel.createMessage('You have no permission to run this command!')
+      } else {
+        dlog(3, {
+          user: msg.author,
+          cmd: cmd
+        })
       }
     }
   }

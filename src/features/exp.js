@@ -13,23 +13,23 @@ module.exports = {
       ...data
     })
   },
-  processHolds: async (id, type) => {
+  processHolds: async (id, nototype) => {
     const data = database.findManySync('holds', {
       wb_id: id
     })
     if (!data) return
     data.forEach(x => {
       const notify = require('./notifications')
-      switch (x.type) {
+      switch (x.type) { // data type
         case 1 : {
-          const rewardable = [1, 3]
-          if (rewardable.includes(type)) {
+          const rewardable = [1, 3] // notification type
+          if (rewardable.includes(nototype)) {
             x.users.forEach(y => {
               giveEXP(y, x.gain, x.message)
             })
           }
           x.users.forEach(y => {
-            notify.send(type, y, {
+            notify.send(nototype, y, {
               id: x.zd_id,
               gain: x.gain
             })
@@ -37,7 +37,7 @@ module.exports = {
           break
         }
         case 2 : {
-          if (type === 1) {
+          if (nototype === 1) { // notification type
             const user = database.findManySync('users', {
               wb_id: x.users[0]
             })

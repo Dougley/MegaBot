@@ -1,9 +1,9 @@
-const zd = require('../megabot-internals/zendesk')
-const ids = require('../megabot-internals/ids')
+const zd = require('./zendesk')
+const ids = require('./ids')
 const db = require('../databases/lokijs')
-const top10 = require('../megabot-internals/top10')
+const top10 = require('./top10')
 const ar = require('./autorole')
-const feed = require('../megabot-internals/feed')
+const feed = require('./feed')
 
 logger.debug('Setting intervals')
 
@@ -29,7 +29,22 @@ setInterval(() => {
       db.findAndRemove(x, query)
     }
   })
-}, 30000)
+}, 30000) // 30 seconds
+
+setInterval(() => {
+  logger.debug('Scanning for stale users')
+  const query = {
+    'properties.lastSeen': {
+      '$lte': Date.now() - (604800000 * 4) // 1 month
+    }
+  }
+  const data = db.findManySync('users', query)
+  logger.trace(data)
+  if (data.length > 0) {
+    logger.debug(`Removing ${data.length} stale users.`)
+    db.findAndRemove('users', query)
+  }
+}, 86400000) // 1 day
 
 setInterval(() => {
   const feedvotes = db.findManySync('questions', {
@@ -45,7 +60,7 @@ setInterval(() => {
       }
     })
   })
-}, 120000)
+}, 120000) // 2 minutes
 
 setInterval(() => {
   logger.debug('Refreshing top10')
