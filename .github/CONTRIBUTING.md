@@ -2,6 +2,9 @@
 
 Please follow these rules when making contributions to this repository.
 
+# Preface
+This project is not affiliated with Discord, therefor any contributions are made with the understanding that it is freely given without any promise whatsoever of reward from the company.
+
 # Unwanted contributions
 
 1. Changes to ESLint configuration without justifiable reason
