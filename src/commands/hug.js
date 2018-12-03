@@ -25,7 +25,7 @@ module.exports = {
     level: 1,
     noDM: true
   },
-  fn: (msg, suffix) => {
+  fn: async (msg, suffix) => {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
     let id = suffix.match(/<@!?([0-9]*)>/)[1]
     if (id === msg.author.id) return msg.channel.createMessage("Can't execute this action on yourself")
