@@ -4,7 +4,8 @@ const ids = require('../megabot-internals/ids')
 module.exports = {
   meta: {
     level: 0,
-    onlyDM: true
+    onlyDM: true,
+    alias: ['shop']
   },
   fn: (msg) => {
     const roles = bot.guilds.get(ids.guild).roles
