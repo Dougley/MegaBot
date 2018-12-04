@@ -24,7 +24,8 @@ const bothug = 'Aww, {s} thanks for hugging me!'
 module.exports = {
   meta: {
     level: 1,
-    noDM: true
+    noDM: true,
+    alias: ['huh', 'hugh']
   },
   fn: async (msg, suffix) => {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
