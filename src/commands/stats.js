@@ -39,13 +39,7 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'EXP',
-          value: data.properties.exp,
-          inline: true
-        },
-        {
-          name: 'Next rank',
-          value: 'TBD',
-          inline: true
+          value: data.properties.exp
         },
         {
           name: 'Pending transactions',
