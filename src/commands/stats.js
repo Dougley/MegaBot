@@ -3,7 +3,8 @@ const ids = require('../megabot-internals/ids')
 
 module.exports = {
   meta: {
-    level: 0
+    level: 0,
+    alias: ['xp']
   },
   fn: (msg) => {
     const data = db.getUser(msg.author.id)
