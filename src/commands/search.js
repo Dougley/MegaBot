@@ -2,7 +2,7 @@ const zd = require('../megabot-internals/zendesk')
 
 module.exports = {
   meta: {
-    level: 1
+    level: 0
   },
   fn: async (msg, suffix) => {
     if (!suffix || suffix.length < 1) return msg.channel.createMessage('Enter a search term!')
