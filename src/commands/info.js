@@ -32,7 +32,7 @@ module.exports = {
                 inline: true
               },
               {
-                name: 'Voters',
+                name: 'Votes',
                 value: x.voteCount,
                 inline: true
               },
