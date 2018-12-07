@@ -1,6 +1,6 @@
 # This is just a simple docker file
 
-FROM node:9
+FROM node:10
 
 RUN mkdir /opt/megabot
 COPY . /opt/megabot
