@@ -4,7 +4,8 @@ const XP = require('../features/exp')
 module.exports = {
   meta: {
     level: 0,
-    timeout: 5
+    timeout: 5,
+    alias: ['dvote']
   },
   fn: (msg, suffix) => {
     const id = suffix.match(MB_CONSTANTS.regex) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix
