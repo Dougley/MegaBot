@@ -32,7 +32,7 @@ const generateEmbed = (data, user) => {
       thumbnail: {
         url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
       },
-      timestamp: Date.now(),
+      timestamp: new Date(),
       fields: [
         {
           name: 'EXP',
