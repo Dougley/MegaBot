@@ -1,12 +1,13 @@
 const ZD = require('../megabot-internals/zendesk')
 const ids = require('../megabot-internals/ids')
 const inq = require('../megabot-internals/inquirer')
+const db = require('../databases/lokijs')
 
 module.exports = {
   regenerate: async () => {
     const channel = bot.getChannel(ids.top10channel)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
-    ZD.getSubmissions('votes', ['users', 'topics']).then(submissions => {
+    ZD.getSubmissions('votes', ['users', 'topics'], 'none').then(submissions => {
       if (editable.length > 10) {
         // delete extraneous messages
         const remove = editable.slice(Math.max(editable.length - 10, 1)).map(x => x.id)
@@ -17,10 +18,16 @@ module.exports = {
         })
       }
       const toedit = editable.slice(0, 10)
-      submissions.slice(0, 10).forEach(c => {
+      submissions.slice(0, 10).forEach(async c => {
         let x = toedit.pop()
-        if (x) x.edit(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
-        else channel.createMessage(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
+        if (x) {
+          const maybeid = await db.find('questions', {
+            wb_id: x.id,
+            type: 4
+          })
+          if (maybeid && maybeid.zd_id !== c.id) await x.removeReactions() // in case the message doesnt reflect the suggestion we're about to display
+          x.edit(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
+        } else channel.createMessage(generateEmbed(c)).then(x => inq.createTopvote(x, c.id))
       })
     })
   }
