@@ -13,9 +13,12 @@ module.exports = {
     submit: 10,
     report: 5,
     dupe: 20,
-    vote: 5,
+    vote: 2,
     comment: 5,
     daily: 25
+  },
+  limits: {
+    vote: 5
   },
   generateErrorMessage: (e) => {
     switch (e.message) {

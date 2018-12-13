@@ -17,7 +17,7 @@ module.exports = {
           return then.getDate() === now.getDate()
         }).filter(x => /Voted on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        if (results.length < 4) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+        if (results.length < MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
       }
     }
   },
@@ -79,6 +79,7 @@ module.exports = {
 }
 
 async function giveEXP (id, granted, msg) {
+  if (id === bot.user.id) return // cant reward exp to myself
   const userinfo = await database.getUser(id)
   if (userinfo.entitlements.includes('gains-no-exp')) return
   userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
