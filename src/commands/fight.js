@@ -12,7 +12,8 @@ const templates = [
   '{r} dodged a mighty fine swing from {s}, and then backhanded {s} in self defense.',
   '{s} begged their pet to attack {r}, but the pet stared back with no indication of understanding.',
   '{s} fought like a dog, but {r} fought back like a bear, winning the fight!',
-  'A wild {r} appears!\n{r} uses Bite! It\'s not very effective...\n{s} uses Mega Punch! It\'s very effective!\n{s} has won!'
+  'A wild {r} appears!\n{r} uses Bite! It\'s not very effective...\n{s} uses Mega Punch! It\'s very effective!\n{s} has won!',
+  'As {s} ran all sweaty and tired reaching out for a last punch, {r} dashed to the side, leaving {s} tumbling onto the ground.'
 ]
 
 module.exports = {

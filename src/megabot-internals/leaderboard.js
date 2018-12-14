@@ -23,10 +23,19 @@ const getNumberWithOrdinal = (n) => { // https://stackoverflow.com/a/31615643
   return n + (s[(v - 20) % 10] || s[v] || s[0])
 }
 
+const getColor = (pos) => {
+  switch (pos) {
+    case 1 : return 0xE5C100
+    case 2 : return 0xC0C0C0
+    case 3 : return 0xcd7f32
+    default : return 0x5c72f5
+  }
+}
+
 const generateEmbed = (data, user) => {
   return {
     embed: {
-      color: 0x5c72f5,
+      color: getColor(data.position),
       title: `${getNumberWithOrdinal(data.position)} place`,
       description: `${user.username}#${user.discriminator}`,
       thumbnail: {

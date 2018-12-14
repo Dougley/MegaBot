@@ -15,8 +15,7 @@ const templates = [
   '{s} sent {r} some love, do I get some too?',
   '{r} ducked when {s} tried to hug them.',
   '{s} hugged {r} but {r} took it as an attack!',
-  '{s} fills {r} with sweet love',
-  'As {s} ran all sweaty and tired reaching out for a last punch, {r} dashed to the side, leaving {s} tumbling onto the ground.'
+  '{s} fills {r} with sweet love'
 ]
 
 const bothug = 'Aww, {s} thanks for hugging me!'

@@ -21,7 +21,7 @@ module.exports = {
     if (reportable) {
       if (!db.findSync('questions', { // prevent duplicates
         type: 2,
-        zd_id: id
+        zd_id: parseInt(id)
       })) msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
       else if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
     }

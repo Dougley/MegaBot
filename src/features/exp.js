@@ -17,7 +17,7 @@ module.exports = {
           return then.getDate() === now.getDate()
         }).filter(x => /Voted on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        if (results.length < MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+        if (results.length <= MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
       }
     }
   },

@@ -1,5 +1,6 @@
 const db = require('../databases/lokijs')
 const ids = require('../megabot-internals/ids')
+const { formatDistance } = require('date-fns')
 
 module.exports = {
   meta: {
@@ -20,6 +21,10 @@ module.exports = {
 }
 
 function generateEmbed (userdata, data) {
+  const transactionTranslator = (tx) => {
+    return `[${formatDistance(new Date(tx.time), new Date(), { addSuffix: true })}] ` +
+      `${tx.modified > 0 ? '+' : ''}${tx.modified} "${tx.reason}"`
+  }
   const pending = db.findManySync('holds', {
     users: {
       $contains: userdata.id
@@ -54,7 +59,7 @@ function generateEmbed (userdata, data) {
         },
         {
           name: 'Recently processed transactions',
-          value: (data.transactions.length > 0) ? data.transactions.slice(Math.max(data.transactions.length - 5, 0)).map(tx => `Applied ${tx.modified}: \`${tx.reason}\``).join('\n') : 'None'
+          value: (data.transactions.length > 0) ? '```inform7\n' + data.transactions.slice(Math.max(data.transactions.length - 5, 0)).map(transactionTranslator).join('\n') + '\n```' : 'None'
         }
       ]
     }
