@@ -59,7 +59,7 @@ function generateEmbed (userdata, data) {
         },
         {
           name: 'Recently processed transactions',
-          value: (data.transactions.length > 0) ? '```inform7\n' + data.transactions.slice(Math.max(data.transactions.length - 5, 0)).map(transactionTranslator).join('\n') + '\n```' : 'None'
+          value: (data.transactions.length > 0) ? '```inform7\n' + data.transactions.slice(Math.max(data.transactions.length - 10, 0)).map(transactionTranslator).join('\n') + '\n```' : 'None'
         }
       ]
     }

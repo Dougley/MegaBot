@@ -4,6 +4,8 @@ const inq = require('./inquirer')
 const xp = require('../features/exp')
 const zd = require('./zendesk')
 
+const Submission = require('./classes/Submission')
+
 module.exports = {
   createDeletionRequest: async (suggestion, msg) => {
     if (await db.find('questions', {
@@ -65,6 +67,60 @@ module.exports = {
         type: 2,
         zd_id: suggestion.id
       }, x)
+    })
+  },
+  createMergeRequest: async (dupe, target, user) => {
+    if (!(dupe instanceof Submission) || !(target instanceof Submission)) throw new TypeError("Didn't supply Submission objects")
+    if (await db.find('questions', {
+      'ids.target': target.id,
+      'ids.dupe': dupe.id,
+      type: 3
+    }) && process.env.NODE_ENV !== 'debug') return
+    const channel = bot.getChannel(ids.queue)
+    channel.createMessage({
+      content: `${user.username}#${user.discriminator} wishes to merge the following suggestions:`,
+      embed: {
+        color: 0x7a01fa,
+        description: `**Suggestion being duped**: [${dupe.title}](${dupe.htmlUrl})\n**Target suggestion**: [${target.title}](${target.htmlUrl})`,
+        fields: [
+          {
+            name: 'Dupe: Content',
+            value: dupe.cleanContent.length === 0 ? '*No content*' : (dupe.cleanContent.length > 1024 ? `${dupe.cleanContent.slice(0, 990)}...\n*[Content has been cut off]*` : dupe.cleanContent)
+          },
+          {
+            name: 'Target: Content',
+            value: target.cleanContent.length === 0 ? '*No content*' : (target.cleanContent.length > 1024 ? `${target.cleanContent.slice(0, 990)}...\n*[Content has been cut off]*` : target.cleanContent)
+          },
+          {
+            name: 'Dupe: Votes - Opinion',
+            value: `${dupe.voteCount} - ${dupe.voteSum}`,
+            inline: true
+          },
+          {
+            name: 'Target: Votes - Opinion',
+            value: `${target.voteCount} - ${target.voteSum}`,
+            inline: true
+          }
+        ]
+      }
+    }).then(x => {
+      xp.holdEXP(x.id, {
+        users: [user.id],
+        gain: MB_CONSTANTS.rewards.dupe,
+        type: 3,
+        message: 'Merged a suggestion',
+        ids: {
+          dupe: dupe.id,
+          target: target.id
+        }
+      })
+      inq.startAdminAction({
+        type: 3,
+        ids: {
+          dupe: dupe.id,
+          target: target.id
+        }
+      }, x, false)
     })
   }
 }

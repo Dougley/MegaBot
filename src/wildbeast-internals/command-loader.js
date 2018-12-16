@@ -6,6 +6,7 @@ for (const cmd in commands) {
   if (result[cmd]) global.logger.error(`Unable to register command ${cmd}, a command with this name already exists.`, true)
   let overrides = Object.keys(commands[cmd].meta).filter(x => /DM/.test(x))
   if (overrides.length > 1) global.logger.error(`Cannot set multiple DM overrides for a command, ${cmd} has ${overrides.join(', ')}`, true)
+  if (commands[cmd].meta.cost && isNaN(commands[cmd].meta.cost)) global.logger.error(`Cost must be a number, found ${typeof commands[cmd].meta.cost} for ${cmd}`, true)
   result[cmd] = commands[cmd]
   if (commands[cmd].meta.alias) {
     for (const x of commands[cmd].meta.alias) {

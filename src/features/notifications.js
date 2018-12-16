@@ -25,6 +25,12 @@ module.exports = {
       case 3 : {
         return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and was dealt with.\nYou gained ${props.gain} EXP`))
       }
+      case 4 : {
+        return channel.createMessage(generateEmbed(`Your dupe report concerning ${props.ids.dupe} and ${props.ids.target} has been processed and accepted!\nYou gained ${props.gain} EXP`))
+      }
+      case 5 : {
+        return channel.createMessage(generateEmbed(`Your dupe report concerning ${props.ids.dupe} and ${props.ids.target} has been processed and denied.`))
+      }
     }
   }
 }

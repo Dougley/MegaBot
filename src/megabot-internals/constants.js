@@ -20,6 +20,9 @@ module.exports = {
   limits: {
     vote: 5
   },
+  strings: {
+    dupe: (x) => `This is a dupe of ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} , so I'm closing this out. If you'd like to have your voice heard please upvote that suggestion!`
+  },
   generateErrorMessage: (e) => {
     switch (e.message) {
       case 'No such user' : {

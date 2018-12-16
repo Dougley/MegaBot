@@ -3,7 +3,7 @@ const aliases = require('../wildbeast-internals/command-loader').alias
 const timeout = require('../features/timeout')
 const perms = require('../features/perms')
 const inq = require('../megabot-internals/inquirer')
-const { touch } = require('../features/exp')
+const { touch, applyEXP, getEXP } = require('../features/exp')
 const dlog = require('../megabot-internals/dlog')
 
 module.exports = async (ctx) => {
@@ -24,6 +24,10 @@ module.exports = async (ctx) => {
       } else {
         if (commands[cmd].meta.onlyDM) return msg.channel.createMessage('This command is only usable in DMs')
       }
+      if (commands[cmd].meta.cost) {
+        const data = await getEXP(msg.author.id)
+        if (parseInt(data) < commands[cmd].meta.cost) return msg.channel.createMessage(`You don't have enough EXP to use this command.\nYou need \`${commands[cmd].meta.cost}\` but you have \`${data}\``)
+      }
       let time = true
       if (commands[cmd].meta.timeout) time = timeout.calculate(msg.author.id, cmd, commands[cmd].meta.timeout)
       if (time !== true) return msg.channel.createMessage(`This command is still on cooldown, try again in ${Math.floor(time)} seconds.`)
@@ -36,6 +40,7 @@ module.exports = async (ctx) => {
           global.logger.error(e)
           msg.channel.createMessage('An error occurred processing this command, please try again later.')
         } finally {
+          if (commands[cmd].meta.cost) applyEXP(msg.author.id, -Math.abs(commands[cmd].meta.cost), `Used ${cmd}`)
           dlog(1, {
             user: msg.author,
             cmd: msg.content

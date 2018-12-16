@@ -6,15 +6,6 @@ const zd = require('./zendesk')
 const dlog = require('./dlog')
 
 module.exports = {
-  createQuestion: (channel, opts) => {
-    channel.createMessage(generateEmbed(opts, 'created')).then(c => {
-      c.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
-      c.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
-      const stand = { wb_id: c.id }
-      const ins = { ...stand, ...opts }
-      return db.create('questions', ins)
-    })
-  },
   createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
@@ -44,10 +35,10 @@ module.exports = {
     if (await db.get('questions', msg.id)) return db.edit(msg.id, ins, 'questions')
     else return db.create('questions', ins)
   },
-  startAdminAction: async (data, msg) => {
+  startAdminAction: async (data, msg, resolvable) => {
     msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
-    msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
+    if (resolvable) msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
     const ins = {
       wb_id: msg.id,
       ...data
@@ -152,7 +143,9 @@ module.exports = {
             })
             msg.edit({ content: 'Report confirmed, submission will be destroyed.', embed: null }).then(x => {
               xp.processHolds(msg.id, 1)
-              setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
             })
             zd.destroySubmission(question.zd_id).then(() => db.delete('questions', msg.id))
           }
@@ -164,7 +157,9 @@ module.exports = {
             })
             msg.edit({ content: 'Report dismissed, left card untouched.', embed: null }).then(x => {
               xp.processHolds(msg.id, 2)
-              setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
             })
             db.delete('questions', msg.id)
           }
@@ -174,15 +169,54 @@ module.exports = {
               action: 'resolved',
               zd_id: question.zd_id
             })
-            msg.edit({ content: 'Report marked as resolved, left card untouched and rewarded EXP.', embed: null }).then(x => {
+            msg.edit({
+              content: 'Report marked as resolved, left card untouched and rewarded EXP.',
+              embed: null
+            }).then(x => {
               xp.processHolds(msg.id, 3)
-              setTimeout(() => { x.delete() }, MB_CONSTANTS.timeouts.queueDelete)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
             })
             db.delete('questions', msg.id)
           }
           break
         }
         case 3: { // admin action: merging
+          if (!perms(2, user, msg, 'admin-commands')) return
+          if (emoji.id === ids.emojis.confirm.id) {
+            dlog(5, {
+              user: user,
+              action: 'confirmed',
+              zd_id: `${question.ids.dupe} > ${question.ids.target}`
+            })
+            msg.edit({ content: 'Report confirmed, cards will be merged.', embed: null }).then(async x => {
+              await zd.createComment(userID, question.ids.dupe, MB_CONSTANTS.strings.dupe(question.ids.target), true)
+              await zd.editSubmission(question.ids.dupe, {
+                status: 'answered',
+                closed: true
+              })
+              xp.processHolds(msg.id, 4)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
+            })
+            db.delete('questions', msg.id)
+          }
+          if (emoji.id === ids.emojis.dismiss.id) {
+            dlog(5, {
+              user: user,
+              action: 'dismissed',
+              zd_id: `${question.ids.dupe} > ${question.ids.target}`
+            })
+            msg.edit({ content: 'Report dismissed, left cards untouched.', embed: null }).then(x => {
+              xp.processHolds(msg.id, 5)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
+            })
+            db.delete('questions', msg.id)
+          }
           break
         }
         case 4: { // chat vote
@@ -211,43 +245,7 @@ module.exports = {
           }
           break
         }
-        case 5: { // inquiry
-          // some questions are locked to 1 user
-          if (question.user && question.user !== userID) return
-
-          if (emoji.id === ids.emojis.confirm.id) {
-            db.delete('questions', msg.id)
-            msg.edit(generateEmbed(question, 'confirm'))
-          }
-          if (emoji.id === ids.emojis.dismiss.id) {
-            db.delete('questions', msg.id)
-            msg.edit(generateEmbed(question, 'dismiss'))
-          }
-          // we can now safely remove the reactions
-          msg.removeReactions()
-          // no ids matched? just discard
-          break
-        }
       }
     })
-  }
-}
-
-function generateEmbed (data, state) {
-  const colors = {
-    created: 0x7289DA, // blurple
-    expired: 0xf47a37, // orange-ish
-    dismiss: 0xe51a23, // red
-    confirm: 0x00693f // green
-  }
-  return {
-    embed: {
-      color: colors[state],
-      description: state === 'created' ? data.question : data.messages[state],
-      timestamp: new Date(),
-      footer: {
-        text: 'Last updated on'
-      }
-    }
   }
 }

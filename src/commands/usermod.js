@@ -1,4 +1,5 @@
 const db = require('../databases/lokijs')
+const { formatDistance } = require('date-fns')
 
 module.exports = {
   meta: {
@@ -60,6 +61,10 @@ module.exports = {
 }
 
 function generateInformationalEmbed (userdata, userinfo) {
+  const transactionTranslator = (tx) => {
+    return `[${formatDistance(new Date(tx.time), new Date(), { addSuffix: true })}] ` +
+      `${tx.modified > 0 ? '+' : ''}${tx.modified} "${tx.reason}"`
+  }
   const pending = db.findManySync('holds', {
     users: {
       $contains: userdata.id
@@ -110,13 +115,9 @@ function generateInformationalEmbed (userdata, userinfo) {
         },
         {
           name: 'Recently processed transactions',
-          value: (userinfo.transactions.length > 0) ? userinfo.transactions.slice(Math.max(userinfo.transactions.length - 5, 0)).map(transactionTranslator).join('\n') : 'None'
+          value: (userinfo.transactions.length > 0) ? '```inform7\n' + userinfo.transactions.slice(Math.max(userinfo.transactions.length - 5, 0)).map(transactionTranslator).join('\n') + '\n```' : 'None'
         }
       ]
     }
   }
-}
-
-function transactionTranslator (tx) {
-  return `Applied ${tx.modified}: \`${tx.reason}\``
 }

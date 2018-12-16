@@ -67,6 +67,20 @@ module.exports = {
     return new Submission(res.body, res.body.post)
   },
   /**
+   * Edit a submission
+   * @param {String} id - Zendesk ID of the submission
+   * @param {Object} data - Zendesk-compatible payload
+   * @returns {Promise<Submission>} - Zendesk response
+   */
+  editSubmission: async (id, data) => {
+    const res = await SA
+      .put(`${ROOT_URL}/api/v2/community/posts/${id}.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .send({ post: data })
+    logger.trace(res.body)
+    return new Submission(res.body, res.body.post)
+  },
+  /**
    * Permanently destroy a submisson
    * @param {Number | String} id - The ID of the submission to destroy
    * @returns {Promise<Request>}
@@ -139,14 +153,15 @@ module.exports = {
    * @param {String} user - Discord ID of the user you're acting on behalf on
    * @param {Number | String} id - Submission ID
    * @param {String} comment - Comment to post
+   * @param {Boolean} [official=false] - Whether or not to mark this comment as official
    * @returns {Promise<Comment>} - Zendesk response
    */
-  createComment: async (user, id, comment) => {
+  createComment: async (user, id, comment, official = false) => {
     const userinfo = await getUserDetails(user)
     const res = await SA
       .post(`${ROOT_URL}/api/v2/community/posts/${id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ comment: { body: comment, author_id: userinfo.id }, notify_subscribers: false })
+      .send({ comment: { body: comment, author_id: userinfo.id, official: official }, notify_subscribers: false })
     logger.trace(res.body)
     return new Comment(res.body, res.body.comment)
   },

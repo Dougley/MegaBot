@@ -35,7 +35,7 @@ module.exports = {
     data.forEach(x => {
       const notify = require('./notifications')
       switch (x.type) { // data type
-        case 1 : {
+        case 1 : { // reporters: report processed
           const rewardable = [1, 3] // notification type
           if (rewardable.includes(nototype)) {
             x.users.forEach(y => {
@@ -50,7 +50,7 @@ module.exports = {
           })
           break
         }
-        case 2 : {
+        case 2 : { // suggestor: submission destroyed
           if (nototype === 1) { // notification type
             const user = database.findManySync('users', {
               wb_id: x.users[0]
@@ -58,6 +58,24 @@ module.exports = {
             if (!user) return
             else giveEXP(x.users[0], x.gain, x.message)
           }
+          break
+        }
+        case 3 : { // reporters: dupe processed
+          const rewardable = [4] // notification type
+          if (rewardable.includes(nototype)) {
+            x.users.forEach(y => {
+              giveEXP(y, x.gain, x.message)
+            })
+          }
+          x.users.forEach(y => {
+            notify.send(nototype, y, {
+              ids: {
+                dupe: x.ids.dupe,
+                target: x.ids.target
+              },
+              gain: x.gain
+            })
+          })
           break
         }
       }

@@ -24,7 +24,8 @@ module.exports = {
   meta: {
     level: 1,
     noDM: true,
-    alias: ['huh', 'hugh']
+    alias: ['huh', 'hugh'],
+    cost: 2
   },
   fn: async (msg, suffix) => {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
