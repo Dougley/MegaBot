@@ -3,7 +3,7 @@ const AQ = require('../megabot-internals/admin-queue')
 
 module.exports = {
   meta: {
-    level: 2
+    level: 1
   },
   fn: async (msg, suffix) => {
     const chunks = suffix.split(' ')
