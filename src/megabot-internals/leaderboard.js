@@ -2,6 +2,11 @@ const db = require('../databases/lokijs')
 const ids = require('./ids')
 
 module.exports = {
+  /**
+   * Regenerate custodian leaderboard
+   * This function returns void, and takes no arguments
+   * @returns {Promise<void>}
+   */
   update: async () => {
     const channel = bot.getChannel(ids.leaderboard)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)

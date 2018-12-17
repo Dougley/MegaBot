@@ -6,6 +6,14 @@ const zd = require('./zendesk')
 const dlog = require('./dlog')
 
 module.exports = {
+  /**
+   * Begin a regular chat vote
+   * This method is intended to be used on messages outside special channels
+   * @param {Message} msg - Message to start this action on
+   * @param {String | Number} id - Zendesk ID
+   * @param {Boolean} [reportable=true] - Whether ot not this vote includes the report reaction
+   * @returns {Promise<Object>} - Database response
+   */
   createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
@@ -24,6 +32,13 @@ module.exports = {
     }
     return db.create('questions', ins)
   },
+  /**
+   * Begin a top 10 vote
+   * This method is intended to be used on messages inside the top-10
+   * @param {Message} msg - Message to start this action on
+   * @param {String | Number} id - Zendesk ID
+   * @returns {Promise<Object>} - Database response
+   */
   createTopvote: async (msg, id) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
@@ -35,7 +50,15 @@ module.exports = {
     if (await db.get('questions', msg.id)) return db.edit(msg.id, ins, 'questions')
     else return db.create('questions', ins)
   },
-  startAdminAction: async (data, msg, resolvable) => {
+  /**
+   * Begin an admin action
+   * This method is intended to be used on messages inside admin-queue
+   * @param {Object} data - Data to be inserted into the database
+   * @param {Message} msg - Message to start this action on
+   * @param {Boolean} [resolvable=true] - Whether or not the message should get the resolve reaction added
+   * @returns {Promise<Object>} - Database response
+   */
+  startAdminAction: async (data, msg, resolvable = true) => {
     msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
     if (resolvable) msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
@@ -45,6 +68,13 @@ module.exports = {
     }
     return db.create('questions', ins)
   },
+  /**
+   * Create a feed vote
+   * This method is intended to be used on messages inside the feed
+   * @param {Message} msg - Message to start this action on
+   * @param {String | Number} id - Zendesk ID to start this action on
+   * @returns {Promise<Object>} - Database response
+   */
   createFeedvote: async (msg, id) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
@@ -57,6 +87,13 @@ module.exports = {
     }
     return db.create('questions', ins)
   },
+  /**
+   * Verify reactions
+   * This checks if reactions are able to be acted upon
+   * Not every message with reactions can be acted on
+   * @param {Object} ctx - WildBeast context object
+   * @returns {Promise<void>}
+   */
   verify: async (ctx) => {
     const { touch } = require('../features/exp')
     const perms = require('../features/perms')

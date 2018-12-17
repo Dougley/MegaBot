@@ -2,11 +2,25 @@ const database = require('../databases/lokijs')
 
 module.exports = {
   getUser: database.getUser,
+  /**
+   * Get someone's total EXP value
+   * @param {String} id - ID of the user to check
+   * @return {Promise<Number>}
+   */
   getEXP: async (id) => {
     const data = await database.getUser(id)
     return data.properties.exp
   },
   applyEXP: giveEXP,
+  /**
+   * Apply a limited reward to someone
+   * Some rewards are limited to prevent abuse
+   * This method is not required to apply rewards that are considered limited, this is a helper
+   * @param {String} id - ID of the user to give the reward to
+   * @param {Number} type - Type of the reward to give
+   * @param {String} zdid? - ID of the Zendesk suggestion this action relates to, not required for some types
+   * @return {Promise<void>}
+   */
   applyLimitedReward: async (id, type, zdid) => {
     const data = await database.getUser(id)
     switch (type) {
@@ -21,12 +35,27 @@ module.exports = {
       }
     }
   },
+  /**
+   * Create a hold for EXP
+   * A hold is a transaction that is considered pending
+   * Pending transactions are usually processed after an admin-queue action, but this is not required
+   * @param {String} queueid - ID of the entity that is responsible for processing
+   * @param {Object} data - Data to inject into the database
+   * @return {Promise<Object>}
+   */
   holdEXP: async (queueid, data) => {
     return database.create('holds', {
       wb_id: queueid,
       ...data
     })
   },
+  /**
+   * Process a hold
+   * This finalizes an already pending transaction
+   * @param {String} id - ID of the entity that is responsible for processing, this was supplied in holdEXP()
+   * @param {Number} nototype - Type of
+   * @return {Promise<void>}
+   */
   processHolds: async (id, nototype) => {
     const data = database.findManySync('holds', {
       wb_id: id
@@ -82,10 +111,22 @@ module.exports = {
       database.remove('holds', x)
     })
   },
+  /**
+   * Check if recent transactions already contain a given reason
+   * @param {String} id - ID of the user to check
+   * @param {String} term - Search query
+   * @return {Boolean}
+   */
   contains: (id, term) => {
     const data = database.getUser(id)
-    return !!data.transactions.find(x => x.reason === term)
+    return data.transactions.some(x => x.reason === term)
   },
+  /**
+   * Bump the last seen date for someone
+   * This also rewards the daily bonus if needed
+   * @param {String} id - ID of the user to bump
+   * @return {Promise<void>}
+   */
   touch: async (id) => {
     const data = database.getUser(id)
     const then = new Date(data.properties.lastSeen)
@@ -96,6 +137,13 @@ module.exports = {
   }
 }
 
+/**
+ * Grant users EXP
+ * @param {String} id - ID of the user to grant EXP to
+ * @param {Number} granted - Amount of EXP to grant, can be negative
+ * @param {String} msg - Reason why this EXP got granted
+ * @return {Promise<Object>}
+ */
 async function giveEXP (id, granted, msg) {
   if (id === bot.user.id) return // cant reward exp to myself
   const userinfo = await database.getUser(id)

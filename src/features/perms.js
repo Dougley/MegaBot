@@ -14,6 +14,14 @@ const custodianrole = '268815388882632704'
 
 const db = require('../databases/lokijs')
 
+/**
+ * Calculate permissions for someone
+ * @param {Number} level - The access level someone should have to run the command
+ * @param {Member | User} user - The user to calculate permissions for
+ * @param {Message} msg - The message that started the command
+ * @param {String} type? - Optional type of permission to calculate
+ * @return {Boolean}
+ */
 module.exports = (level, user, msg, type) => {
   const userdata = db.getUser(user.id)
   if (supers.includes(user.id)) return true // supers can do anything

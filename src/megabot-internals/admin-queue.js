@@ -7,6 +7,12 @@ const zd = require('./zendesk')
 const Submission = require('./classes/Submission')
 
 module.exports = {
+  /**
+   * Begin an admin action to delete a suggestion
+   * @param {Submission} suggestion - The suggestion to start this action on
+   * @param {Message} msg - The message that reported this suggestion
+   * @return {Promise<void>}
+   */
   createDeletionRequest: async (suggestion, msg) => {
     if (await db.find('questions', {
       zd_id: suggestion.id,
@@ -69,6 +75,13 @@ module.exports = {
       }, x)
     })
   },
+  /**
+   * Begin an admin action to merge two submissions together
+   * @param {Submission} dupe - The suggestion that should be merged
+   * @param {Submission} target - The suggestion to merge the dupe into
+   * @param {User} user - Eris user object of the user that started this action
+   * @return {Promise<void>}
+   */
   createMergeRequest: async (dupe, target, user) => {
     if (!(dupe instanceof Submission) || !(target instanceof Submission)) throw new TypeError("Didn't supply Submission objects")
     if (await db.find('questions', {

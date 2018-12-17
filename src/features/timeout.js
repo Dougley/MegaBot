@@ -1,6 +1,13 @@
 const store = new Map()
 
 module.exports = {
+  /**
+   * Calculate if timeout for a command has expired or not
+   * @param {String | Number} id - ID of the object to calculate timeout for, can be anything but should ideally be a user ID
+   * @param {String} handle - Name of the command to calculate timeout for
+   * @param {Number} time - Time in seconds this command should timeout for
+   * @return {Boolean}
+   */
   calculate: (id, handle, time) => {
     const now = new Date()
     const opts = `${id}:${handle}`

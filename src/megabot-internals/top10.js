@@ -4,6 +4,11 @@ const inq = require('../megabot-internals/inquirer')
 const db = require('../databases/lokijs')
 
 module.exports = {
+  /**
+   * Regenerate top 10 suggestions
+   * This function returns void, and takes no arguments
+   * @returns {Promise<void>}
+   */
   regenerate: async () => {
     const channel = bot.getChannel(ids.top10channel)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)

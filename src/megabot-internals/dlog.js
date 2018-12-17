@@ -1,5 +1,11 @@
 const ids = require('./ids')
 
+/**
+ * Create a log message inside Discord
+ * @param {Number} type - Type of log message to send
+ * @param {Object} opts - Optional arguments to include, differs with every log type
+ * @returns {Promise<Message>}
+ */
 module.exports = (type, opts) => {
   const channel = bot.getChannel(ids.log)
   const now = new Date()

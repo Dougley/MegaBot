@@ -4,6 +4,12 @@ const inq = require('./inquirer')
 const { Message } = require('eris')
 
 module.exports = {
+  /**
+   * Refreshes the feed
+   * This gets recent submissions and posts them to the feed channel
+   * This method is intended to run in an interval
+   * @returns {Promise<void>}
+   */
   refresh: async () => {
     const filterer = (x) => {
       return !db.findSync('questions', {

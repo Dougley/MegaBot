@@ -2,6 +2,11 @@ const db = require('../databases/lokijs')
 
 module.exports = {
   check: check,
+  /**
+   * Toggle someone's notification settings
+   * @param {String} id - String of the user to toggle
+   * @return {Boolean}
+   */
   toggle: (id) => {
     const data = db.getUser(id)
     db.edit(id, {
@@ -12,6 +17,13 @@ module.exports = {
     })
     return !data.properties.notifications
   },
+  /**
+   * Send notifications
+   * @param {Number} type - Type of notification to send
+   * @param {String} user - ID of the user to notify
+   * @param {Object} props - Optional properties, differs per notification type
+   * @return {void | Promise<Message>}
+   */
   send: async (type, user, props) => {
     if (!check(user)) return
     const channel = await bot.getDMChannel(user)
@@ -35,6 +47,11 @@ module.exports = {
   }
 }
 
+/**
+ * Check if someone's notifications are enabled
+ * @param {String} id - String of the user to check
+ * @return {Boolean}
+ */
 function check (id) {
   const data = db.getUser(id)
   return !!data.properties.notifications

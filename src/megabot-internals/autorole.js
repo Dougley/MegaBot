@@ -3,6 +3,10 @@ const ids = require('./ids')
 const dlog = require('./dlog')
 
 module.exports = {
+  /**
+   * Check if users reached the threshold for the custodian role
+   * @returns {void}
+   */
   check: () => {
     if (process.env.DISABLE_AUTOROLE) return
     const aggregation = db.findManySync('users', {
