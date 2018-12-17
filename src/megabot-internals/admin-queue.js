@@ -69,7 +69,7 @@ module.exports = {
         message: 'A suggestion you submitted got deleted',
         zd_id: suggestion.id
       })
-      inq.startAdminAction({
+      inq.startAdminDeleteRequest({
         type: 2,
         zd_id: suggestion.id
       }, x)
@@ -127,13 +127,13 @@ module.exports = {
           target: target.id
         }
       })
-      inq.startAdminAction({
+      inq.startAdminMergeRequest({
         type: 3,
         ids: {
           dupe: dupe.id,
           target: target.id
         }
-      }, x, false)
+      }, x)
     })
   }
 }

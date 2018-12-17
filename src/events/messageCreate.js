@@ -5,6 +5,7 @@ const perms = require('../features/perms')
 const inq = require('../megabot-internals/inquirer')
 const { touch, applyEXP, getEXP } = require('../features/exp')
 const dlog = require('../megabot-internals/dlog')
+const ids = require('../megabot-internals/ids')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
@@ -40,7 +41,11 @@ module.exports = async (ctx) => {
           global.logger.error(e)
           msg.channel.createMessage('An error occurred processing this command, please try again later.')
         } finally {
-          if (commands[cmd].meta.cost) applyEXP(msg.author.id, -Math.abs(commands[cmd].meta.cost), `Used ${cmd}`)
+          if (commands[cmd].meta.cost) {
+            if (msg.channel.guild && !ids.modRoles.some(x => msg.member.roles.includes(x))) {
+              applyEXP(msg.author.id, -Math.abs(commands[cmd].meta.cost), `Used ${cmd}`)
+            }
+          }
           dlog(1, {
             user: msg.author,
             cmd: msg.content

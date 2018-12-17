@@ -119,7 +119,7 @@ module.exports = {
    */
   contains: (id, term) => {
     const data = database.getUser(id)
-    return data.transactions.some(x => x.reason === term)
+    return !!data.transactions.find(x => x.reason === term)
   },
   /**
    * Bump the last seen date for someone

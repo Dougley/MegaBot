@@ -51,17 +51,33 @@ module.exports = {
     else return db.create('questions', ins)
   },
   /**
-   * Begin an admin action
+   * Begin an admin action to delete a suggestion
    * This method is intended to be used on messages inside admin-queue
    * @param {Object} data - Data to be inserted into the database
    * @param {Message} msg - Message to start this action on
-   * @param {Boolean} [resolvable=true] - Whether or not the message should get the resolve reaction added
    * @returns {Promise<Object>} - Database response
    */
-  startAdminAction: async (data, msg, resolvable = true) => {
+  startAdminDeleteRequest: async (data, msg) => {
     msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
-    if (resolvable) msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
+    msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
+    const ins = {
+      wb_id: msg.id,
+      ...data
+    }
+    return db.create('questions', ins)
+  },
+  /**
+   * Begin an admin action to merge suggestions
+   * This method is intended to be used on messages inside admin-queue
+   * @param {Object} data - Data to be inserted into the database
+   * @param {Message} msg - Message to start this action on
+   * @returns {Promise<Object>} - Database response
+   */
+  startAdminMergeRequest: async (data, msg) => {
+    msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
+    msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
+    msg.addReaction(`${ids.emojis.reverse.name}:${ids.emojis.reverse.id}`)
     const ins = {
       wb_id: msg.id,
       ...data
@@ -230,6 +246,25 @@ module.exports = {
             msg.edit({ content: 'Report confirmed, cards will be merged.', embed: null }).then(async x => {
               await zd.createComment(userID, question.ids.dupe, MB_CONSTANTS.strings.dupe(question.ids.target), true)
               await zd.editSubmission(question.ids.dupe, {
+                status: 'answered',
+                closed: true
+              })
+              xp.processHolds(msg.id, 4)
+              setTimeout(() => {
+                x.delete()
+              }, MB_CONSTANTS.timeouts.queueDelete)
+            })
+            db.delete('questions', msg.id)
+          }
+          if (emoji.id === ids.emojis.reverse.id) {
+            dlog(5, {
+              user: user,
+              action: 'reverse-confirmed',
+              zd_id: `${question.ids.dupe} > ${question.ids.target}`
+            })
+            msg.edit({ content: 'Report confirmed, cards will be flip-merged.', embed: null }).then(async x => {
+              await zd.createComment(userID, question.ids.target, MB_CONSTANTS.strings.dupe(question.ids.dupe), true)
+              await zd.editSubmission(question.ids.target, {
                 status: 'answered',
                 closed: true
               })
