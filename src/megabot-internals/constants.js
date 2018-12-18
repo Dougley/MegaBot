@@ -2,7 +2,7 @@ module.exports = {
   regex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
   isID: (input) => { return /\d{12,}/.test(input) },
   thresholds: {
-    reports: 3,
+    reports: 4, // 3 + 1, megabots reactions also count
     custodian: 150
   },
   timeouts: {
