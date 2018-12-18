@@ -18,7 +18,7 @@ module.exports = {
    * This method is not required to apply rewards that are considered limited, this is a helper
    * @param {String} id - ID of the user to give the reward to
    * @param {Number} type - Type of the reward to give
-   * @param {String} zdid? - ID of the Zendesk suggestion this action relates to, not required for some types
+   * @param {String} [zdid] - ID of the Zendesk suggestion this action relates to, not required for some types
    * @return {Promise<void>}
    */
   applyLimitedReward: async (id, type, zdid) => {
@@ -53,7 +53,7 @@ module.exports = {
    * Process a hold
    * This finalizes an already pending transaction
    * @param {String} id - ID of the entity that is responsible for processing, this was supplied in holdEXP()
-   * @param {Number} nototype - Type of
+   * @param {Number} nototype - Type of reward to process, this coincides with what notification to send
    * @return {Promise<void>}
    */
   processHolds: async (id, nototype) => {

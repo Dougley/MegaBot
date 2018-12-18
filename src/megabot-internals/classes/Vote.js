@@ -3,6 +3,7 @@ const Submission = require('./Submission')
 
 /**
  * Represents a vote
+ * @extends Base
  * @property {Number} id - The ID of the vote
  * @property {String} apiUrl - The corresponding API URL
  * @property {Date} createdAt - The time at which the vote was created
