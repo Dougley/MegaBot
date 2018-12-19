@@ -32,10 +32,6 @@ const debug = {
     resolve: {
       id: '518121642166190080',
       name: 'bots2'
-    },
-    reverse: {
-      id: '322646981476614144',
-      name: 'reverse'
     }
   },
   channels: {
@@ -81,6 +77,10 @@ const production = {
     resolve: {
       id: '401095659656183848',
       name: 'f1'
+    },
+    reverse: {
+      id: '322646981476614144',
+      name: 'reverse'
     }
   },
   channels: {
