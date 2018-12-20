@@ -35,6 +35,7 @@ module.exports = async (ctx) => {
   if (perms(0, user, msg)) touch(msg.author.id)
 
   db.getQuestion(msg.id).then(question => {
+    if (!question) return
     if (question.expire) {
       const then = new Date(question.expire)
       const now = new Date()

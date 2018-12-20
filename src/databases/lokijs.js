@@ -130,6 +130,19 @@ module.exports = {
     return collection.update(newdata)
   },
   /**
+   * Synchronously edit a document
+   * @param {String} handle - The handle of the document you're trying to edit
+   * @param {Object} data - The data to merge with the document
+   * @param {String} [coll='users'] - The collection where the document is located
+   * @return {Object}
+   */
+  editSync: (handle, data, coll = 'users') => {
+    const collection = db.getCollection(coll)
+    const orig = collection.findOne({ wb_id: handle })
+    const newdata = { ...orig, ...data } // spread ops, fancy!
+    return collection.update(newdata)
+  },
+  /**
    * Delete many documents from a collection
    * @param {String} coll - The collection where the documents are located
    * @param {Object} query - LokiJS search object

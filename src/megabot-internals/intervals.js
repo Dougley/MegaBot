@@ -35,9 +35,15 @@ setInterval(() => {
 setInterval(() => {
   logger.debug('Scanning for stale users')
   const query = {
-    'properties.lastSeen': {
-      '$lte': Date.now() - (604800000 * 4) // 1 month
-    }
+    $and: [{
+      'properties.lastSeen': {
+        '$lte': Date.now() - (604800000 * 4) // 1 month
+      }
+    }, {
+      entitlements: {
+        $size: 0
+      }
+    }]
   }
   const data = db.findManySync('users', query)
   logger.trace(data)

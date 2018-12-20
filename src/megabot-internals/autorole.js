@@ -16,7 +16,7 @@ module.exports = {
         }
       }, {
         entitlements: {
-          $containsNone: ['cant-autorole']
+          $containsNone: ['cant-autorole', 'never-custodian']
         }
       }]
     })

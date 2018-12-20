@@ -142,15 +142,15 @@ module.exports = {
  * @param {String} id - ID of the user to grant EXP to
  * @param {Number} granted - Amount of EXP to grant, can be negative
  * @param {String} msg - Reason why this EXP got granted
- * @return {Promise<Object>}
+ * @return {Object | void}
  */
-async function giveEXP (id, granted, msg) {
+function giveEXP (id, granted, msg) {
   if (id === bot.user.id) return // cant reward exp to myself
-  const userinfo = await database.getUser(id)
+  const userinfo = database.getSync('users', id)
   if (userinfo.entitlements.includes('gains-no-exp')) return
   userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
-  userinfo.transactions = userinfo.transactions.slice(Math.max(userinfo.transactions.length - 50, 0))
-  return database.edit(id, {
+  if (userinfo.transactions.length > 50) userinfo.transactions = userinfo.transactions.slice(userinfo.transactions.length - 50)
+  return database.editSync(id, {
     properties: {
       ...userinfo.properties,
       exp: userinfo.properties.exp + granted

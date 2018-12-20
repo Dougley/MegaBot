@@ -35,6 +35,7 @@ module.exports = (level, user, msg, type) => {
   }
   if (!user.roles || user.roles.length === 0) return level === 0 // no roles = no elevated access
   if (userdata.blocked) return false // blocked users dont get to run commands
+  if (userdata.entitlements.includes('never-custodian')) return level === 0
   // check role permissions now
   if (modroles.some(x => user.roles.includes(x))) return level <= 2
   if (user.roles.includes(custodianrole)) return level <= 1

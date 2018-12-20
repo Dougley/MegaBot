@@ -13,6 +13,7 @@ module.exports = {
     if (!role) return msg.channel.createMessage('No role with that ID found!')
     else {
       const userdata = await xp.getUser(msg.author.id)
+      if (userdata.blocked || userdata.entitlements.some(x => ['store-disabled', 'never-custodian'].indexOf(x) !== -1)) return msg.channel.createMessage('Unfortunately, your privileges to use this command have been disabled, please contact a moderator.')
       const user = bot.guilds.get(ids.guild).members.get(msg.author.id) ? bot.guilds.get(ids.guild).members.get(msg.author.id) : await bot.guilds.get(ids.guild).getRESTMember(msg.author.id)
       if (user.roles.includes(role)) {
         return msg.channel.createMessage('You already have that role.')
