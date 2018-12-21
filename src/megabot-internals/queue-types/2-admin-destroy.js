@@ -48,6 +48,10 @@ module.exports = async (question, user, emoji, msg) => {
       content: 'Report marked as resolved, left card untouched and rewarded EXP.',
       embed: null
     }).then(x => {
+      zd.editSubmission(question.zd_id, {
+        status: 'answered',
+        closed: true
+      })
       xp.processHolds(msg.id, 3)
       setTimeout(() => {
         x.delete()
