@@ -1,6 +1,6 @@
 {
   "name": "megabot",
-  "version": "2.2.1",
+  "version": "2.3.0",
   "description": "This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.",
   "main": "index.js",
   "scripts": {

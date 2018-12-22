@@ -5,7 +5,7 @@ module.exports = {
     level: 2
   },
   fn: (msg, suffix) => {
-    let id = (MB_CONSTANTS.regex.test(suffix)) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix
+    let id = (MB_CONSTANTS.submissionRegex.test(suffix)) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
     ZD.getSubmission(id).then(x => {
       return ZD.getUser(x.authorId)
     }).then(async x => {

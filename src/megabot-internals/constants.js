@@ -1,5 +1,6 @@
 module.exports = {
-  regex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
+  submissionRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
+  commentRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?\/comments\/(\d{12,})/,
   isID: (input) => { return /\d{12,}/.test(input) },
   thresholds: {
     reports: 4, // 3 + 1, megabots reactions also count
@@ -15,7 +16,8 @@ module.exports = {
     dupe: 20,
     vote: 2,
     comment: 5,
-    daily: 25
+    daily: 25,
+    commentRemove: 1
   },
   limits: {
     vote: 5

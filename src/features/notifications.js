@@ -43,6 +43,12 @@ module.exports = {
       case 5 : {
         return channel.createMessage(generateEmbed(`Your dupe report concerning ${props.ids.dupe} and ${props.ids.target} has been processed and denied.`))
       }
+      case 6 : {
+        return channel.createMessage(generateEmbed(`The comment you reported with ID ${props.ids.comment} for suggestion ${props.ids.card} has been deleted\nYou gained ${props.gain} EXP`))
+      }
+      case 7 : {
+        return channel.createMessage(generateEmbed(`Your report for comment with ID ${props.ids.comment} for suggestion ${props.ids.card} has been denied.`))
+      }
     }
   }
 }

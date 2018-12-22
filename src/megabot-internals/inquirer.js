@@ -98,5 +98,45 @@ module.exports = {
       zd_id: id
     }
     return db.create('questions', ins)
+  },
+  /**
+   * Create a chat-vote-like question to report comments
+   * @param {Message} msg - Message to start this action on
+   * @param {String | Number} comment - Zendesk ID of the comment
+   * @param {String | Number} card - Zendesk ID of the suggestion that has the comment
+   * @returns {Promise<Object>} - Database response
+   */
+  createCommentReporter: async (msg, comment, card) => {
+    msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+    const ins = {
+      type: 5,
+      wb_id: msg.id,
+      ids: {
+        comment: comment,
+        card: card
+      }
+    }
+    return db.create('questions', ins)
+  },
+  /**
+   * Begin an admin action to delete a comment
+   * This method is intended to be used on messages inside admin-queue
+   * @param {Message} msg - Message to start this action on
+   * @param {String | Number} comment - Zendesk ID of the comment
+   * @param {String | Number} card - Zendesk ID of the suggestion that has the comment
+   * @returns {Promise<Object>} - Database response
+   */
+  startAdminCommentRemove: async (msg, comment, card) => {
+    msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
+    msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
+    const ins = {
+      type: 6,
+      wb_id: msg.id,
+      ids: {
+        comment: comment,
+        card: card
+      }
+    }
+    return db.create('questions', ins)
   }
 }

@@ -107,6 +107,21 @@ module.exports = {
           })
           break
         }
+        case 4 : { // reporters: comment delete processed
+          const rewardable = [6] // notification type
+          if (rewardable.includes(nototype)) {
+            x.users.forEach(y => {
+              giveEXP(y, x.gain, x.message)
+            })
+          }
+          x.users.forEach(y => {
+            notify.send(nototype, y, {
+              ids: x.ids,
+              gain: x.gain
+            })
+          })
+          break
+        }
       }
       database.remove('holds', x)
     })

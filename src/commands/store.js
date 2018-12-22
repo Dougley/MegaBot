@@ -7,14 +7,21 @@ module.exports = {
     onlyDM: true,
     alias: ['shop']
   },
-  fn: (msg) => {
-    const roles = bot.guilds.get(ids.guild).roles
-    const rewardable = roles.filter(x => !!rewards.roles[x.id])
-    msg.channel.createMessage(generateEmbed(rewardable))
+  fn: (msg, suffix) => {
+    switch (suffix) {
+      case 'roles': {
+        const roles = bot.guilds.get(ids.guild).roles
+        const rewardable = roles.filter(x => !!rewards.roles[x.id])
+        return msg.channel.createMessage(generateRoleListing(rewardable))
+      }
+      case 'things': {
+
+      }
+    }
   }
 }
 
-const generateEmbed = (roles) => {
+const generateRoleListing = (roles) => {
   return {
     embed: {
       color: 0x76e9db,

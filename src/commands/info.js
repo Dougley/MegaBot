@@ -8,7 +8,7 @@ module.exports = {
     alias: ['url']
   },
   fn: (msg, suffix) => {
-    const id = suffix.match(MB_CONSTANTS.regex) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix
+    const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
     if (MB_CONSTANTS.isID(id)) {
       ZD.getSubmission(id, ['users', 'topics']).then(x => {
         return msg.channel.createMessage({

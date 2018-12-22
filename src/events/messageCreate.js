@@ -12,7 +12,12 @@ module.exports = async (ctx) => {
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
   if (msg.channel.guild) {
-    if (!msg.content.startsWith(prefix) && msg.content.match(MB_CONSTANTS.regex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.regex)[1])
+    if (!msg.content.startsWith(prefix)) {
+      if (msg.content.match(MB_CONSTANTS.commentRegex)) {
+        const matches = [...msg.content.match((MB_CONSTANTS.commentRegex))]
+        inq.createCommentReporter(msg, matches[2], matches[1])
+      } else if (msg.content.match(MB_CONSTANTS.submissionRegex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.submissionRegex)[1])
+    }
     if (perms(0, msg.member, msg)) touch(msg.author.id)
   }
   if (msg.content.indexOf(prefix) === 0) {

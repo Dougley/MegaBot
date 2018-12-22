@@ -8,7 +8,7 @@ module.exports = {
     alias: ['vote']
   },
   fn: (msg, suffix) => {
-    const id = suffix.match(MB_CONSTANTS.regex) ? suffix.match(MB_CONSTANTS.regex)[1] : suffix
+    const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
     ZD.applyVote(msg.author.id, id).then(x => {
       return x.getSubmission()
     }).then(x => {

@@ -76,6 +76,45 @@ module.exports = {
     })
   },
   /**
+   * Begin an admin action to delete a comment
+   * @param {String | Number} comment - The Zendesk ID of the comment to delete
+   * @param {String | Number} card - The Zendesk ID of the suggestion this comment is associated with
+   * @param {Message} msg - The message that reported this comment
+   * @return {Promise<void>}
+   */
+  createCommentDeletion: async (comment, card, msg) => {
+    if (await db.find('questions', {
+      'ids.comment': comment,
+      'ids.card': card,
+      type: 6
+    }) && process.env.NODE_ENV !== 'debug') return
+    const channel = bot.getChannel(ids.queue)
+    const content = await zd.getComment(card, comment)
+    channel.createMessage({
+      content: 'The following comment was reported.\n**Confirming this request deletes the comment IRREVERSIBLY, please be certain**',
+      embed: {
+        description: `[Suggestion this comment belongs to](${content.htmlUrl})`,
+        fields: [{
+          name: 'Content of the comment',
+          value: content.cleanContent.length === 0 ? '*No content*' : (content.cleanContent.length > 1024 ? `${content.cleanContent.slice(0, 990)}...\n*[Content has been cut off]*` : content.cleanContent)
+        }]
+      }
+    }).then(async x => {
+      const users = await msg.getReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+      xp.holdEXP(x.id, {
+        users: users.filter(x => x.id !== bot.user.id).map(x => x.id),
+        gain: MB_CONSTANTS.rewards.commentRemove,
+        type: 4,
+        message: 'Reported a comment',
+        ids: {
+          comment: comment,
+          card: card
+        }
+      })
+      inq.startAdminCommentRemove(x, comment, card)
+    })
+  },
+  /**
    * Begin an admin action to merge two submissions together
    * @param {Submission} dupe - The suggestion that should be merged
    * @param {Submission} target - The suggestion to merge the dupe into
