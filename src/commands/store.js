@@ -15,7 +15,10 @@ module.exports = {
         return msg.channel.createMessage(generateRoleListing(rewardable))
       }
       case 'things': {
-
+        return msg.channel.createMessage('soon:tm:')
+      }
+      default: {
+        return msg.channel.createMessage('The category you provided is incorrect, please see <#514129741096288257> for a list of valid categories')
       }
     }
   }
