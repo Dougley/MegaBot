@@ -42,7 +42,7 @@ function generateEmbed (data) {
   return {
     embed: {
       title: data.title,
-      description: data.cleanContent.length > 1750 ? '*Content too long, check the site instead*' : data.cleanContent,
+      description: data.cleanContent.length === 0 ? '*No content*' : (data.cleanContent.length > 1024 ? `${data.cleanContent.slice(0, 990)}...\n*[Content has been cut off]*` : data.cleanContent),
       url: data.htmlUrl,
       timestamp: data.createdAt,
       // color: (data.status) ? parseInt(data.status.hex_color.substr(1), 16) : 0x595f68,

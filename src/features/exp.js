@@ -146,9 +146,8 @@ module.exports = {
     const data = database.getUser(id)
     const then = new Date(data.properties.lastSeen)
     const now = new Date()
-    if (then.getDate() !== now.getDate()) giveEXP(id, MB_CONSTANTS.rewards.daily, 'Daily login bonus')
     data.properties.lastSeen = Date.now()
-    database.edit(id, data)
+    if (then.getDate() !== now.getDate()) giveEXP(id, MB_CONSTANTS.rewards.daily, 'Daily login bonus')
   }
 }
 

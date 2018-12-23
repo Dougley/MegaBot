@@ -11,11 +11,11 @@ const Comment = require('./classes/Comment')
 module.exports = {
   /**
    * Gets a list of recent submissions
-   * @param {String} sort - How posts should be sorted, defaults to 'created_at'
-   * @param {Array} includes - Sideloads for extra records
-   * @param {String} filter - List only posts with a certain state
-   * @param {Number} page - Pagination, the page number to get
-   * @param {Number} limit - Pagination, how many records to return, can't exceed 100
+   * @param {String} [sort='created_at'] - How posts should be sorted, defaults to 'created_at'
+   * @param {Array} [includes=['users']] - Sideloads for extra records
+   * @param {String} [filter=''] - List only posts with a certain state
+   * @param {Number} [page=1] - Pagination, the page number to get
+   * @param {Number} [limit=20] - Pagination, how many records to return, can't exceed 100
    * @returns {Promise<Submission[]>} - Zendesk response
    */
   getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1, limit = 20) => {
@@ -28,7 +28,7 @@ module.exports = {
   /**
    * Get information about a single submission
    * @param {Number | String} id - The ID of the submission
-   * @param {Array} includes - Sideloads for extra records
+   * @param {Array} [includes=['users']] - Sideloads for extra records
    * @returns {Promise<Submission>} - Zendesk response
    */
   getSubmission: async (id, includes = ['users']) => {
@@ -94,7 +94,7 @@ module.exports = {
    * Create a vote on a submission
    * @param {String} user - Discord ID of the user you're acting on behalf on
    * @param {Number | String} cardid - ID of the submission
-   * @param {String} [type=up] - Type of vote, can be 'down' or 'up', defaults to 'up'
+   * @param {String} [type='up'] - Type of vote, can be 'down' or 'up', defaults to 'up'
    * @returns {Promise<Vote>} - Zendesk response
    */
   applyVote: async (user, cardid, type = 'up') => {
@@ -122,9 +122,9 @@ module.exports = {
   /**
    * Return a list of comments on a record
    * @param {Number | String} id - ID of the record to query
-   * @param {String} [type=posts] - Type of record to query, can be 'users' or 'posts', defaults to 'posts'
-   * @param {Array} includes - Sideloads for extra records
-   * @param {Number} page - Pagination, the page number to get
+   * @param {String} [type='posts'] - Type of record to query, can be 'users' or 'posts', defaults to 'posts'
+   * @param {Array} [includes=['users']] - Sideloads for extra records
+   * @param {Number} [page=1] - Pagination, the page number to get
    * @returns {Promise<Comment[]>} - Zendesk response
    */
   listComments: async (id, type = 'posts', includes = ['users'], page = 1) => {
@@ -138,7 +138,7 @@ module.exports = {
    * Return information on a single comment
    * @param {Number | String} postid - ID of the submission
    * @param {Number | String} commentid - ID of the comment
-   * @param {Array} includes - Sideloads for extra records
+   * @param {Array} [includes=['users']] - Sideloads for extra records
    * @returns {Promise<Comment>} - Zendesk response
    */
   getComment: async (postid, commentid, includes = ['users']) => {

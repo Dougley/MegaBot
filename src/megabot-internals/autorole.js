@@ -30,7 +30,9 @@ module.exports = {
             message: `Granting ${user.username}#${user.discriminator} custodian, they passed the EXP threshold`
           })
           logger.debug(`Granting ${x.wb_id} custodian due to autorole`)
-          user.addRole(ids.custodianRole, 'Autorole: EXP threshold reached')
+          user.addRole(ids.custodianRole, 'Autorole: EXP threshold reached').then(() => {
+            bot.createMessage(ids.custodianChannel, `Please welcome <@${user.id}> to the custodians!`)
+          })
         }
       } catch (e) {
         logger.warn(`Unable to autorole ${x.wb_id}: ${e.message}`)
