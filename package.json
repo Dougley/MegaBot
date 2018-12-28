@@ -1,6 +1,6 @@
 {
   "name": "megabot",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Dougley/MBv2#readme",
   "dependencies": {
+    "bottleneck": "^2.14.1",
     "chalk": "^2.4.1",
     "date-fns": "^2.0.0-alpha.26",
     "dotenv": "^6.2.0",
@@ -25,10 +26,10 @@
     "lokijs": "^1.5.5",
     "raven": "^2.6.4",
     "striptags": "^3.1.1",
-    "superagent": "^4.0.0"
+    "superagent": "^4.1.0"
   },
   "devDependencies": {
-    "eslint": "^5.10.0",
+    "eslint": "^5.11.1",
     "eslint-config-standard": "^12.0.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-node": "^8.0.0",

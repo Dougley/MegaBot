@@ -19,14 +19,17 @@ module.exports = async (question, user, emoji, msg, userID) => {
         status: 'answered',
         closed: true
       })
+      const votes = await getAllVotes(question.ids.dupe)
+      votes.forEach(x => {
+        zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
+      })
       xp.processHolds(msg.id, 4)
       setTimeout(() => {
         x.delete()
       }, MB_CONSTANTS.timeouts.queueDelete)
     })
     db.delete('questions', msg.id)
-  }
-  if (emoji.id === ids.emojis.reverse.id) {
+  } else if (emoji.id === ids.emojis.reverse.id) {
     dlog(5, {
       user: user,
       action: 'reverse-confirmed',
@@ -44,8 +47,7 @@ module.exports = async (question, user, emoji, msg, userID) => {
       }, MB_CONSTANTS.timeouts.queueDelete)
     })
     db.delete('questions', msg.id)
-  }
-  if (emoji.id === ids.emojis.dismiss.id) {
+  } else if (emoji.id === ids.emojis.dismiss.id) {
     dlog(5, {
       user: user,
       action: 'dismissed',
@@ -59,4 +61,17 @@ module.exports = async (question, user, emoji, msg, userID) => {
     })
     db.delete('questions', msg.id)
   }
+}
+
+const getAllVotes = async (id) => {
+  let votes = []
+  let keepGoing = true
+  let page = 1
+  while (keepGoing) {
+    let data = await zd.getVotes(id, page)
+    await votes.push.apply(votes, data)
+    if (data[0]._raw.next_page !== null) page++
+    else keepGoing = false
+  }
+  return votes
 }

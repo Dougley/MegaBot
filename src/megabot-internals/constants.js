@@ -1,3 +1,5 @@
+const Bottleneck = require('bottleneck')
+
 module.exports = {
   submissionRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
   commentRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?\/comments\/(\d{12,})/,
@@ -22,8 +24,13 @@ module.exports = {
   limits: {
     vote: 5
   },
+  limiter: new Bottleneck({
+    reservoir: 700,
+    reservoirRefreshAmount: 700,
+    reservoirRefreshInterval: 60 * 1000
+  }),
   strings: {
-    dupe: (x) => `This is a dupe of ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} , so I'm closing this out. If you'd like to have your voice heard please upvote that suggestion!`
+    dupe: (x) => `This is a dupe of ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x}, so I'm closing this out. If you'd like to have your voice heard please upvote that suggestion!`
   },
   generateErrorMessage: (e) => {
     switch (e.message) {

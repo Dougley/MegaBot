@@ -12,7 +12,11 @@ module.exports = {
   regenerate: async () => {
     const channel = bot.getChannel(ids.top10channel)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
-    ZD.getSubmissions('votes', ['users', 'topics'], 'none').then(submissions => {
+    ZD.getSubmissions({
+      sort_by: 'votes',
+      include: 'users,topics',
+      filter_by: 'none'
+    }).then(submissions => {
       if (editable.length > 10) {
         // delete extraneous messages
         const remove = editable.slice(Math.max(editable.length - 10, 1)).map(x => x.id)

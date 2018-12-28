@@ -3,6 +3,7 @@ const QS = require('querystring')
 const DB = require('../databases/lokijs')
 
 const ROOT_URL = process.env.ZENDESK_ROOT_URL
+const { schedule } = MB_CONSTANTS.limiter
 
 const Submission = require('./classes/Submission')
 const Vote = require('./classes/Vote')
@@ -11,17 +12,27 @@ const Comment = require('./classes/Comment')
 module.exports = {
   /**
    * Gets a list of recent submissions
-   * @param {String} [sort='created_at'] - How posts should be sorted, defaults to 'created_at'
-   * @param {Array} [includes=['users']] - Sideloads for extra records
-   * @param {String} [filter=''] - List only posts with a certain state
-   * @param {Number} [page=1] - Pagination, the page number to get
-   * @param {Number} [limit=20] - Pagination, how many records to return, can't exceed 100
+   * @param {Object} opts - Options to pass to Zendesk
+   * @param {String} [opts.sort_by=created_at] - How posts should be sorted
+   * @param {Array | String} [opts.include=users] - Array or comma separated string of types to sideload alongside this request
+   * @param {String} [opts.filter_by] - Filter posts to only show posts with a certain state
+   * @param {Number} [opts.page=1] - Pagination, which page of data to get
+   * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
+   * @see {@link https://developer.zendesk.com/rest_api/docs/help_center/topics#list-topics Zendesk docs on this route}
+   * @see {@link https://developer.zendesk.com/rest_api/docs/support/side_loading Zendesk docs on sideloading}
    * @returns {Promise<Submission[]>} - Zendesk response
    */
-  getSubmissions: async (sort = 'created_at', includes = ['users'], filter = '', page = 1, limit = 20) => {
-    const res = await SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ sort_by: sort, include: includes.join(','), filter_by: filter, page: page, per_page: limit })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+  getSubmissions: async (opts = {}) => {
+    const defaults = {
+      sort_by: 'created_at',
+      include: 'users',
+      page: 1,
+      per_page: 20
+    }
+    if (opts.include && Array.isArray(opts.include)) opts.include = opts.include.join(',')
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ ...defaults, ...opts })}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.posts.map(x => new Submission(res.body, x))
   },
@@ -32,9 +43,9 @@ module.exports = {
    * @returns {Promise<Submission>} - Zendesk response
    */
   getSubmission: async (id, includes = ['users']) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes.join(',') })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return new Submission(res.body, res.body.post)
   },
@@ -44,9 +55,9 @@ module.exports = {
    * @returns {Promise<Submission[]>} - Zendesk response
    */
   searchSubmissions: async (query) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/help_center/community_posts/search.json?${QS.stringify({ query: query })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.results.map(x => new Submission(res.body, x))
   },
@@ -58,11 +69,11 @@ module.exports = {
    */
   postSubmission: async (userid, data) => {
     const userdata = await getUserDetails(userid)
-    data = { ...data, author_id: userdata.id, notify_subscribers: false }
-    const res = await SA
+    data = { author_id: userdata.id, notify_subscribers: false, ...data }
+    const res = await schedule(() => SA
       .post(`${ROOT_URL}/api/v2/community/posts.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ post: data })
+      .send({ post: data }))
     logger.trace(res.body)
     return new Submission(res.body, res.body.post)
   },
@@ -73,36 +84,38 @@ module.exports = {
    * @returns {Promise<Submission>} - Zendesk response
    */
   editSubmission: async (id, data) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .put(`${ROOT_URL}/api/v2/community/posts/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ post: data })
+      .send({ post: data }))
     logger.trace(res.body)
     return new Submission(res.body, res.body.post)
   },
   /**
-   * Permanently destroy a submisson
+   * Permanently destroy a submission
    * @param {Number | String} id - The ID of the submission to destroy
    * @returns {Promise<Request>}
    */
   destroySubmission: async (id) => {
-    return SA
+    return schedule(() => SA
       .delete(`${ROOT_URL}/api/v2/community/posts/${id}.json`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   },
+  // TODO: Cleanup this route
   /**
    * Create a vote on a submission
-   * @param {String} user - Discord ID of the user you're acting on behalf on
+   * @param {String} user - Discord (or Zendesk, if force is true) ID of the user you're acting on behalf on
    * @param {Number | String} cardid - ID of the submission
    * @param {String} [type='up'] - Type of vote, can be 'down' or 'up', defaults to 'up'
+   * @param {Boolean} [force=false] - Indicate that no user details should be fetched, but used from input instead
    * @returns {Promise<Vote>} - Zendesk response
    */
-  applyVote: async (user, cardid, type = 'up') => {
-    const userinfo = await getUserDetails(user)
-    const res = await SA
+  applyVote: async (user, cardid, type = 'up', force = false) => {
+    const userinfo = force ? undefined : await getUserDetails(user)
+    const res = await schedule(() => SA
       .post(`${ROOT_URL}/api/v2/community/posts/${cardid}/${type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ vote: { user_id: userinfo.id } })
+      .send({ vote: { user_id: force ? user : userinfo.id } }))
     logger.trace(res.body)
     return new Vote(res.body, res.body.vote)
   },
@@ -113,9 +126,9 @@ module.exports = {
    * @returns {Promise<Vote[]>}
    */
   getVotes: async (id, page = 1) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.votes.map(x => new Vote(res.body, x))
   },
@@ -128,9 +141,9 @@ module.exports = {
    * @returns {Promise<Comment[]>} - Zendesk response
    */
   listComments: async (id, type = 'posts', includes = ['users'], page = 1) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes.join(','), page: page })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.comments.map(x => new Comment(res.body, x))
   },
@@ -142,9 +155,9 @@ module.exports = {
    * @returns {Promise<Comment>} - Zendesk response
    */
   getComment: async (postid, commentid, includes = ['users']) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes.join(',') })}`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return new Comment(res.body, res.body.comment)
   },
@@ -158,10 +171,10 @@ module.exports = {
    */
   createComment: async (user, id, comment, official = false) => {
     const userinfo = await getUserDetails(user)
-    const res = await SA
+    const res = await schedule(() => SA
       .post(`${ROOT_URL}/api/v2/community/posts/${id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ comment: { body: comment, author_id: userinfo.id, official: official }, notify_subscribers: false })
+      .send({ comment: { body: comment, author_id: userinfo.id, official: official }, notify_subscribers: false }))
     logger.trace(res.body)
     return new Comment(res.body, res.body.comment)
   },
@@ -172,9 +185,9 @@ module.exports = {
    * @returns {Promise<Request>} - Zendesk response
    */
   deleteComment: async (postid, commentid) => {
-    return SA
+    return schedule(() => SA
       .delete(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   },
   /**
    * Search for user details
@@ -190,9 +203,9 @@ module.exports = {
    * @returns {Promise<Object>} - Zendesk response
    */
   getUser: async (id) => {
-    const res = await SA
+    const res = await schedule(() => SA
       .get(`${ROOT_URL}/api/v2/users/${id}.json`)
-      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.user
   }
@@ -210,9 +223,9 @@ async function getUserDetails (id) {
       DB.delete('cache', `zd_u:${id}`)
     }
   }
-  const data = await SA
+  const data = await schedule(() => SA
     .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({ query: id })}`)
-    .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   logger.trace(data.body)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')
