@@ -41,7 +41,7 @@ module.exports = {
           fields: [
             {
               name: `${msg.author.username} commented on this:`,
-              value: comment
+              value: comment.length > 1024 ? `${comment.slice(0, 990)}...\n*[Content has been cut off]*` : comment
             }
           ]
         }

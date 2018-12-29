@@ -1,5 +1,6 @@
 const { promisify } = require('util')
 const { exec } = require('child_process')
+const dlog = require('../megabot-internals/dlog')
 const execAsync = promisify(exec)
 
 module.exports = {
@@ -15,8 +16,11 @@ module.exports = {
     }).then(x => {
       logger.trace(x)
       return execAsync('git rev-parse HEAD')
-    }).then(x => {
+    }).then(async x => {
       logger.trace(x)
+      await dlog(4, {
+        message: `Successfully updated to revision \`${x.stdout.trim()}\``
+      })
       m.edit(`Updated to ref \`${x.stdout.trim()}\`, terminating process.`).then(() => process.exit(0))
     }).catch(e => {
       logger.error(e)
