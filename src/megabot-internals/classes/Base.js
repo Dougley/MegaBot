@@ -10,6 +10,11 @@ class Base {
     this.htmlUrl = data.html_url
     this.sideloads = { users: props.users, topics: props.topics, posts: props.posts, comments: props.comments }
     this._raw = props
+    this.pagination = {
+      nextPage: props.next_page,
+      previousPage: props.previous_page,
+      count: props.count
+    }
   }
 }
 

@@ -32,6 +32,10 @@ const debug = {
     resolve: {
       id: '518121642166190080',
       name: 'bots2'
+    },
+    reverse: {
+      id: '528144253667246080',
+      name: 'refresh'
     }
   },
   channels: {

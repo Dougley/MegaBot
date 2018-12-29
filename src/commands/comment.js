@@ -14,7 +14,14 @@ module.exports = {
     ZD.getSubmission(id, ['users', 'topics']).then(c => {
       suggestion = c
       if (c.closed) throw new Error('Suggestion closed')
-      else return ZD.createComment(msg.author.id, id, comment)
+      else {
+        return ZD.createComment({
+          discordId: msg.author.id,
+          id: id
+        }, {
+          body: comment
+        })
+      }
     }).then(() => {
       if (!XP.contains(msg.author.id, `Commented on ${suggestion.id}`)) XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.comment, `Commented on ${suggestion.id}`)
       return msg.channel.createMessage({

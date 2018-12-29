@@ -2,7 +2,7 @@ const SA = require('superagent')
 const QS = require('querystring')
 const DB = require('../databases/lokijs')
 
-const ROOT_URL = process.env.ZENDESK_ROOT_URL
+const ROOT_URL = `${process.env.ZENDESK_ROOT_URL}/api/v2`
 const { schedule } = MB_CONSTANTS.limiter
 
 const Submission = require('./classes/Submission')
@@ -31,7 +31,7 @@ module.exports = {
     }
     if (opts.include && Array.isArray(opts.include)) opts.include = opts.include.join(',')
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/community/posts.json?${QS.stringify({ ...defaults, ...opts })}`)
+      .get(`${ROOT_URL}/community/posts.json?${QS.stringify({ ...defaults, ...opts })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.posts.map(x => new Submission(res.body, x))
@@ -44,7 +44,7 @@ module.exports = {
    */
   getSubmission: async (id, includes = ['users']) => {
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}.json?${QS.stringify({ include: includes.join(',') })}`)
+      .get(`${ROOT_URL}/community/posts/${id}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return new Submission(res.body, res.body.post)
@@ -56,7 +56,7 @@ module.exports = {
    */
   searchSubmissions: async (query) => {
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/help_center/community_posts/search.json?${QS.stringify({ query: query })}`)
+      .get(`${ROOT_URL}/help_center/community_posts/search.json?${QS.stringify({ query: query })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.results.map(x => new Submission(res.body, x))
@@ -71,7 +71,7 @@ module.exports = {
     const userdata = await getUserDetails(userid)
     data = { author_id: userdata.id, notify_subscribers: false, ...data }
     const res = await schedule(() => SA
-      .post(`${ROOT_URL}/api/v2/community/posts.json`)
+      .post(`${ROOT_URL}/community/posts.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ post: data }))
     logger.trace(res.body)
@@ -85,7 +85,7 @@ module.exports = {
    */
   editSubmission: async (id, data) => {
     const res = await schedule(() => SA
-      .put(`${ROOT_URL}/api/v2/community/posts/${id}.json`)
+      .put(`${ROOT_URL}/community/posts/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ post: data }))
     logger.trace(res.body)
@@ -98,7 +98,7 @@ module.exports = {
    */
   destroySubmission: async (id) => {
     return schedule(() => SA
-      .delete(`${ROOT_URL}/api/v2/community/posts/${id}.json`)
+      .delete(`${ROOT_URL}/community/posts/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   },
   // TODO: Cleanup this route
@@ -113,7 +113,7 @@ module.exports = {
   applyVote: async (user, cardid, type = 'up', force = false) => {
     const userinfo = force ? undefined : await getUserDetails(user)
     const res = await schedule(() => SA
-      .post(`${ROOT_URL}/api/v2/community/posts/${cardid}/${type}.json`)
+      .post(`${ROOT_URL}/community/posts/${cardid}/${type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ vote: { user_id: force ? user : userinfo.id } }))
     logger.trace(res.body)
@@ -127,7 +127,7 @@ module.exports = {
    */
   getVotes: async (id, page = 1) => {
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
+      .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.votes.map(x => new Vote(res.body, x))
@@ -135,14 +135,24 @@ module.exports = {
   /**
    * Return a list of comments on a record
    * @param {Number | String} id - ID of the record to query
-   * @param {String} [type='posts'] - Type of record to query, can be 'users' or 'posts', defaults to 'posts'
-   * @param {Array} [includes=['users']] - Sideloads for extra records
-   * @param {Number} [page=1] - Pagination, the page number to get
+   * @param {Object} opts - Options to pass to Zendesk
+   * @param {String} [opts.type=posts] - Type of record to query, can be 'users' or 'posts'
+   * @param {Array | String} [opts.include=users] - Array or comma separated string of types to sideload alongside this request
+   * @param {Number} [opts.page=1] - Pagination, which page of data to get
+   * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
    * @returns {Promise<Comment[]>} - Zendesk response
    */
-  listComments: async (id, type = 'posts', includes = ['users'], page = 1) => {
+  listComments: async (id, opts) => {
+    const options = {
+      type: 'posts',
+      includes: 'users',
+      page: 1,
+      per_page: 20,
+      ...opts
+    }
+    if (Array.isArray(options.includes)) options.includes = options.includes.join(',')
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/community/${type}/${id}/comments.json?${QS.stringify({ include: includes.join(','), page: page })}`)
+      .get(`${ROOT_URL}/community/${options.type}/${id}/comments.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.comments.map(x => new Comment(res.body, x))
@@ -156,25 +166,32 @@ module.exports = {
    */
   getComment: async (postid, commentid, includes = ['users']) => {
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes.join(',') })}`)
+      .get(`${ROOT_URL}/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return new Comment(res.body, res.body.comment)
   },
   /**
    * Create a comment on a submission
-   * @param {String} user - Discord ID of the user you're acting on behalf on
-   * @param {Number | String} id - Submission ID
-   * @param {String} comment - Comment to post
-   * @param {Boolean} [official=false] - Whether or not to mark this comment as official
+   * @param {Object} ctx - Context of the request
+   * @param {String} [ctx.discordId] - Discord ID of the user you're acting on behalf on, not required if opts.author_id is defined
+   * @param {String | Number} ctx.id - Zendesk ID of the suggestion you're commenting on
+   * @param {Object} opts - Options to pass to Zendesk,
+   * @param {String | Number} [opts.author_id] - Zendesk ID of the user you're acting on behalf on, not required if ctx.discordId is defined
+   * @param {String} opts.body - The actual comment you're creating
+   * @param {Boolean} [opts.official] - Whether or not the comment should be marked as official
+   * @param {Date} [opts.created_at] - Time at which the comment was captured, defaults to the current date
+   * @see {@link https://developer.zendesk.com/rest_api/docs/help_center/post_comments#create-comment Zendesk docs on this route}
    * @returns {Promise<Comment>} - Zendesk response
    */
-  createComment: async (user, id, comment, official = false) => {
-    const userinfo = await getUserDetails(user)
+  createComment: async (ctx, opts) => {
+    if (ctx.discordId) {
+      opts.author_id = (await getUserDetails(ctx.discordId)).id
+    }
     const res = await schedule(() => SA
-      .post(`${ROOT_URL}/api/v2/community/posts/${id}/comments.json`)
+      .post(`${ROOT_URL}/community/posts/${ctx.id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ comment: { body: comment, author_id: userinfo.id, official: official }, notify_subscribers: false }))
+      .send({ comment: opts, notify_subscribers: false }))
     logger.trace(res.body)
     return new Comment(res.body, res.body.comment)
   },
@@ -186,7 +203,7 @@ module.exports = {
    */
   deleteComment: async (postid, commentid) => {
     return schedule(() => SA
-      .delete(`${ROOT_URL}/api/v2/community/posts/${postid}/comments/${commentid}.json`)
+      .delete(`${ROOT_URL}/community/posts/${postid}/comments/${commentid}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   },
   /**
@@ -204,7 +221,7 @@ module.exports = {
    */
   getUser: async (id) => {
     const res = await schedule(() => SA
-      .get(`${ROOT_URL}/api/v2/users/${id}.json`)
+      .get(`${ROOT_URL}/users/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.user
@@ -224,7 +241,7 @@ async function getUserDetails (id) {
     }
   }
   const data = await schedule(() => SA
-    .get(`${ROOT_URL}/api/v2/users/search.json?${QS.stringify({ query: id })}`)
+    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ query: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   logger.trace(data.body)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
