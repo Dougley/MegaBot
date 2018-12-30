@@ -60,8 +60,22 @@ module.exports = {
     const data = database.findManySync('holds', {
       wb_id: id
     })
+    const event = database.findSync('system', {
+      type: 'event',
+      endDate: null
+    })
     if (!data) return
     data.forEach(x => {
+      if (event && x.type !== 2 && !event.paused) {
+        x.users.forEach(y => {
+          if (!event.participants[y]) event.participants[y] = []
+          event.participants[y].push({
+            type: x.type,
+            result: nototype,
+            gain: x.gain
+          })
+        })
+      }
       const notify = require('./notifications')
       switch (x.type) { // data type
         case 1 : { // reporters: report processed

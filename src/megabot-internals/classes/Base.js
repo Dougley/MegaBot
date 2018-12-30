@@ -1,5 +1,15 @@
 /**
  * The base class for all subsequent classes
+ * @property {Number} id - The ID of the object
+ * @property {String} apiUrl - The corresponding API URL
+ * @property {String} htmlUrl - The corresponding Community URL
+ * @property {Date} createdAt - The time at which the object was created
+ * @property {Date} updatedAt - The time at which the object was last updated
+ * @property {Object} sideloads - Any data you might have sideloaded
+ * @property {Object} pagination - Pagination information
+ * @property {String | null} pagination.nextPage - The next page in the set
+ * @property {String | null} pagination.previousPage - The previous page in the set
+ * @property {Number | null} pagination.count - The number of objects in the set
  */
 class Base {
   constructor (props, data) {

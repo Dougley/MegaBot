@@ -6,12 +6,6 @@ const decoder = new Entities()
 /**
  * Represents a comment
  * @extends Base
- * @property {Number} id - The ID of the comment
- * @property {String} apiUrl - The corresponding API URL
- * @property {String} htmlUrl - The corresponding Community URL
- * @property {Date} createdAt - The time at which the comment was created
- * @property {Date} updatedAt - The time at which the comment was last updated
- * @property {Object} sideloads - Any data you might have sideloaded
  * @property {String} rawContent - The raw content of the comment, be aware that this might include HTML tags
  * @property {Number} authorId - The ID of the author of this comment
  * @property {Number} postId - The ID of the post this comment belongs to
@@ -32,7 +26,7 @@ class Comment extends Base {
 
   /**
    * Get clean content of the comment
-   * @returns {string}
+   * @returns {String}
    */
   get cleanContent () {
     return decoder.decode(Striptags(this.rawContent))
