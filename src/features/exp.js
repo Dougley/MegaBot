@@ -44,8 +44,14 @@ module.exports = {
    * @return {Promise<Object>}
    */
   holdEXP: async (queueid, data) => {
+    const event = database.findSync('system', {
+      type: 'event',
+      endDate: null,
+      paused: false
+    })
     return database.create('holds', {
       wb_id: queueid,
+      event: !!event,
       ...data
     })
   },
@@ -66,7 +72,7 @@ module.exports = {
     })
     if (!data) return
     data.forEach(x => {
-      if (event && x.type !== 2 && !event.paused) {
+      if (event && x.type !== 2 && x.event) {
         x.users.forEach(y => {
           if (!event.participants[y]) event.participants[y] = []
           event.participants[y].push({

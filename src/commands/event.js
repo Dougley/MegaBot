@@ -57,7 +57,18 @@ module.exports = {
           }).sort((a, b) => {
             return a.result - b.result
           })
-          return msg.channel.createMessage(`The event has ended\n\nTop 10 participants:\n${finals.slice(finals.length - 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n')}`)
+          return msg.channel.createMessage({
+            content: 'The event has ended',
+            embed: {
+              color: 0x2faffd,
+              title: 'Top 10 participants',
+              description: finals.slice(finals.length - 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n'),
+              footer: {
+                icon_url: global.bot.user.dynamicAvatarURL('png', 32),
+                text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`
+              }
+            }
+          })
         }
       }
       default: {
