@@ -1,7 +1,11 @@
 const debug = {
   roles: {
     '519254764978962434': 25
-  }
+  },
+  things: [
+    { name: 'Recurring reward', cost: 25 },
+    { name: 'Onetime reward', cost: 25, oneTime: true }
+  ]
 }
 
 const production = {
@@ -11,7 +15,8 @@ const production = {
     '273149954850160640': 1500, // librarian
     '273149955512860673': 2400, // vizier
     '273149956167172107': 4770 // grand vizier
-  }
+  },
+  things: []
 }
 
 module.exports = process.env.NODE_ENV === 'debug' ? debug : production

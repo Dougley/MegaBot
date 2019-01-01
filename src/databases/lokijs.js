@@ -225,6 +225,7 @@ function ensureUser (id) {
       entitlements: [],
       overrides: [],
       transactions: [],
+      onetimeRewards: [],
       blocked: false
     }
     return users.insert(shim)
