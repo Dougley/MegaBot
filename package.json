@@ -1,7 +1,7 @@
 {
   "name": "megabot",
-  "version": "3.1.0",
-  "description": "This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.",
+  "version": "3.1.1",
+  "description": "Bot for the official Discord Feedback server.",
   "main": "index.js",
   "scripts": {
     "test": "eslint ."
@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/Dougley/MBv2#readme",
   "dependencies": {
-    "bottleneck": "^2.14.1",
+    "bottleneck": "^2.15.0",
     "chalk": "^2.4.1",
     "date-fns": "^2.0.0-alpha.26",
     "dotenv": "^6.2.0",

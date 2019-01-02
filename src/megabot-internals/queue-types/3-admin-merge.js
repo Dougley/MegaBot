@@ -89,6 +89,10 @@ module.exports = async (question, user, emoji, msg, userID) => {
       action: 'dismissed',
       zd_id: `${question.ids.dupe} > ${question.ids.target}`
     })
+    bot.createMessage(ids.deniedFeed, {
+      content: `${user.username} denied the following merge request`,
+      embed: msg.embeds[0]
+    })
     msg.edit({ content: 'Report dismissed, left cards untouched.', embed: null }).then(x => {
       xp.processHolds(msg.id, 5)
       setTimeout(() => {

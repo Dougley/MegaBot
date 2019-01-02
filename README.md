@@ -1,5 +1,5 @@
-# MegaBot v2 [![https://travis-ci.org/Dougley/MBv2](https://img.shields.io/travis/Dougley/MBv2.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Dougley/MBv2)
-This is a rewrite of the, now deprecated, [DiscordFeedback](https://github.com/Dougley/DiscordFeedback) system.
+# MegaBot [![https://travis-ci.org/Dougley/MBv2](https://img.shields.io/travis/Dougley/MBv2.svg?style=for-the-badge&logo=travis)]
+This repository holds the code for the bot used in the [Discord Feedback](https://discord.gg/discord-feedback) server.
 
 ## Installation
 Please note that this is a highly specialized project, we won't guarantee compatibility with your environment/setup.    
@@ -15,3 +15,10 @@ Thanks for taking the time to contribute! Please make sure you follow our [contr
 
 ## Acknowledgements
 Parts of this project are based on [WildBeast](https://github.com/TheSharks/WildBeast), used with permission.
+
+----
+<div>
+  <div style="margin-left:auto;margin-right:auto;">
+    <a href="https://discord.gg/discord-feedback"><img src="https://discordapp.com/api/guilds/268811439588900865/widget.png?style=banner3" alt="Discord server"></a>
+  </div>
+</div>

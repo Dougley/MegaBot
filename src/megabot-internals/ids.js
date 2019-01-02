@@ -8,6 +8,7 @@ const debug = {
   leaderboard: '519105992261238786',
   modRoles: [],
   modChannel: '459298531480567809',
+  deniedFeed: '530011587545661475',
   log: '519137610988388362',
   emojis: {
     confirm: {
@@ -55,6 +56,7 @@ const production = {
   leaderboard: '519570060453478400',
   modRoles: ['268815351360389121', '268815286067527690'],
   modChannel: '294530473290498049',
+  deniedFeed: '347823023102885889',
   emojis: {
     confirm: {
       id: '302137375092375553',

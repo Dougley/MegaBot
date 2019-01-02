@@ -20,7 +20,7 @@ module.exports = async (ctx) => {
     }
     if (perms(0, msg.member, msg)) touch(msg.author.id)
   }
-  if (msg.content.indexOf(prefix) === 0) {
+  if (msg.content.startsWith(prefix)) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
     if (commands[cmd]) {
