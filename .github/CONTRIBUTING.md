@@ -59,6 +59,26 @@ someCommand().then(res => {
 })
 ```
 
+### Line length
+
+There are no set limits for the length of a line.  
+However, chained functions should be split up when it's over 3 functions, or when the line is particularly long.
+
+```js
+// ✗ bad
+const someString = 'Hello world!'
+return someString.split(' ').map(x => x.toLowerCase()).filter(x => x !== '!').join(' ')
+```
+
+```js
+// ✓ good
+const someString = 'Hello world!'
+return someString.split(' ') // the first function can be on the same line
+  .map(x => x.toLowerCase())
+  .filter(x => x !== '!')
+  .join(' ')
+```
+
 ### Embeds vs text
 
 Prefer returning embeds if the data you're using is suited for it, single strings can be returned plain.    
