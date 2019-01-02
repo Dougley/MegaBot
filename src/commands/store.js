@@ -30,7 +30,7 @@ const generateRoleListing = (roles) => {
     embed: {
       color: 0x76e9db,
       title: 'MegaBot Store',
-      description: roles.map(x => `**${Object.keys(rewards.roles).indexOf(x.id) + 1}**: ${x.name} - ${rewards.roles[x.id]} EXP`).join('\n') + `\n\n*Use \`${process.env.BOT_PREFIX}buy role role-number\` to buy a role*`, // 1: buyable role - x EXP
+      description: roles.map(x => `**${Object.keys(rewards.roles).indexOf(x.id) + 1}**: ${x.name} - ${rewards.roles[x.id]} EXP`).join('\n') + `\n\n*Use \`${process.env.BOT_PREFIX}buy roles role-number\` to buy a role*`, // 1: buyable role - x EXP
       footer: {
         icon_url: global.bot.user.dynamicAvatarURL('png', 32),
         text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`
