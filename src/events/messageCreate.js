@@ -6,6 +6,7 @@ const inq = require('../megabot-internals/inquirer')
 const { touch, applyEXP, getEXP } = require('../features/exp')
 const dlog = require('../megabot-internals/dlog')
 const ids = require('../megabot-internals/ids')
+const zd = require('../megabot-internals/zendesk')
 
 module.exports = async (ctx) => {
   const msg = ctx[0]
@@ -15,8 +16,10 @@ module.exports = async (ctx) => {
     if (!msg.content.startsWith(prefix)) {
       if (msg.content.match(MB_CONSTANTS.commentRegex)) {
         const matches = [...msg.content.match((MB_CONSTANTS.commentRegex))]
-        inq.createCommentReporter(msg, matches[2], matches[1])
-      } else if (msg.content.match(MB_CONSTANTS.submissionRegex)) inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.submissionRegex)[1])
+        zd.getComment(matches[1], matches[2]).then(() => inq.createCommentReporter(msg, matches[2], matches[1])).catch(() => {})
+      } else if (msg.content.match(MB_CONSTANTS.submissionRegex)) {
+        zd.getSubmission(msg.content.match(MB_CONSTANTS.submissionRegex)[1]).then(() => inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.submissionRegex)[1])).catch(() => {})
+      }
     }
     if (perms(0, msg.member, msg)) touch(msg.author.id)
   }
