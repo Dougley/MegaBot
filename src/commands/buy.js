@@ -36,7 +36,7 @@ module.exports = {
         const reward = rewards.things[chunks[1] - 1]
         if (!reward) return msg.channel.createMessage('No reward with that ID found!')
         else {
-          if (reward.oneTime && userdata.onetimeRewards && userdata.onetimeRewards.includes(chunks[1])) return msg.channel.createMessage('The reward you want is one-time only, and you already got it once!!')
+          if (reward.oneTime && userdata.onetimeRewards && userdata.onetimeRewards.includes(chunks[1])) return msg.channel.createMessage('The reward you want is one-time only, and you already got it once!')
           else {
             if (!userdata.onetimeRewards) userdata.onetimeRewards = []
             userdata.onetimeRewards.push(chunks[1])
