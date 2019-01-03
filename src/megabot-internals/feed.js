@@ -28,12 +28,13 @@ module.exports = {
 }
 
 function generateEmbed (suggestion) {
+  suggestion.cleanContent = suggestion.cleanContent.replace(MB_CONSTANTS.inviteRegex, '[invite censored]')
   return {
     wait: true,
     embeds: [{
       color: 0x7bffd3,
       title: suggestion.title.length > 250 ? suggestion.title.substring(0, 250) + '...' : suggestion.title,
-      description: suggestion.cleanContent.length > 2048 ? '*Content too long*' : suggestion.cleanContent,
+      description: suggestion.cleanContent.length === 0 ? '*No content*' : (suggestion.cleanContent.length > 1024 ? `${suggestion.cleanContent.slice(0, 990)}...\n*[Content has been cut off]*` : suggestion.cleanContent),
       url: suggestion.htmlUrl,
       timestamp: suggestion.createdAt,
       footer: {
