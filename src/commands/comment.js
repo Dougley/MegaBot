@@ -3,7 +3,8 @@ const XP = require('../features/exp')
 
 module.exports = {
   meta: {
-    level: 0
+    level: 0,
+    alias: ['reply']
   },
   fn: async (msg, suffix) => {
     msg.channel.sendTyping()
