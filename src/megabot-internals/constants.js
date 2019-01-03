@@ -31,7 +31,7 @@ module.exports = {
     reservoirRefreshInterval: 60 * 1000
   }),
   strings: {
-    dupe: (x) => `This is a dupe of ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x}, so I'm closing this out. If you'd like to have your voice heard please upvote that suggestion!`
+    dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`
   },
   generateErrorMessage: (e) => {
     switch (e.message) {

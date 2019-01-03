@@ -54,6 +54,20 @@ setInterval(() => {
 }, 86400000) // 1 day
 
 setInterval(() => {
+  logger.debug('Scanning for duped suggestions that are queued for deletion')
+  const query = {
+    type: 'dupe-delete',
+    executeTime: { $lte: Date.now() }
+  }
+  const data = db.findManySync('system', query)
+  if (data.length > 0) {
+    logger.debug(`Removing ${data.length} suggestions.`)
+    data.forEach(x => zd.destroySubmission(x.zd_id))
+    db.findAndRemove('system', query)
+  }
+}, 3600000) // 1 hour
+
+setInterval(() => {
   const feedvotes = db.findManySync('questions', {
     type: 1
   }, 25)

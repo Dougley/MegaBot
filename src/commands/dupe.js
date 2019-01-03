@@ -21,6 +21,7 @@ module.exports = {
       'ids.dupe': dupe.id,
       type: 3
     })) return msg.channel.createMessage('A dupe request for these suggestions was already submitted.')
+    if (dupe.status === 'answered') return msg.channel.createMessage("You can't merge a suggestion that's marked as `Answered`. If you feel this is in error, contact Dabbit Prime")
     AQ.createMergeRequest(dupe, target, msg.author).then(() => msg.channel.createMessage('Dupe request submitted'))
   }
 }
