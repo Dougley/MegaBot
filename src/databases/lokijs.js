@@ -182,12 +182,12 @@ module.exports = {
     })
   },
   /**
-   * Get a raw collection from the database
-   * @param {String} coll - The name of the collection to get
-   * @return {Collection}
+   * Get a resultset of a collection via Collection.chain()
+   * @param {String} coll - The name of the collection to chain
+   * @return {Resultset}
    */
-  getRawCollection: (coll) => {
-    return db.getCollection(coll)
+  chain: (coll) => {
+    return db.getCollection(coll).chain()
   },
   /**
    * Count the amount of documents in a collection

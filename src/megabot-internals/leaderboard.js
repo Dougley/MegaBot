@@ -10,14 +10,21 @@ module.exports = {
   update: async () => {
     const channel = bot.getChannel(ids.leaderboard)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
-    const users = db.getRawCollection('users').chain().simplesort('properties.exp', { desc: true }).limit(10).data()
+    const users = db.chain('users')
+      .find({
+        entitlements: {
+          $containsNone: ['no-leaderboard']
+        }
+      })
+      .simplesort('properties.exp', { desc: true })
+      .limit(10)
+      .data()
     const toedit = editable.slice(0, 10)
     users.forEach(async data => {
       let x = toedit.pop()
-      data.position = users.indexOf(data) + 1
       const user = bot.users.get(data.wb_id) ? bot.users.get(data.wb_id) : await bot.getRESTUser(data.wb_id)
-      if (x) x.edit(generateEmbed(data, user))
-      else channel.createMessage(generateEmbed(data, user))
+      if (x) x.edit(generateEmbed(data, user, users.indexOf(data) + 1))
+      else channel.createMessage(generateEmbed(data, user, users.indexOf(data) + 1))
     })
   }
 }
@@ -37,11 +44,11 @@ const getColor = (pos) => {
   }
 }
 
-const generateEmbed = (data, user) => {
+const generateEmbed = (data, user, position) => {
   return {
     embed: {
-      color: getColor(data.position),
-      title: `${getNumberWithOrdinal(data.position)} place`,
+      color: getColor(position),
+      title: `${getNumberWithOrdinal(position)} place`,
       description: `${user.username}#${user.discriminator}`,
       thumbnail: {
         url: `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`
