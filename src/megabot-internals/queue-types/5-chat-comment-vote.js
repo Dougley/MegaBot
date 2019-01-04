@@ -1,6 +1,6 @@
 const perms = require('../../features/perms')
 const ids = require('../ids')
-const queue = require('../admin-queue')
+const queue = require('../controllers/admin-queue')
 const dlog = require('../dlog')
 
 module.exports = async (question, user, emoji, msg, userID) => {

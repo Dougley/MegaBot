@@ -1,5 +1,5 @@
 const ZD = require('../megabot-internals/zendesk')
-const inquire = require('../megabot-internals/inquirer')
+const inquire = require('../megabot-internals/controllers/inquirer')
 
 module.exports = {
   meta: {

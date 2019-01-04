@@ -1,5 +1,5 @@
-const zd = require('./zendesk')
-const db = require('../databases/lokijs')
+const zd = require('../zendesk')
+const db = require('../../databases/lokijs')
 const inq = require('./inquirer')
 const { Message } = require('eris')
 

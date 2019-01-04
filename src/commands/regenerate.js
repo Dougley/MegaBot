@@ -1,4 +1,4 @@
-const top10 = require('../megabot-internals/top10')
+const top10 = require('../megabot-internals/controllers/top10')
 
 module.exports = {
   meta: {

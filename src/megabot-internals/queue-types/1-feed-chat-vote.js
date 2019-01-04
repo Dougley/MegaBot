@@ -1,5 +1,5 @@
 const perms = require('../../features/perms')
-const queue = require('../admin-queue')
+const queue = require('../controllers/admin-queue')
 const xp = require('../../features/exp')
 const ids = require('../ids')
 const zd = require('../zendesk')

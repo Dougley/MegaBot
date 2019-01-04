@@ -1,10 +1,10 @@
 const zd = require('./zendesk')
 const ids = require('./ids')
 const db = require('../databases/lokijs')
-const top10 = require('./top10')
-const ar = require('./autorole')
-const feed = require('./feed')
-const lb = require('./leaderboard')
+const top10 = require('./controllers/top10')
+const ar = require('./controllers/autorole')
+const feed = require('./controllers/feed')
+const lb = require('./controllers/leaderboard')
 
 logger.debug('Setting intervals')
 

@@ -1,5 +1,5 @@
 const ZD = require('../megabot-internals/zendesk')
-const AQ = require('../megabot-internals/admin-queue')
+const AQ = require('../megabot-internals/controllers/admin-queue')
 const DB = require('../databases/lokijs')
 
 module.exports = {

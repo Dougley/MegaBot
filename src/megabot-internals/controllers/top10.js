@@ -1,7 +1,7 @@
-const ZD = require('../megabot-internals/zendesk')
-const ids = require('../megabot-internals/ids')
-const inq = require('../megabot-internals/inquirer')
-const db = require('../databases/lokijs')
+const ZD = require('../zendesk')
+const ids = require('../ids')
+const inq = require('./inquirer')
+const db = require('../../databases/lokijs')
 
 module.exports = {
   /**

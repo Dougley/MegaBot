@@ -1,10 +1,10 @@
-const db = require('../databases/lokijs')
-const ids = require('./ids')
+const db = require('../../databases/lokijs')
+const ids = require('../ids')
 const inq = require('./inquirer')
-const xp = require('../features/exp')
-const zd = require('./zendesk')
+const xp = require('../../features/exp')
+const zd = require('../zendesk')
 
-const Submission = require('./classes/Submission')
+const Submission = require('../classes/Submission')
 
 module.exports = {
   /**

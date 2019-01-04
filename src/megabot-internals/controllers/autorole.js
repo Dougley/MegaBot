@@ -1,6 +1,6 @@
-const db = require('../databases/lokijs')
-const ids = require('./ids')
-const dlog = require('./dlog')
+const db = require('../../databases/lokijs')
+const ids = require('../ids')
+const dlog = require('../dlog')
 
 module.exports = {
   /**

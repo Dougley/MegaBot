@@ -1,5 +1,5 @@
-const ids = require('./ids')
-const db = require('../databases/lokijs')
+const ids = require('../ids')
+const db = require('../../databases/lokijs')
 
 module.exports = {
   /**
