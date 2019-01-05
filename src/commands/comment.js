@@ -11,6 +11,7 @@ module.exports = {
     const chunks = suffix.split(' ')
     const id = chunks[0].match(MB_CONSTANTS.submissionRegex) ? chunks[0].match(MB_CONSTANTS.submissionRegex)[1] : chunks[0]
     const comment = chunks[1] !== '|' ? chunks.slice(1).join(' ') : chunks.slice(2).join(' ')
+    if (!comment || comment.length < 3) return msg.channel.createMessage("You didn't supply a comment!")
     if (MB_CONSTANTS.inviteRegex.test(comment) && !perms(1, msg.member, msg)) return msg.channel.createMessage('Please do not include invites in your comment.')
     let suggestion // FIXME: might be better to use Promise.all
     ZD.getSubmission(id, ['users', 'topics']).then(c => {
