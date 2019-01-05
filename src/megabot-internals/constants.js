@@ -28,7 +28,8 @@ module.exports = {
   limiter: new Bottleneck({
     reservoir: 700,
     reservoirRefreshAmount: 700,
-    reservoirRefreshInterval: 60 * 1000
+    reservoirRefreshInterval: 60 * 1000,
+    maxConcurrent: 1
   }),
   strings: {
     dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`
