@@ -82,6 +82,11 @@ module.exports = async (question, user, emoji, msg, userID) => {
           created_at: x.createdAt
         })
       })
+     db.create('system', {
+        type: 'dupe-delete',
+        zd_id: question.ids.target,
+        executeTime: Date.now() + 604800000 // 1 week
+      })
       xp.processHolds(msg.id, 4)
       setTimeout(() => {
         x.delete()
