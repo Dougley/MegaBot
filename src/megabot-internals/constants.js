@@ -1,5 +1,18 @@
 const Bottleneck = require('bottleneck')
 
+const limiter = new Bottleneck({
+  reservoir: 700,
+  reservoirRefreshAmount: 700,
+  reservoirRefreshInterval: 60 * 1000,
+  maxConcurrent: 1
+})
+
+limiter._oldStop = limiter.stop
+limiter.stop = async function stop () {
+  this.stopped = true
+  return this._oldStop.apply(this, arguments)
+}
+
 module.exports = {
   submissionRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
   commentRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?\/comments\/(\d{12,})/,
@@ -25,12 +38,7 @@ module.exports = {
   limits: {
     vote: 5
   },
-  limiter: new Bottleneck({
-    reservoir: 700,
-    reservoirRefreshAmount: 700,
-    reservoirRefreshInterval: 60 * 1000,
-    maxConcurrent: 1
-  }),
+  limiter: limiter,
   strings: {
     dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`
   },

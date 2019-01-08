@@ -27,6 +27,7 @@ module.exports = async (ctx) => {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
     if (aliases.has(cmd)) cmd = aliases.get(cmd)
     if (commands[cmd]) {
+      if (MB_CONSTANTS.limiter.stopped) return msg.channel.createMessage("I'm currently unable to process your request, try again later")
       const suffix = msg.content.substr(prefix.length).split(' ').slice(1).join(' ')
       if (!msg.channel.guild) {
         if (commands[cmd].meta.noDM) return msg.channel.createMessage('You cannot use this command in DMs')

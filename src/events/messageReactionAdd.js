@@ -7,6 +7,7 @@ const perms = require('../features/perms')
 const types = require('../megabot-internals/queue-types/index')
 
 module.exports = async (ctx) => {
+  if (MB_CONSTANTS.limiter.stopped) return
   let msg = ctx[0]
   let emoji = ctx[1]
   let userID = ctx[2]
