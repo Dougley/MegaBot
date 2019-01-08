@@ -192,10 +192,12 @@ module.exports = {
   /**
    * Count the amount of documents in a collection
    * @param {String} coll - The name of the collection to count
+   * @param {Object} query - LokiJS search object
    * @return {Number}
    */
-  count: (coll) => {
-    return db.getCollection(coll).chain().count()
+  count: (coll, query) => {
+    if (!query) return db.getCollection(coll).chain().count()
+    else return db.getCollection(coll).chain().find(query).count()
   },
   _driver: db
 }
