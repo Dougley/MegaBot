@@ -20,7 +20,7 @@ module.exports = {
             name: suggestion.sideloads.users[0].name,
             icon_url: suggestion.sideloads.users[0].photo ? suggestion.sideloads.users[0].photo.content_url : undefined
           },
-          title: title.length > 250 ? title.substring(0, 250) + '...' : title,
+          title: title.text.length > 250 ? title.text.substring(0, 250) + '...' : title.text,
           description: translation.text.length === 0 ? '*No content*' : (translation.text.length > 1024 ? `${translation.text.slice(0, 990)}...\n*[Content has been cut off]*` : translation.text),
           url: suggestion.htmlUrl,
           timestamp: suggestion.createdAt,
