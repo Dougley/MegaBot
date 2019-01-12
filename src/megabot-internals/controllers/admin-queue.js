@@ -167,6 +167,7 @@ module.exports = {
         }
       })
       inq.startAdminMergeRequest({
+        userID: user.id,
         type: 3,
         ids: {
           dupe: dupe.id,

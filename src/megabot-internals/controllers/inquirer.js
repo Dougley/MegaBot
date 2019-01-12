@@ -58,6 +58,7 @@ module.exports = {
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
     msg.addReaction(`${ids.emojis.resolve.name}:${ids.emojis.resolve.id}`)
     const ins = {
+      expire: Date.now() + (604800000 * 4), // expire in 1 month
       wb_id: msg.id,
       ...data
     }
@@ -75,6 +76,7 @@ module.exports = {
     msg.addReaction(`${ids.emojis.dismiss.name}:${ids.emojis.dismiss.id}`)
     msg.addReaction(`${ids.emojis.reverse.name}:${ids.emojis.reverse.id}`)
     const ins = {
+      expire: Date.now() + (604800000 * 4), // expire in 1 month
       wb_id: msg.id,
       ...data
     }
@@ -110,6 +112,7 @@ module.exports = {
     msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
     const ins = {
       type: 5,
+      expire: Date.now() + 432000000, // expire in 5 days
       wb_id: msg.id,
       ids: {
         comment: comment,
@@ -138,5 +141,31 @@ module.exports = {
       }
     }
     return db.create('questions', ins)
+  },
+  /**
+   * Await a reaction on a message
+   * This returns an object of the reaction that was returned, given the reaction was whitelisted
+   * @param {Array<Object>} whitelist - Array of emoji objects that should be listened to
+   * @param {Message} msg - The message to listen to
+   * @param {String} user - ID of the user to listen to
+   * @return {Promise<Object>} - The emoji reacted with
+   */
+  awaitReaction: (whitelist, msg, user) => {
+    return new Promise((resolve, reject) => {
+      whitelist.forEach(x => msg.addReaction(`${x.name}:${x.id}`))
+      bot.on('messageReactionAdd', function compute (message, emoji, userid) {
+        const time = setTimeout(() => {
+          bot.removeListener('messageReactionAdd', compute)
+          msg.removeReactions()
+          return reject(new Error('Timed out'))
+        }, 10000)
+        if (message.id === msg.id && userid === user && emoji.id && whitelist.map(x => x.id).includes(emoji.id)) {
+          clearTimeout(time)
+          bot.removeListener('messageReactionAdd', compute)
+          msg.removeReactions()
+          return resolve(emoji)
+        }
+      })
+    })
   }
 }
