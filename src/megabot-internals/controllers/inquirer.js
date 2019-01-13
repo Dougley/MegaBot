@@ -158,7 +158,7 @@ module.exports = {
           bot.removeListener('messageReactionAdd', compute)
           msg.removeReactions()
           return reject(new Error('Timed out'))
-        }, 10000)
+        }, 30000)
         if (message.id === msg.id && userid === user && emoji.id && whitelist.map(x => x.id).includes(emoji.id)) {
           clearTimeout(time)
           bot.removeListener('messageReactionAdd', compute)
