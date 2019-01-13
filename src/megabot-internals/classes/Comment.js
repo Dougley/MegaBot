@@ -26,6 +26,7 @@ class Comment extends Base {
 
   /**
    * Get clean content of the comment
+   * @readonly
    * @returns {String}
    */
   get cleanContent () {

@@ -37,6 +37,7 @@ class Submission extends Base {
 
   /**
    * Get clean content of the submission
+   * @readonly
    * @returns {String}
    */
   get cleanContent () {

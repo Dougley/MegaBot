@@ -6,7 +6,7 @@ const db = new Loki('wildbeast.db', {
   autosaveInterval: 1000
 })
 
-const collections = ['users', 'questions', 'cache', 'bonuses', 'holds', 'system'] // extend this to add more, beware that this might add extra strain
+const collections = ['users', 'questions', 'bonuses', 'holds', 'system'] // extend this to add more, beware that this might add extra strain
 
 function loadCollections () {
   collections.forEach(x => {

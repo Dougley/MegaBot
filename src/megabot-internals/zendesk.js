@@ -1,6 +1,6 @@
 const SA = require('superagent')
 const QS = require('querystring')
-const DB = require('../databases/lokijs')
+const DB = require('../databases/redis')
 
 const ROOT_URL = `${process.env.ZENDESK_ROOT_URL}/api/v2`
 const { schedule } = MB_CONSTANTS.limiter
@@ -230,15 +230,10 @@ module.exports = {
 
 async function getUserDetails (id) {
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE) id = process.env.DEBUG_USER_SEARCH_OVERRIDE
-  const cache = await DB.get('cache', `zd_u:${id}`)
+  let cache = await DB.get(`zd_u:${id}`)
   if (cache) {
-    // this cache might be expired
-    if (new Date(cache.expire) > new Date()) {
-      logger.debug('Returning user cache')
-      return DB.get('cache', `zd_u:${id}`)
-    } else {
-      DB.delete('cache', `zd_u:${id}`)
-    }
+    logger.debug('Returning user cache')
+    return JSON.parse(cache)
   }
   const data = await schedule(() => SA
     .get(`${ROOT_URL}/users/search.json?${QS.stringify({ query: id })}`)
@@ -247,11 +242,9 @@ async function getUserDetails (id) {
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
   if (data.body.count === 0 || !data.body.users.find(x => x.external_id === id)) throw new Error('No such user')
   else {
-    await DB.create('cache', {
-      expire: Date.now() + 604800000, // 1 week
-      wb_id: `zd_u:${id}`,
+    await DB.set(`zd_u:${id}`, JSON.stringify({
       ...data.body.users.find(x => x.external_id === id)
-    })
+    }), 'EX', 604800) // expire in 1 week
     return data.body.users.find(x => x.external_id === id)
   }
 }
