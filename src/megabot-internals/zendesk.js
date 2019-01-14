@@ -8,6 +8,7 @@ const { schedule } = MB_CONSTANTS.limiter
 const Submission = require('./classes/Submission')
 const Vote = require('./classes/Vote')
 const Comment = require('./classes/Comment')
+const Topic = require('./classes/Topic')
 
 module.exports = {
   /**
@@ -225,6 +226,29 @@ module.exports = {
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.trace(res.body)
     return res.body.user
+  },
+  /**
+   * Get a list of all topics for community
+   * @return {Promise<Topic[]>}
+   */
+  getTopics: async () => {
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/topics.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.trace(res.body)
+    return res.body.topics.map(x => new Topic(res.body, x))
+  },
+  /**
+   * Return a specific community topic
+   * @param {String | Number} id - The ID of the topic
+   * @return {Promise<Topic>}
+   */
+  getTopic: async (id) => {
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/topics/${id}.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.trace(res.body)
+    return new Topic(res.body, res.body.topic)
   }
 }
 
