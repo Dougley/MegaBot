@@ -120,7 +120,7 @@ const getAllVotes = async (id) => {
   while (keepGoing) {
     let data = await zd.getVotes(id, page)
     await votes.push.apply(votes, data)
-    if (data[0].pagination.nextPage !== null) page++
+    if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
   }
   return votes
@@ -135,7 +135,7 @@ const getAllComments = async (id) => {
       page: page
     })
     await comments.push.apply(comments, data)
-    if (data[0].pagination.nextPage !== null) page++
+    if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
   }
   return comments.filter(x => !x.official)
