@@ -24,7 +24,7 @@ module.exports = {
       .replace(/\*/g, '\\*')
       .replace(/~/g, '\\~')
       .replace(/`/g, '\\`')
-      .replace(/_/g, '\\_')
+      .replace(/\|/g, '\\|')
   },
   thresholds: {
     reports: 4, // 3 + 1, megabots reactions also count
