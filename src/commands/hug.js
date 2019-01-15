@@ -34,6 +34,6 @@ module.exports = {
     if (id === bot.user.id) return msg.channel.createMessage(bothug.replace(/{s}/g, msg.author.username))
     const user = bot.users.get(id) || await bot.getRESTUser(id)
     const random = templates[Math.floor(Math.random() * templates.length)].replace(/{s}/g, msg.author.username).replace(/{r}/g, user.username)
-    msg.channel.createMessage(random)
+    msg.channel.createMessage(MB_CONSTANTS.sanitize(random))
   }
 }
