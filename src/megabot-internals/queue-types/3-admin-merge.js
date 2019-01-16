@@ -30,7 +30,7 @@ module.exports = async (question, user, emoji, msg, userID) => {
       votes.forEach(x => {
         // zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
         zd.applyVote({
-          priority: 1, // low priority
+          priority: 9, // low priority
           cardId: question.ids.target,
           type: x.value > 0 ? 'up' : 'down'
         }, {
@@ -40,7 +40,7 @@ module.exports = async (question, user, emoji, msg, userID) => {
       comments.forEach(x => {
         zd.createComment({
           id: question.ids.target,
-          priority: 1 // low priority
+          priority: 9 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,
@@ -80,7 +80,7 @@ module.exports = async (question, user, emoji, msg, userID) => {
       const comments = await getAllComments(question.ids.target)
       votes.forEach(x => {
         zd.applyVote({
-          priority: 1, // low priority
+          priority: 9, // low priority
           cardId: question.ids.dupe,
           type: x.value > 0 ? 'up' : 'down'
         }, {
@@ -90,7 +90,7 @@ module.exports = async (question, user, emoji, msg, userID) => {
       comments.forEach(x => {
         zd.createComment({
           id: question.ids.dupe,
-          priority: 1 // low priority
+          priority: 9 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,
