@@ -1,4 +1,4 @@
-workflow "New workflow" {
+workflow "Docker Workflow" {
   on = "push"
   resolves = ["GitHub Action for Docker-1"]
 }

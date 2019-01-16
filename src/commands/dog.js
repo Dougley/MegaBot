@@ -11,6 +11,7 @@ module.exports = {
     msg.channel.sendTyping()
     const start = await SA.get('https://random.dog/woof.json')
     const image = await SA.get(start.body.url)
+    if (image.body.byteLength > 4500000) return msg.channel.createMessage(start.body.url)
     const url = new URL(start.body.url)
     return msg.channel.createMessage('', {
       file: image.body,

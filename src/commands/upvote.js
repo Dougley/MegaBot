@@ -9,7 +9,10 @@ module.exports = {
   },
   fn: (msg, suffix) => {
     const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
-    ZD.applyVote(msg.author.id, id).then(x => {
+    ZD.applyVote({
+      discordId: msg.author.id,
+      cardId: id
+    }).then(x => {
       return x.getSubmission()
     }).then(x => {
       if (!XP.contains(msg.author.id, `Voted on ${id}`)) XP.applyLimitedReward(msg.author.id, 1, id)

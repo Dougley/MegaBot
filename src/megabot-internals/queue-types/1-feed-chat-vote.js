@@ -14,7 +14,11 @@ module.exports = async (question, user, emoji, msg, userID) => {
       zd_id: question.zd_id
     })
     if (!xp.contains(userID, `Voted on ${question.zd_id}`)) xp.applyLimitedReward(userID, 1, question.zd_id)
-    zd.applyVote(userID, question.zd_id, (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down')
+    zd.applyVote({
+      discordId: userID,
+      cardId: question.zd_id,
+      type: (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down'
+    })
   } else if (emoji.id === ids.emojis.report.id) {
     // this is likely the report reaction
     if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)

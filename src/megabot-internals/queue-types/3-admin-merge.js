@@ -28,11 +28,19 @@ module.exports = async (question, user, emoji, msg, userID) => {
       const votes = await getAllVotes(question.ids.dupe)
       const comments = await getAllComments(question.ids.dupe)
       votes.forEach(x => {
-        zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
+        // zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
+        zd.applyVote({
+          priority: 1, // low priority
+          cardId: question.ids.target,
+          type: x.value > 0 ? 'up' : 'down'
+        }, {
+          user_id: x.userId
+        })
       })
       comments.forEach(x => {
         zd.createComment({
-          id: question.ids.target
+          id: question.ids.target,
+          priority: 1 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,
@@ -71,11 +79,18 @@ module.exports = async (question, user, emoji, msg, userID) => {
       const votes = await getAllVotes(question.ids.target)
       const comments = await getAllComments(question.ids.target)
       votes.forEach(x => {
-        zd.applyVote(x.userId, question.ids.dupe, x.value > 0 ? 'up' : 'down', true)
+        zd.applyVote({
+          priority: 1, // low priority
+          cardId: question.ids.dupe,
+          type: x.value > 0 ? 'up' : 'down'
+        }, {
+          user_id: x.userId
+        })
       })
       comments.forEach(x => {
         zd.createComment({
-          id: question.ids.dupe
+          id: question.ids.dupe,
+          priority: 1 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,

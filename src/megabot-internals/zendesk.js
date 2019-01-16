@@ -102,21 +102,29 @@ module.exports = {
       .delete(`${ROOT_URL}/community/posts/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   },
-  // TODO: Cleanup this route
   /**
    * Create a vote on a submission
-   * @param {String} user - Discord (or Zendesk, if force is true) ID of the user you're acting on behalf on
-   * @param {Number | String} cardid - ID of the submission
-   * @param {String} [type='up'] - Type of vote, can be 'down' or 'up', defaults to 'up'
-   * @param {Boolean} [force=false] - Indicate that no user details should be fetched, but used from input instead
+   * @param {Object} ctx - Context of the request
+   * @param {String} [ctx.discordId] - Discord ID of the user you're acting on behalf on, not required if opts.user_id is defined
+   * @param {Number} [ctx.priority=5] - What priority this request should run at, must be a number from 0 to 9
+   * @param {Number | String} ctx.cardId - The ID of the suggestion you're executing this action on
+   * @param {String} [ctx.type=up] - What vote to apply, can be 'up' or 'down'
+   * @param {Object} [opts={}] - Options for the request
+   * @param {Number} [opts.user_id] - Zendesk ID of the user you're acting on behalf on, not required if ctx.discordId is defined
    * @returns {Promise<Vote>} - Zendesk response
    */
-  applyVote: async (user, cardid, type = 'up', force = false) => {
-    const userinfo = force ? undefined : await getUserDetails(user)
-    const res = await schedule(() => SA
-      .post(`${ROOT_URL}/community/posts/${cardid}/${type}.json`)
+  applyVote: async (ctx, opts = {}) => {
+    if (ctx.discordId) {
+      opts.user_id = (await getUserDetails(ctx.discordId)).id
+    }
+    const defaults = {
+      type: 'up',
+      ...ctx
+    }
+    const res = await schedule({ priority: ctx.priority || 5 }, () => SA
+      .post(`${ROOT_URL}/community/posts/${defaults.cardId}/${defaults.type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      .send({ vote: { user_id: force ? user : userinfo.id } }))
+      .send({ vote: opts }))
     logger.trace(res.body)
     return new Vote(res.body, res.body.vote)
   },
@@ -176,6 +184,7 @@ module.exports = {
    * Create a comment on a submission
    * @param {Object} ctx - Context of the request
    * @param {String} [ctx.discordId] - Discord ID of the user you're acting on behalf on, not required if opts.author_id is defined
+   * @param {Number} [ctx.priority=5] - What priority this request should run at, must be a number from 0 to 9
    * @param {String | Number} ctx.id - Zendesk ID of the suggestion you're commenting on
    * @param {Object} opts - Options to pass to Zendesk,
    * @param {String | Number} [opts.author_id] - Zendesk ID of the user you're acting on behalf on, not required if ctx.discordId is defined
@@ -189,7 +198,7 @@ module.exports = {
     if (ctx.discordId) {
       opts.author_id = (await getUserDetails(ctx.discordId)).id
     }
-    const res = await schedule(() => SA
+    const res = await schedule({ priority: ctx.priority || 5 }, () => SA
       .post(`${ROOT_URL}/community/posts/${ctx.id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ comment: opts, notify_subscribers: false }))
