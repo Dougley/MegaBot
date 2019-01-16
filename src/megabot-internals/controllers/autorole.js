@@ -25,17 +25,17 @@ module.exports = {
       try {
         const user = bot.guilds.get(ids.guild).members.get(x.wb_id) ? bot.guilds.get(ids.guild).members.get(x.wb_id) : await bot.guilds.get(ids.guild).getRESTMember(x.wb_id)
         if (ids.modRoles.some(x => user.roles.includes(x))) return
-        if (!user.roles.includes(ids.custodianRole)) {
+        if (!user.roles.includes(ids.custodianRole) && !x.properties.propmted) {
+          x.properties.propmted = true
           dlog(4, {
-            message: `Granting ${user.username}#${user.discriminator} custodian, they passed the EXP threshold`
+            message: `Prompting ${user.username}#${user.discriminator} to buy the custodian role, they accumulated enough exp to buy the role`
           })
-          logger.debug(`Granting ${x.wb_id} custodian due to autorole`)
-          user.addRole(ids.custodianRole, 'Autorole: EXP threshold reached').then(() => {
-            bot.createMessage(ids.custodianChannel, `Please welcome <@${user.id}> to the custodians!`)
+          bot.getDMChannel(user.id).then(x => {
+            x.createMessage(MB_CONSTANTS.strings.custodianInvite)
           })
         }
       } catch (e) {
-        logger.warn(`Unable to autorole ${x.wb_id}: ${e.message}`)
+        logger.warn(`Unable to prompt ${x.wb_id}: ${e.message}`)
       }
     })
   }

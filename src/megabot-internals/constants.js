@@ -44,11 +44,15 @@ module.exports = {
     commentRemove: 1
   },
   limits: {
-    vote: 5
+    vote: 5,
+    submit: 1,
+    comment: 3,
+    dupe: 5
   },
   limiter: limiter,
   strings: {
-    dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`
+    dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`,
+    custodianInvite: "Hey there! Just wanted to let you know we've seen you around in DFeedback, being awesome, and you've accrued enough experience to buy the coveted Custodian role! It gives you access to more channels, new commands and an absolutely awesome community! Just use this command `!buy roles 1` in this bot's DMs to buy it!"
   },
   generateErrorMessage: (e) => {
     switch (e.message) {

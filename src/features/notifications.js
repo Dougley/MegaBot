@@ -19,19 +19,18 @@ module.exports = {
   },
   /**
    * Create a notification, notifications are not immediately dispatched
-   * @todo This method is adapted from the previous notification system, therefor some details are redundant
-   * @param {Number} type - Type of notification to send
+   * @param {Boolean} accepted - Whether or not this notification is for an accepted action
    * @param {String} user - ID of the user to notify
-   * @param {Object} props - Optional properties, differs per notification type
-   * @return {void | Promise<Message>}
+   * @param {Number} [gain=0] - How much EXP this action rewarded
+   * @return {void}
    */
-  send: (type, user, props) => {
+  send: (accepted, user, gain = 0) => {
     if (check(user)) {
       db.create('system', {
         type: 'notification',
-        n_type: type,
         user: user,
-        props: props
+        gain: gain,
+        accepted: accepted
       })
     }
   },
@@ -49,9 +48,9 @@ module.exports = {
       const channel = await bot.getDMChannel(user)
       channel.createMessage(generateEmbed(
         'Since your last debriefing:\n\n' +
-        `- You had ${notifs.filter(x => [1, 3, 4, 6].includes(x.n_type)).length} reports approved\n` +
-        `- You had ${notifs.filter(x => [2, 5, 7].includes(x.n_type)).length} denied\n` +
-        `- You've gained **${notifs.filter(x => [1, 3, 4, 6].includes(x.n_type)).map(x => x.props.gain).reduce((a, b) => a + b, 0)} EXP**`
+        `- You had ${notifs.filter(x => x.accepted)} reports approved\n` +
+        `- You had ${notifs.filter(x => !x.accepted)} denied\n` +
+        `- You've gained **${notifs.filter(x => x.accepted).map(x => x.gain).reduce((a, b) => a + b, 0)} EXP**`
       ))
     })
     db.findAndRemove('system', {

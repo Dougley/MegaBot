@@ -24,6 +24,9 @@ module.exports = {
           name: 'Revision',
           value: `\`${require('child_process').execSync('git rev-parse HEAD').toString().trim()}\``
         }, {
+          name: 'Remaining budget',
+          value: `${MB_CONSTANTS.limiter.currentReservoir()} remaining out of 700`
+        }, {
           name: 'Buffer stats',
           value: '```js\n' + counts + '\n```'
         }],
