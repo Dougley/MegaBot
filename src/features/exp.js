@@ -47,6 +47,12 @@ module.exports = {
         if (results.length <= MB_CONSTANTS.limits.dupe) giveEXP(id, MB_CONSTANTS.rewards.dupe, `Merged a suggestion`)
         break
       }
+      case 4 : { // submit
+        const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
+        logger.trace(results)
+        if (results.length <= MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.comment, `Submitted suggestion`)
+        break
+      }
     }
   },
   /**
