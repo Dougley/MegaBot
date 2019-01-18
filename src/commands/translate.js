@@ -1,5 +1,6 @@
 const ZD = require('../megabot-internals/zendesk')
 const TL = require('@vitalets/google-translate-api')
+const DB = require('../databases/lokijs')
 
 module.exports = {
   meta: {
@@ -8,7 +9,9 @@ module.exports = {
   },
   fn: async (msg, suffix) => {
     try {
-      const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
+      let id
+      if (suffix) id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
+      else id = (DB.chain('questions').find({ type: 1 }).simplesort('expire', { desc: true }).data()[0]).zd_id // galaxybrain
       const suggestion = await ZD.getSubmission(id, ['topics', 'users'])
       const translation = await TL(suggestion.cleanContent, { to: 'en' })
       const title = await TL(suggestion.title, { to: 'en' })
