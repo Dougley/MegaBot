@@ -25,7 +25,8 @@ module.exports = {
     const data = await database.getUser(id)
     const transactions = data.transactions.filter(x => {
       const then = new Date(x.time)
-      return then.getDate() === (new Date()).getDate()
+      const now = new Date()
+      return then.getDate() === now.getDate()
     })
     switch (type) {
       case 1 : { // votes
