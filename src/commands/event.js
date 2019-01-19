@@ -139,7 +139,7 @@ const generateParticipants = (data) => {
     const v = data.participants[x].filter(x => countable.includes(x.result))
     return { id: x, total: v.length, result: v.map(x => x.gain).reduce((a, b) => a + b, 0) }
   }).sort((a, b) => {
-    return a.result - b.result
+    return b.result - a.result
   })
 }
 
