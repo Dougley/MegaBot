@@ -41,7 +41,7 @@ module.exports = {
     vote: 2,
     comment: 5,
     daily: 25,
-    commentRemove: 1
+    commentRemove: 3
   },
   limits: {
     vote: 5,
