@@ -49,8 +49,8 @@ module.exports = {
       channel.createMessage(generateEmbed(
         'Since your last debriefing:\n\n' +
         `- You had ${notifs.filter(x => x.accepted).length} reports approved\n` +
-        `- You had ${notifs.filter(x => !x.accepted).length} denied\n` +
-        `- You've gained **${notifs.filter(x => x.accepted).map(x => x.gain).reduce((a, b) => a + b, 0)} EXP**`
+        `- You had ${notifs.filter(x => !x.accepted).length} reports denied\n` +
+        `- After daily limits, you've gained **${notifs.filter(x => x.accepted).map(x => x.gain).reduce((a, b) => a + b, 0)} EXP**`
       ))
     })
     db.findAndRemove('system', {

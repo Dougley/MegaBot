@@ -32,26 +32,62 @@ module.exports = {
       case 1 : { // votes
         const results = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        if (results.length <= MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+        if (results.length < MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
         break
       }
       case 2 : { // comments
         const results = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        if (results.length <= MB_CONSTANTS.limits.comment) giveEXP(id, MB_CONSTANTS.rewards.comment, `Commented on ${zdid}`)
+        if (results.length < MB_CONSTANTS.limits.comment) giveEXP(id, MB_CONSTANTS.rewards.comment, `Commented on ${zdid}`)
         break
       }
       case 3 : { // dupes
         const results = transactions.filter(x => /Merged a suggestion/.test(x.reason))
         logger.trace(results)
-        if (results.length <= MB_CONSTANTS.limits.dupe) giveEXP(id, MB_CONSTANTS.rewards.dupe, `Merged a suggestion`)
+        if (results.length < MB_CONSTANTS.limits.dupe) giveEXP(id, MB_CONSTANTS.rewards.dupe, `Merged a suggestion`)
         break
       }
       case 4 : { // submit
         const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
         logger.trace(results)
-        if (results.length <= MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.comment, `Submitted suggestion`)
+        if (results.length < MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.comment, `Submitted suggestion`)
         break
+      }
+    }
+  },
+  /**
+   * Check if the limit for limited rewards has been reached
+   * @param {String} id - ID of the user to check
+   * @param {Number} type - Type of the reward to check
+   * @return {Promise<Boolean>} - If true, this reward won't be applied anymore for the rest of the day
+   */
+  checkIfExhausted: async (id, type) => {
+    const data = await database.getUser(id)
+    const transactions = data.transactions.filter(x => {
+      const then = new Date(x.time)
+      const now = new Date()
+      return then.getDate() === now.getDate()
+    })
+    switch (type) {
+      case 1 : { // votes
+        const results = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        return results.length < MB_CONSTANTS.limits.vote
+      }
+      case 2 : { // comments
+        const results = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        return results.length < MB_CONSTANTS.limits.comment
+      }
+      case 3 : { // dupes
+        const results = transactions.filter(x => /Merged a suggestion/.test(x.reason))
+        logger.trace(results)
+        return results.length < MB_CONSTANTS.limits.dupe
+      }
+      case 4 : { // submit
+        const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
+        logger.trace(results)
+        return results.length < MB_CONSTANTS.limits.submit
       }
     }
   },
@@ -132,8 +168,9 @@ module.exports = {
               module.exports.applyLimitedReward(y, 3)
             })
           }
-          x.users.forEach(y => {
-            notify.send(nototype === 4, y, x.gain)
+          x.users.forEach(async y => {
+            const reached = await module.exports.checkIfExhausted(y, 3)
+            notify.send(nototype === 4, y, (!reached) ? x.gain : 0)
           })
         }
       }
