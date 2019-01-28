@@ -24,7 +24,8 @@ module.exports = {
       expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
       wb_id: msg.id,
-      zd_id: id
+      zd_id: id,
+      userVotes: []
     }
     return db.create('questions', ins)
   },
@@ -97,7 +98,8 @@ module.exports = {
       expire: Date.now() + (604800000 * 2), // expire in 2 weeks
       type: 1,
       wb_id: msg.id,
-      zd_id: id
+      zd_id: id,
+      userVotes: []
     }
     return db.create('questions', ins)
   },

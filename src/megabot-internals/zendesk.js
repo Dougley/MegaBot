@@ -34,7 +34,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/posts.json?${QS.stringify({ ...defaults, ...opts })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.posts.map(x => new Submission(res.body, x))
   },
   /**
@@ -47,7 +47,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/posts/${id}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -59,7 +59,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/help_center/community_posts/search.json?${QS.stringify({ query: query })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.results.map(x => new Submission(res.body, x))
   },
   /**
@@ -75,7 +75,7 @@ module.exports = {
       .post(`${ROOT_URL}/community/posts.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ post: data }))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -89,7 +89,7 @@ module.exports = {
       .put(`${ROOT_URL}/community/posts/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ post: data }))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Submission(res.body, res.body.post)
   },
   /**
@@ -125,8 +125,19 @@ module.exports = {
       .post(`${ROOT_URL}/community/posts/${defaults.cardId}/${defaults.type}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ vote: opts }))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Vote(res.body, res.body.vote)
+  },
+  /**
+   * Delete a vote
+   * @param id - ID of the vote
+   * @return {Promise<Request>}
+   */
+  deleteVote: async (id) => {
+    return schedule(() => SA
+      .delete(`${ROOT_URL}help_center/votes/${id}.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+    )
   },
   /**
    * Get all votes for a submission
@@ -138,7 +149,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.votes.map(x => new Vote(res.body, x))
   },
   /**
@@ -163,7 +174,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/${options.type}/${id}/comments.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.comments.map(x => new Comment(res.body, x))
   },
   /**
@@ -177,7 +188,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/posts/${postid}/comments/${commentid}.json?${QS.stringify({ include: includes.join(',') })}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Comment(res.body, res.body.comment)
   },
   /**
@@ -202,7 +213,7 @@ module.exports = {
       .post(`${ROOT_URL}/community/posts/${ctx.id}/comments.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
       .send({ comment: opts, notify_subscribers: false }))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Comment(res.body, res.body.comment)
   },
   /**
@@ -233,7 +244,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/users/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.user
   },
   /**
@@ -244,7 +255,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/topics.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return res.body.topics.map(x => new Topic(res.body, x))
   },
   /**
@@ -256,7 +267,7 @@ module.exports = {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/topics/${id}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.trace(res.body)
+    logger.http(res.body)
     return new Topic(res.body, res.body.topic)
   }
 }

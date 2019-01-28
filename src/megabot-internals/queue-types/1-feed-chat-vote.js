@@ -18,6 +18,8 @@ module.exports = async (question, user, emoji, msg, userID) => {
       discordId: userID,
       cardId: question.zd_id,
       type: (emoji.id === ids.emojis.upvote.id) ? 'up' : 'down'
+    }).then(x => {
+      question.userVotes[userID] = x.id
     })
   } else if (emoji.id === ids.emojis.report.id) {
     // this is likely the report reaction

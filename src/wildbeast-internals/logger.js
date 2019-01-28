@@ -17,6 +17,9 @@ module.exports = {
   debug: (msg) => {
     if (process.env.NODE_ENV === 'debug') log(chalk`{bold.green DEBUG}: ${msg}`)
   },
+  http: (msg) => {
+    if (process.env.NODE_ENV === 'debug' && !process.env.SUPRESS_HTTP_TRACELOG) log(chalk`{bold.grey HTTP-TRACE}: ${inspect(msg)}`)
+  },
   log: (msg) => {
     log(chalk`{bold.blue INFO}: ${msg}`) // nothing too interesting going on here
   },
@@ -40,7 +43,7 @@ module.exports = {
     log(chalk`{bold.yellow WARN}: ${msg}`)
   },
   trace: (msg) => {
-    if (process.env.NODE_ENV === 'debug') log(chalk`{bold.cyan TRACE}: ${inspect(msg)}`) // trace is the only logging route that inspects automatically
+    if (process.env.NODE_ENV === 'debug') log(chalk`{bold.cyan TRACE}: ${inspect(msg)}`)
   },
   command: (opts) => { // specifically to log commands being ran
     log(chalk`{bold.magenta CMD}: ${opts.cmd} by ${opts.m.author.username} in ${opts.m.channel.guild ? opts.m.channel.guild.name : 'DM'}`)
