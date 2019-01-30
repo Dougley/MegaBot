@@ -72,22 +72,22 @@ module.exports = {
       case 1 : { // votes
         const results = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        return results.length < MB_CONSTANTS.limits.vote
+        return !(results.length < MB_CONSTANTS.limits.vote)
       }
       case 2 : { // comments
         const results = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        return results.length < MB_CONSTANTS.limits.comment
+        return !(results.length < MB_CONSTANTS.limits.comment)
       }
       case 3 : { // dupes
         const results = transactions.filter(x => /Merged a suggestion/.test(x.reason))
         logger.trace(results)
-        return results.length < MB_CONSTANTS.limits.dupe
+        return !(results.length < MB_CONSTANTS.limits.dupe)
       }
       case 4 : { // submit
         const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
         logger.trace(results)
-        return results.length < MB_CONSTANTS.limits.submit
+        return !(results.length < MB_CONSTANTS.limits.submit)
       }
     }
   },
