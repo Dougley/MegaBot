@@ -33,7 +33,7 @@ module.exports = {
       .data()
     const toedit = editable.slice(0, 10)
     users.forEach(async data => {
-      let x = toedit.shift()
+      let x = toedit.pop()
       const user = bot.users.get(data.wb_id) ? bot.users.get(data.wb_id) : await bot.getRESTUser(data.wb_id)
       if (x) x.edit(generateEmbed(data, user, users.indexOf(data) + 1))
       else channel.createMessage(generateEmbed(data, user, users.indexOf(data) + 1))
