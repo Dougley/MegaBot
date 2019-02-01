@@ -50,7 +50,7 @@ module.exports = {
       case 4 : { // submit
         const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
         logger.trace(results)
-        if (results.length < MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.comment, `Submitted suggestion`)
+        if (results.length < MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.submit, `Submitted suggestion`)
         break
       }
     }
