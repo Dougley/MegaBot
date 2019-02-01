@@ -10,22 +10,35 @@ module.exports = {
   update: async () => {
     const channel = bot.getChannel(ids.leaderboard)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
+    const month = (new Date()).getMonth()
     const users = db.chain('users')
       .find({
         entitlements: {
-          $containsNone: ['no-leaderboard']
+          $containsNone: ['no-leaderboard', 'never-custodian']
+        },
+        leaderboardData: {
+          $contains: month
         }
       })
-      .simplesort('properties.exp', { desc: true })
+      .where(x => {
+        // FIXME: This might be disadvantageous to people not in cache
+        const user = bot.guilds.get(ids.guild).members.get(x.wb_id) // cant async here :(
+        if (user) return user.roles.includes(ids.custodianRole)
+        else return false
+      })
+      .sort((a, b) => {
+        return b.leaderboardData[month] - a.leaderboardData[month]
+      })
       .limit(10)
       .data()
     const toedit = editable.slice(0, 10)
     users.forEach(async data => {
-      let x = toedit.pop()
+      let x = toedit.shift()
       const user = bot.users.get(data.wb_id) ? bot.users.get(data.wb_id) : await bot.getRESTUser(data.wb_id)
       if (x) x.edit(generateEmbed(data, user, users.indexOf(data) + 1))
       else channel.createMessage(generateEmbed(data, user, users.indexOf(data) + 1))
     })
+    if (toedit.length > 0) toedit.forEach(x => x.delete())
   }
 }
 
@@ -45,6 +58,8 @@ const getColor = (pos) => {
 }
 
 const generateEmbed = (data, user, position) => {
+  const { format } = require('date-fns')
+  const month = (new Date()).getMonth()
   return {
     embed: {
       color: getColor(position),
@@ -56,8 +71,8 @@ const generateEmbed = (data, user, position) => {
       timestamp: new Date(),
       fields: [
         {
-          name: 'EXP',
-          value: data.properties.exp
+          name: `EXP gained in ${format(new Date(), 'MMMM')}`,
+          value: data.leaderboardData[month]
         }
       ]
     }

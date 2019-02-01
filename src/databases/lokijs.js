@@ -227,6 +227,7 @@ function ensureUser (id) {
       entitlements: [],
       overrides: [],
       transactions: [],
+      leaderboardData: {},
       onetimeRewards: [],
       blocked: false
     }
