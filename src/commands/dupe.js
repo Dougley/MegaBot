@@ -19,10 +19,9 @@ module.exports = {
     }
     if (dupe.id === target.id) return msg.channel.createMessage("Can't merge 2 of the same suggestions!")
     if (DB.findSync('questions', {
-      'ids.target': target.id,
       'ids.dupe': dupe.id,
       type: 3
-    })) return msg.channel.createMessage('A dupe request for these suggestions was already submitted.')
+    })) return msg.channel.createMessage(`A dupe request targeting ${dupe.id} was already submitted`)
     if (dupe.status === 'answered') return msg.channel.createMessage("You can't merge a suggestion that's marked as `Answered`. If you feel this is in error, contact Dabbit Prime")
     const x = await msg.channel.createMessage({
       content: 'This merge request will result in this suggestion when approved, is this correct?',

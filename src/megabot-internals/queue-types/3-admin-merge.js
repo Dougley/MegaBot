@@ -28,11 +28,19 @@ module.exports = async (question, user, emoji, msg, userID) => {
       const votes = await getAllVotes(question.ids.dupe)
       const comments = await getAllComments(question.ids.dupe)
       votes.forEach(x => {
-        zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
+        // zd.applyVote(x.userId, question.ids.target, x.value > 0 ? 'up' : 'down', true)
+        zd.applyVote({
+          priority: 9, // low priority
+          cardId: question.ids.target,
+          type: x.value > 0 ? 'up' : 'down'
+        }, {
+          user_id: x.userId
+        })
       })
       comments.forEach(x => {
         zd.createComment({
-          id: question.ids.target
+          id: question.ids.target,
+          priority: 9 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,
@@ -71,11 +79,18 @@ module.exports = async (question, user, emoji, msg, userID) => {
       const votes = await getAllVotes(question.ids.target)
       const comments = await getAllComments(question.ids.target)
       votes.forEach(x => {
-        zd.applyVote(x.userId, question.ids.dupe, x.value > 0 ? 'up' : 'down', true)
+        zd.applyVote({
+          priority: 9, // low priority
+          cardId: question.ids.dupe,
+          type: x.value > 0 ? 'up' : 'down'
+        }, {
+          user_id: x.userId
+        })
       })
       comments.forEach(x => {
         zd.createComment({
-          id: question.ids.dupe
+          id: question.ids.dupe,
+          priority: 9 // low priority
         }, {
           body: x.rawContent,
           author_id: x.authorId,
@@ -120,7 +135,7 @@ const getAllVotes = async (id) => {
   while (keepGoing) {
     let data = await zd.getVotes(id, page)
     await votes.push.apply(votes, data)
-    if (data[0].pagination.nextPage !== null) page++
+    if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
   }
   return votes
@@ -135,7 +150,7 @@ const getAllComments = async (id) => {
       page: page
     })
     await comments.push.apply(comments, data)
-    if (data[0].pagination.nextPage !== null) page++
+    if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
   }
   return comments.filter(x => !x.official)

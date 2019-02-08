@@ -20,7 +20,7 @@ module.exports = {
       details: chunks[1] ? chunks[1] : undefined,
       topic_id: IDs.channels[msg.channel.id]
     }).then(x => {
-      XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.submit, 'Submitted suggestion')
+      XP.applyLimitedReward(msg.author.id, 4)
       msg.delete()
       msg.channel.createMessage({
         content: `<@${msg.author.id}>, your suggestion was submitted!`,

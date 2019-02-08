@@ -18,38 +18,44 @@ module.exports = {
     return !data.properties.notifications
   },
   /**
-   * Send notifications
-   * @param {Number} type - Type of notification to send
+   * Create a notification, notifications are not immediately dispatched
+   * @param {Boolean} accepted - Whether or not this notification is for an accepted action
    * @param {String} user - ID of the user to notify
-   * @param {Object} props - Optional properties, differs per notification type
-   * @return {void | Promise<Message>}
+   * @param {Number} [gain=0] - How much EXP this action rewarded
+   * @return {void}
    */
-  send: async (type, user, props) => {
-    if (!check(user)) return
-    const channel = await bot.getDMChannel(user)
-    switch (type) {
-      case 1 : {
-        return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and accepted!\nYou gained ${props.gain} EXP`))
-      }
-      case 2 : {
-        return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and denied.`))
-      }
-      case 3 : {
-        return channel.createMessage(generateEmbed(`Your report for ${props.id} has been processed and was dealt with.\nYou gained ${props.gain} EXP`))
-      }
-      case 4 : {
-        return channel.createMessage(generateEmbed(`Your dupe report concerning ${props.ids.dupe} and ${props.ids.target} has been processed and accepted!\nYou gained ${props.gain} EXP`))
-      }
-      case 5 : {
-        return channel.createMessage(generateEmbed(`Your dupe report concerning ${props.ids.dupe} and ${props.ids.target} has been processed and denied.`))
-      }
-      case 6 : {
-        return channel.createMessage(generateEmbed(`The comment you reported with ID ${props.ids.comment} for suggestion ${props.ids.card} has been deleted\nYou gained ${props.gain} EXP`))
-      }
-      case 7 : {
-        return channel.createMessage(generateEmbed(`Your report for comment with ID ${props.ids.comment} for suggestion ${props.ids.card} has been denied.`))
-      }
+  send: (accepted, user, gain = 0) => {
+    if (check(user)) {
+      db.create('system', {
+        type: 'notification',
+        user: user,
+        gain: gain,
+        accepted: accepted
+      })
     }
+  },
+  /**
+   * Dispatch notifications to users
+   * @return {Promise<void>}
+   */
+  dispatch: async () => {
+    const messages = db.findManySync('system', {
+      type: 'notification'
+    })
+    const users = new Set(messages.map(x => x.user))
+    users.forEach(async user => {
+      const notifs = messages.filter(z => z.user === user)
+      const channel = await bot.getDMChannel(user)
+      channel.createMessage(generateEmbed(
+        'Since your last debriefing:\n\n' +
+        `- You had ${notifs.filter(x => x.accepted).length} reports approved\n` +
+        `- You had ${notifs.filter(x => !x.accepted).length} reports denied\n` +
+        `- After daily limits, you've gained **${notifs.filter(x => x.accepted).map(x => x.gain).reduce((a, b) => a + b, 0)} EXP**`
+      ))
+    })
+    db.findAndRemove('system', {
+      type: 'notification'
+    })
   }
 }
 
@@ -66,8 +72,8 @@ function check (id) {
 function generateEmbed (message) {
   return {
     embed: {
-      title: 'MegaBot notification',
-      color: 0xFFFAFA,
+      title: 'MegaBot debriefing',
+      color: 0x376df9,
       description: message,
       timestamp: new Date()
     }

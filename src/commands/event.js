@@ -91,7 +91,7 @@ module.exports = {
             embed: {
               color: 0x2faffd,
               title: `Event ID ${data['$loki']}`,
-              description: participants.length > 1 ? participants.slice(participants.length - 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n') : 'No participants :(',
+              description: participants.length > 1 ? participants.slice(0, 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n') : 'No participants :(',
               fields: [{
                 name: 'Start date',
                 value: new Date(data.startDate).toDateString(),
@@ -138,16 +138,14 @@ const generateParticipants = (data) => {
   return names.map(x => {
     const v = data.participants[x].filter(x => countable.includes(x.result))
     return { id: x, total: v.length, result: v.map(x => x.gain).reduce((a, b) => a + b, 0) }
-  }).sort((a, b) => {
-    return a.result - b.result
-  })
+  }).sort((a, b) => b.result - a.result)
 }
 
 const generateEmbed = (finals) => {
   return {
     color: 0x2faffd,
     title: 'Top 10 participants',
-    description: finals.slice(finals.length - 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n'),
+    description: finals.slice(0, 10).map(x => `<@${x.id}>: ${x.total} actions with a gain of ${x.result} EXP`).join('\n'),
     footer: {
       icon_url: global.bot.user.dynamicAvatarURL('png', 32),
       text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`

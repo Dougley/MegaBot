@@ -23,15 +23,71 @@ module.exports = {
    */
   applyLimitedReward: async (id, type, zdid) => {
     const data = await database.getUser(id)
+    const transactions = data.transactions.filter(x => {
+      const then = new Date(x.time)
+      const now = new Date()
+      return then.getDate() === now.getDate()
+    })
     switch (type) {
       case 1 : { // votes
-        const now = new Date()
-        const results = data.transactions.filter(x => {
-          const then = new Date(x.time)
-          return then.getDate() === now.getDate()
-        }).filter(x => /Voted on ([0-9])+/.test(x.reason))
+        const results = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
         logger.trace(results)
-        if (results.length <= MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+        if (results.length < MB_CONSTANTS.limits.vote) giveEXP(id, MB_CONSTANTS.rewards.vote, `Voted on ${zdid}`)
+        break
+      }
+      case 2 : { // comments
+        const results = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        if (results.length < MB_CONSTANTS.limits.comment) giveEXP(id, MB_CONSTANTS.rewards.comment, `Commented on ${zdid}`)
+        break
+      }
+      case 3 : { // dupes
+        const results = transactions.filter(x => /Merged a suggestion/.test(x.reason))
+        logger.trace(results)
+        if (results.length < MB_CONSTANTS.limits.dupe) giveEXP(id, MB_CONSTANTS.rewards.dupe, `Merged a suggestion`)
+        break
+      }
+      case 4 : { // submit
+        const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
+        logger.trace(results)
+        if (results.length < MB_CONSTANTS.limits.submit) giveEXP(id, MB_CONSTANTS.rewards.submit, `Submitted suggestion`)
+        break
+      }
+    }
+  },
+  /**
+   * Check if the limit for limited rewards has been reached
+   * @param {String} id - ID of the user to check
+   * @param {Number} type - Type of the reward to check
+   * @return {Promise<Boolean>} - If true, this reward won't be applied anymore for the rest of the day
+   */
+  checkIfExhausted: async (id, type) => {
+    const data = await database.getUser(id)
+    const transactions = data.transactions.filter(x => {
+      const then = new Date(x.time)
+      const now = new Date()
+      return then.getDate() === now.getDate()
+    })
+    switch (type) {
+      case 1 : { // votes
+        const results = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        return !(results.length < MB_CONSTANTS.limits.vote)
+      }
+      case 2 : { // comments
+        const results = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
+        logger.trace(results)
+        return !(results.length < MB_CONSTANTS.limits.comment)
+      }
+      case 3 : { // dupes
+        const results = transactions.filter(x => /Merged a suggestion/.test(x.reason))
+        logger.trace(results)
+        return !(results.length < MB_CONSTANTS.limits.dupe)
+      }
+      case 4 : { // submit
+        const results = transactions.filter(x => /Submitted suggestion/.test(x.reason))
+        logger.trace(results)
+        return !(results.length < MB_CONSTANTS.limits.submit)
       }
     }
   },
@@ -59,7 +115,7 @@ module.exports = {
    * Process a hold
    * This finalizes an already pending transaction
    * @param {String} id - ID of the entity that is responsible for processing, this was supplied in holdEXP()
-   * @param {Number} nototype - Type of reward to process, this coincides with what notification to send
+   * @param {Number} nototype - Type of reward to process
    * @return {Promise<void>}
    */
   processHolds: async (id, nototype) => {
@@ -84,63 +140,38 @@ module.exports = {
       }
       const notify = require('./notifications')
       switch (x.type) { // data type
-        case 1 : { // reporters: report processed
-          const rewardable = [1, 3] // notification type
+        case 1 : // reporters: report processed
+        case 4 : { // reporters: comment delete processed
+          const rewardable = [1, 3, 6] // notification type
           if (rewardable.includes(nototype)) {
             x.users.forEach(y => {
               giveEXP(y, x.gain, x.message)
             })
           }
           x.users.forEach(y => {
-            notify.send(nototype, y, {
-              id: x.zd_id,
-              gain: x.gain
-            })
+            notify.send(rewardable.includes(nototype), y, x.gain)
           })
           break
         }
         case 2 : { // suggestor: submission destroyed
           if (nototype === 1) { // notification type
-            const user = database.findManySync('users', {
+            const user = database.findSync('users', {
               wb_id: x.users[0]
             })
-            if (!user) return
-            else giveEXP(x.users[0], x.gain, x.message)
+            if (user) giveEXP(x.users[0], x.gain, x.message)
           }
           break
         }
         case 3 : { // reporters: dupe processed
-          const rewardable = [4] // notification type
-          if (rewardable.includes(nototype)) {
+          if (nototype === 4) {
             x.users.forEach(y => {
-              giveEXP(y, x.gain, x.message)
+              module.exports.applyLimitedReward(y, 3)
             })
           }
-          x.users.forEach(y => {
-            notify.send(nototype, y, {
-              ids: {
-                dupe: x.ids.dupe,
-                target: x.ids.target
-              },
-              gain: x.gain
-            })
+          x.users.forEach(async y => {
+            const reached = await module.exports.checkIfExhausted(y, 3)
+            notify.send(nototype === 4, y, (!reached) ? x.gain : 0)
           })
-          break
-        }
-        case 4 : { // reporters: comment delete processed
-          const rewardable = [6] // notification type
-          if (rewardable.includes(nototype)) {
-            x.users.forEach(y => {
-              giveEXP(y, x.gain, x.message)
-            })
-          }
-          x.users.forEach(y => {
-            notify.send(nototype, y, {
-              ids: x.ids,
-              gain: x.gain
-            })
-          })
-          break
         }
       }
       database.remove('holds', x)
@@ -181,6 +212,9 @@ module.exports = {
 function giveEXP (id, granted, msg) {
   if (id === bot.user.id) return // cant reward exp to myself
   const userinfo = database.getSync('users', id)
+  const month = (new Date()).getMonth()
+  if (!userinfo.leaderboardData) userinfo.leaderboardData = {}
+  userinfo.leaderboardData[month] = (userinfo.leaderboardData[month] || 0) + granted
   if (userinfo.entitlements.includes('gains-no-exp')) return
   userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
   if (userinfo.transactions.length > 50) userinfo.transactions = userinfo.transactions.slice(userinfo.transactions.length - 50)

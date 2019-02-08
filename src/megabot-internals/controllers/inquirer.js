@@ -24,7 +24,8 @@ module.exports = {
       expire: Date.now() + 432000000, // expire in 5 days
       type: 4,
       wb_id: msg.id,
-      zd_id: id
+      zd_id: id,
+      userVotes: []
     }
     return db.create('questions', ins)
   },
@@ -97,7 +98,8 @@ module.exports = {
       expire: Date.now() + (604800000 * 2), // expire in 2 weeks
       type: 1,
       wb_id: msg.id,
-      zd_id: id
+      zd_id: id,
+      userVotes: []
     }
     return db.create('questions', ins)
   },
@@ -158,7 +160,7 @@ module.exports = {
           bot.removeListener('messageReactionAdd', compute)
           msg.removeReactions()
           return reject(new Error('Timed out'))
-        }, 10000)
+        }, 20000)
         if (message.id === msg.id && userid === user && emoji.id && whitelist.map(x => x.id).includes(emoji.id)) {
           clearTimeout(time)
           bot.removeListener('messageReactionAdd', compute)

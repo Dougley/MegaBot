@@ -32,6 +32,7 @@ To verify your code adheres to our styleguide, run `npm test` in the project roo
 
 Although we expose the database driver as `_driver`, please don't use it. We strongly urge you to write abstractions instead.    
 Importing methods from `_driver` using ES6 destructuring syntax is also not allowed.    
+The exception to this rule is the Redis driver.
 
 ### Global objects
 

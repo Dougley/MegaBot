@@ -18,13 +18,18 @@ module.exports = {
         if (!role) return msg.channel.createMessage('No role with that ID found!')
         else {
           const user = bot.guilds.get(ids.guild).members.get(msg.author.id) ? bot.guilds.get(ids.guild).members.get(msg.author.id) : await bot.guilds.get(ids.guild).getRESTMember(msg.author.id)
-          if (user.roles.includes(role)) {
+          if (!user.roles.includes(ids.custodianRole) && role !== ids.custodianRole) {
+            return msg.channel.createMessage('You must buy the custodian role before any other role.')
+          } else if (user.roles.includes(role)) {
             return msg.channel.createMessage('You already have that role.')
+          } else if (user.roles.length < Object.keys(rewards.roles).indexOf(role)) {
+            return msg.channel.createMessage('You must buy roles in order.')
           }
           if (userdata.properties.exp >= rewards.roles[role]) {
             user.addRole(role, 'Role bought')
             xp.applyEXP(msg.author.id, -Math.abs(rewards.roles[role]), 'Bought a role')
-            bot.createMessage(ids.custodianChannel, `<@${msg.author.id}> has entered the ranks of **${bot.guilds.get(ids.guild).roles.get(role).name}**!`)
+            if (role !== ids.custodianRole) bot.createMessage(ids.custodianChannel, `<@${msg.author.id}> has entered the ranks of **${bot.guilds.get(ids.guild).roles.get(role).name}**!`)
+            else bot.createMessage(ids.custodianChannel, `Please welcome <@${msg.author.id}> to the custodians!`)
             return msg.channel.createMessage('You successfully bought a new role!')
           } else {
             return msg.channel.createMessage("You currently don't have enough EXP to buy that role :(")

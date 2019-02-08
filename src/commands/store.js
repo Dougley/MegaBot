@@ -7,12 +7,13 @@ module.exports = {
     onlyDM: true,
     alias: ['shop']
   },
-  fn: (msg, suffix) => {
+  fn: async (msg, suffix) => {
     switch (suffix) {
       case 'roles': {
         const roles = bot.guilds.get(ids.guild).roles
         const rewardable = roles.filter(x => !!rewards.roles[x.id])
-        return msg.channel.createMessage(generateRoleListing(rewardable))
+        const userroles = (await bot.guilds.get(ids.guild).getRESTMember(msg.author.id)).roles.filter(x => !!rewards.roles[x])
+        return msg.channel.createMessage(generateRoleListing(rewardable, userroles))
       }
       case 'things': {
         if (!rewards.things || rewards.things.length === 0) return msg.channel.createMessage('There are no rewards to list in this category! :(')
@@ -25,12 +26,20 @@ module.exports = {
   }
 }
 
-const generateRoleListing = (roles) => {
+const generateRoleListing = (roles, userroles) => {
   return {
     embed: {
       color: 0x76e9db,
       title: 'MegaBot Store',
-      description: roles.map(x => `**${Object.keys(rewards.roles).indexOf(x.id) + 1}**: ${x.name} - ${rewards.roles[x.id]} EXP`).join('\n') + `\n\n*Use \`${process.env.BOT_PREFIX}buy roles role-number\` to buy a role*`, // 1: buyable role - x EXP
+      description: roles.map(x => {
+        const index = Object.keys(rewards.roles).indexOf(x.id)
+        const message = `**${index + 1}**: ${x.name} - ${rewards.roles[x.id]} EXP`
+
+        if (x.id !== ids.custodianRole && !userroles.includes(ids.custodianRole)) return `~~${message}~~ *(you need to buy Custodian first)*`
+        else if (userroles.length < index) return `~~${message}~~ *(you must buy roles in order)*`
+        else if (userroles.includes(x.id)) return `~~${message}~~ *(you already have that role)*`
+        else return message
+      }).join('\n') + `\n\n*Use \`${process.env.BOT_PREFIX}buy roles role-number\` to buy a role*`, // 1: buyable role - x EXP
       footer: {
         icon_url: global.bot.user.dynamicAvatarURL('png', 32),
         text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`

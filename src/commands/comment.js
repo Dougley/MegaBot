@@ -26,7 +26,7 @@ module.exports = {
         })
       }
     }).then(() => {
-      if (!XP.contains(msg.author.id, `Commented on ${suggestion.id}`)) XP.applyEXP(msg.author.id, MB_CONSTANTS.rewards.comment, `Commented on ${suggestion.id}`)
+      if (!XP.contains(msg.author.id, `Commented on ${suggestion.id}`)) XP.applyLimitedReward(msg.author.id, 2, suggestion.id)
       msg.delete()
       return msg.channel.createMessage({
         content: 'Your comment was added',

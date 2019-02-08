@@ -5,6 +5,7 @@ const top10 = require('./controllers/top10')
 const ar = require('./controllers/autorole')
 const feed = require('./controllers/feed')
 const lb = require('./controllers/leaderboard')
+const notifs = require('../features/notifications')
 
 logger.debug('Setting intervals')
 
@@ -83,6 +84,11 @@ module.exports = [
       })
     })
   }, 120000), // 2 minutes
+
+  setInterval(() => {
+    logger.debug('Dispatching notifications')
+    notifs.dispatch()
+  }, (3600000 * 2)), // 2 hours
 
   setInterval(() => {
     logger.debug('Refreshing top10')

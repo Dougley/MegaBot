@@ -4,7 +4,7 @@ module.exports = {
   meta: {
     level: 2
   },
-  fn: (msg) => {
+  fn: async (msg) => {
     const { inspect } = require('util')
     const counts = inspect(MB_CONSTANTS.limiter.counts(), { compact: false })
     msg.channel.createMessage({
@@ -23,6 +23,9 @@ module.exports = {
         }, {
           name: 'Revision',
           value: `\`${require('child_process').execSync('git rev-parse HEAD').toString().trim()}\``
+        }, {
+          name: 'Remaining budget',
+          value: `${await MB_CONSTANTS.limiter.currentReservoir()} remaining out of 700`
         }, {
           name: 'Buffer stats',
           value: '```js\n' + counts + '\n```'
