@@ -6,7 +6,7 @@ const intervals = require('../megabot-internals/intervals')
 
 module.exports = {
   meta: {
-    level: 10
+    level: 3
   },
   fn: async (msg) => {
     const m = await msg.channel.createMessage('Update queued, waiting for jobs to complete...')
