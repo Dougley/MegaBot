@@ -57,10 +57,10 @@ module.exports = {
   generateErrorMessage: (e) => {
     switch (e.message) {
       case 'No such user' : {
-        return `Your details couldn't be found, please make sure you've logged in at least once at ${process.env.ZENDESK_ROOT_URL}/hc/en-us/signin\nIf you just recently signed in for the first time, it might take a minute for me to detect it.`
+        return `Seems this is the first time you're using the feedback system, please login first at ${process.env.ZENDESK_ROOT_URL}/hc/en-us/signin for everything to work properly.\nIf you just recently signed in for the first time, it might take a minute for me to detect it.`
       }
       case 'Not Found' : {
-        return "Using your input, no content could be found. Please make sure you haven't made a typo"
+        return "I haven't found anything using your input. Please make sure you haven't made a typo"
       }
       case 'Internal Server Error': {
         return "Zendesk didn't respond properly for whatever reason, please try again later.\nThis issue might be related to problems over at Zendesk, please check https://status.zendesk.com"

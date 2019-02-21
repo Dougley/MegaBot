@@ -16,7 +16,7 @@ module.exports = {
       const translation = await TL(suggestion.cleanContent, { to: 'en' })
       const title = await TL(suggestion.title, { to: 'en' })
       return msg.channel.createMessage({
-        content: `Translated from \`${translation.from.language.iso}\``,
+        content: `Translated from \`${translation.from.language.iso}\`By Google Translate\nMachine translations are not always reliable, ask someone that speaks this language natively if you're not sure.`,
         embed: {
           color: 0xFFA500,
           author: {

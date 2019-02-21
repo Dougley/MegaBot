@@ -212,10 +212,10 @@ module.exports = {
 function giveEXP (id, granted, msg) {
   if (id === bot.user.id) return // cant reward exp to myself
   const userinfo = database.getSync('users', id)
+  if (userinfo.entitlements.includes('gains-no-exp')) return
   const month = (new Date()).getMonth()
   if (!userinfo.leaderboardData) userinfo.leaderboardData = {}
   userinfo.leaderboardData[month] = (userinfo.leaderboardData[month] || 0) + granted
-  if (userinfo.entitlements.includes('gains-no-exp')) return
   userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
   if (userinfo.transactions.length > 50) userinfo.transactions = userinfo.transactions.slice(userinfo.transactions.length - 50)
   return database.editSync(id, {

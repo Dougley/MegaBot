@@ -41,7 +41,7 @@ module.exports = async (ctx) => {
       let time = true
       if (commands[cmd].meta.timeout) time = timeout.calculate(msg.author.id, cmd, commands[cmd].meta.timeout)
       if (time !== true) return msg.channel.createMessage(`This command is still on cooldown, try again in ${Math.floor(time)} seconds.`)
-      const allowed = (commands[cmd].meta.forceDM && !msg.channel.guild) ? true : perms(commands[cmd].meta.level, (msg.channel.guild ? msg.member : msg.author), msg, (commands[cmd].meta.level === 2 ? 'admin-commands' : null))
+      const allowed = (commands[cmd].meta.forceDM && !msg.channel.guild) ? true : perms(commands[cmd].meta.level, (msg.channel.guild ? msg.member : msg.author), msg)
       global.logger.debug(`Access: ${allowed}`)
       if (allowed) {
         try {
