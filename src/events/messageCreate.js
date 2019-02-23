@@ -1,5 +1,4 @@
-const commands = require('../wildbeast-internals/command-loader').commands
-const aliases = require('../wildbeast-internals/command-loader').alias
+const { commands, alias } = require('../wildbeast-internals/command-loader')
 const timeout = require('../features/timeout')
 const perms = require('../features/perms')
 const inq = require('../megabot-internals/controllers/inquirer')
@@ -25,7 +24,7 @@ module.exports = async (ctx) => {
   }
   if (msg.content.startsWith(prefix)) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
-    if (aliases.has(cmd)) cmd = aliases.get(cmd)
+    if (alias.has(cmd)) cmd = alias.get(cmd)
     if (commands[cmd]) {
       if (MB_CONSTANTS.limiter.stopped) return msg.channel.createMessage("I'm currently unable to process your request, try again later")
       const suffix = msg.content.substr(prefix.length).split(' ').slice(1).join(' ')
@@ -46,15 +45,15 @@ module.exports = async (ctx) => {
       if (allowed) {
         try {
           commands[cmd].fn(msg, suffix)
-        } catch (e) {
-          global.logger.error(e)
-          msg.channel.createMessage('An error occurred processing this command, please try again later.')
-        } finally {
           if (commands[cmd].meta.cost) {
             if (msg.channel.guild && !ids.modRoles.some(x => msg.member.roles.includes(x))) {
               applyEXP(msg.author.id, -Math.abs(commands[cmd].meta.cost), `Used ${cmd}`)
             }
           }
+        } catch (e) {
+          global.logger.error(e)
+          msg.channel.createMessage('An error occurred processing this command, please try again later.')
+        } finally {
           dlog(1, {
             user: msg.author,
             cmd: msg.content

@@ -27,6 +27,7 @@ module.exports = {
       content: 'This merge request will result in this suggestion when approved, is this correct?',
       ...generateEmbed(dupe, target)
     })
+    await stall(2000)
     INQ.awaitReaction([ID.emojis.confirm, ID.emojis.dismiss], x, msg.author.id).then(z => {
       if (z.id === ID.emojis.confirm.id) {
         AQ.createMergeRequest(dupe, target, msg.author).then(() => x.edit({ content: 'Dupe request submitted', embed: null }))
@@ -38,6 +39,12 @@ module.exports = {
       else logger.error(z)
     })
   }
+}
+
+const stall = (timeout) => {
+  return new Promise(resolve => {
+    setTimeout(() => { return resolve() }, timeout)
+  })
 }
 
 const generateEmbed = (dupe, target) => {
