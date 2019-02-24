@@ -22,7 +22,7 @@ module.exports = {
       'ids.dupe': dupe.id,
       type: 3
     })) return msg.channel.createMessage(`A dupe request targeting ${dupe.id} was already submitted`)
-    if (dupe.status === 'answered') return msg.channel.createMessage("You can't merge a suggestion that's marked as `Answered`. If you feel this is in error, contact Dannysaur")
+    if (dupe.status === 'answered' && !process.env.UNRESTRICTED_DUPE) return msg.channel.createMessage("You can't merge a suggestion that's marked as `Answered`. If you feel this is in error, contact Dannysaur")
     const x = await msg.channel.createMessage({
       content: 'This merge request will result in this suggestion when approved, is this correct?',
       ...generateEmbed(dupe, target)
