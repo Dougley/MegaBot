@@ -30,7 +30,11 @@ module.exports = {
     await stall(2000)
     INQ.awaitReaction([ID.emojis.confirm, ID.emojis.dismiss], x, msg.author.id).then(z => {
       if (z.id === ID.emojis.confirm.id) {
-        AQ.createMergeRequest(dupe, target, msg.author).then(() => x.edit({ content: 'Dupe request submitted', embed: null }))
+        AQ.createMergeRequest(dupe, target, msg.author).then(() => x.edit({ content: 'Dupe request submitted',
+          embed: {
+            description: `Dupe: [${dupe.title}](${dupe.htmlUrl})\nTarget: [${target.title}](${target.htmlUrl})`
+          }
+        }))
       } else if (z.id === ID.emojis.dismiss.id) {
         x.edit({ content: 'Dupe request cancelled', embed: null })
       }
