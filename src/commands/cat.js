@@ -1,5 +1,4 @@
 const SA = require('superagent')
-const { URL } = require('url')
 
 module.exports = {
   meta: {
@@ -9,13 +8,18 @@ module.exports = {
   },
   fn: async (msg) => {
     msg.channel.sendTyping()
-    const start = await SA.get('https://aws.random.cat/meow')
-    const image = await SA.get(start.body.file)
-    if (image.body.byteLength > 4500000) return msg.channel.createMessage(start.body.file)
-    const url = new URL(start.body.file)
-    return msg.channel.createMessage('', {
-      file: image.body,
-      name: encodeURIComponent(url.pathname)
+    const start = (await SA.get('https://aws.random.cat/meow')).body.file
+    const fact = (await SA.get('https://catfact.ninja/fact')).body.fact
+    return msg.channel.createMessage({
+      embed: {
+        color: 0x31c670,
+        image: {
+          url: start
+        },
+        footer: {
+          text: fact
+        }
+      }
     })
   }
 }

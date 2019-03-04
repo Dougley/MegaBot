@@ -1,6 +1,6 @@
 {
   "name": "megabot",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Bot for the official Discord Feedback server.",
   "main": "index.js",
   "scripts": {

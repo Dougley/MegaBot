@@ -3,7 +3,11 @@ const QS = require('querystring')
 const DB = require('../databases/redis')
 
 const ROOT_URL = `${process.env.ZENDESK_ROOT_URL}/api/v2`
-const { schedule } = MB_CONSTANTS.limiter
+const schedule = async (...args) => {
+  if (typeof args[0] === 'object') args[0] = { expiration: 2500, ...args[0] }
+  else args.unshift({ expiration: 2500 })
+  return MB_CONSTANTS.limiter.schedule(...args)
+}
 
 const Submission = require('./classes/Submission')
 const Vote = require('./classes/Vote')
