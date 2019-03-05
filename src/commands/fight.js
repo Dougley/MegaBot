@@ -14,7 +14,8 @@ const templates = [
   '{s} fought like a dog, but {r} fought back like a bear, winning the fight!',
   'A wild {r} appears!\n{r} uses Bite! It\'s not very effective...\n{s} uses Mega Punch! It\'s very effective!\n{s} has won!',
   'As {s} ran all sweaty and tired reaching out for a last punch, {r} dashed to the side, leaving {s} tumbling onto the ground.',
-  '{s} tried to modify the Dupe Bomber 3000 to take down {r} with tons of dupe reports, but Dannysaur got there first and denied them all... Which broke the machine.'
+  '{s} tried to modify the Dupe Bomber 3000 to take down {r} with tons of dupe reports, but Dannysaur got there first and denied them all... Which broke the machine.',
+  '{s} Mega Evolved and tried to wipe out {r} with Hyper Beam! But {r} used Mimic and reversed it back onto {s} instead!'
 ]
 
 module.exports = {
