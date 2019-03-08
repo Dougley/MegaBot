@@ -17,7 +17,8 @@ const templates = [
   '{s} hugged {r} but {r} took it as an attack!',
   '{s} fills {r} with sweet love',
   '{s} gave {r} a Legacy Hug, in recognition of the legendary Dabbit Prime.',
-  'Is {s} sure they want to hug {r}? Sure thing, as they just did!'
+  'Is {s} sure they want to hug {r}? Sure thing, as they just did!',
+  '{s} attempts to hug {r} but Dannysaur threw a banana peel on the floor and made {s} slip',
 ]
 
 const bothug = 'Aww, {s} thanks for hugging me!'
