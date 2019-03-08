@@ -18,8 +18,6 @@ const templates = [
   '{s} Mega Evolved and tried to wipe out {r} with Hyper Beam! But {r} used Mimic and reversed it back onto {s} instead!',
   '{s} threw a snowball at {r} but unfortunately it hits a window at Discord HQ. Oops',
   '{s} tricked {r} into waking up the Sleeping Pizza. The Sleeping Pizza does not like being woken up, so it turned both {s} and {r} into Calzone Pizza. Rest In Pepperoni.'
-  
-  
 ]
 
 module.exports = {
