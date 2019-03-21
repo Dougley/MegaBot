@@ -6,13 +6,14 @@ module.exports = {
   meta: {
     level: 1
   },
-  fn: async (msg) => {
+  fn: async (msg, suffix) => {
     const query = {
       type: 3,
-      userID: msg.author.id
+      userID: msg.author.id,
+      ...(suffix ? { '$loki': parseInt(suffix) } : {})
     }
     const report = db.chain('questions').find(query).simplesort('expire', { desc: true }).data()[0]
-    if (!report) return msg.channel.createMessage('No report found')
+    if (!report) return msg.channel.createMessage('No report found, or the report is not yours to revoke')
     else {
       const x = await msg.channel.createMessage({
         content: 'Are you sure you want to cancel this recent report?',
