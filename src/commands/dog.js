@@ -8,7 +8,7 @@ module.exports = {
   },
   fn: async (msg) => {
     msg.channel.sendTyping()
-    const start = (await SA.get('https://random.dog/woof.json?filter=mp4,webm')).body.message
+    const start = (await SA.get('https://random.dog/woof.json?filter=mp4,webm')).body.url
     const fact = (await SA.get('https://dog-api.kinduff.com/api/facts')).body.facts[0]
     return msg.channel.createMessage({
       embed: {
