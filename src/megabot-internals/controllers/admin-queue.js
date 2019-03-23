@@ -18,6 +18,11 @@ module.exports = {
       zd_id: suggestion.id,
       type: 2
     }) && process.env.NODE_ENV !== 'debug') return
+    const feedmsg = await db.find('questions', {
+      zd_id: suggestion.id,
+      type: 1
+    })
+    if (feedmsg) bot.addMessageReaction(ids.feed, feedmsg.wb_id, `${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
     const channel = bot.getChannel(ids.queue)
     const creator = await zd.getUser(suggestion.authorId)
     channel.createMessage({
