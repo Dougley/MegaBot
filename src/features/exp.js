@@ -213,9 +213,11 @@ function giveEXP (id, granted, msg) {
   if (id === bot.user.id) return // cant reward exp to myself
   const userinfo = database.getSync('users', id)
   if (userinfo.entitlements.includes('gains-no-exp')) return
-  const month = (new Date()).getMonth()
-  if (!userinfo.leaderboardData) userinfo.leaderboardData = {}
-  userinfo.leaderboardData[month] = (userinfo.leaderboardData[month] || 0) + granted
+  if (granted > 0 && !userinfo.entitlements.includes('no-leaderboard')) {
+    const lbstr = `${(new Date()).getMonth()}-${(new Date()).getUTCFullYear()}`
+    if (!userinfo.leaderboardData) userinfo.leaderboardData = {}
+    userinfo.leaderboardData[lbstr] = (userinfo.leaderboardData[lbstr] || 0) + granted
+  }
   userinfo.transactions.push({ modified: granted, reason: msg, time: Date.now() })
   if (userinfo.transactions.length > 50) userinfo.transactions = userinfo.transactions.slice(userinfo.transactions.length - 50)
   return database.editSync(id, {

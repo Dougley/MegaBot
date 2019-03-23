@@ -10,14 +10,14 @@ module.exports = {
   update: async () => {
     const channel = bot.getChannel(ids.leaderboard)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
-    const month = (new Date()).getMonth()
+    const lbstr = `${(new Date()).getMonth()}-${(new Date()).getUTCFullYear()}`
     const users = db.chain('users')
       .find({
         entitlements: {
           $containsNone: ['no-leaderboard', 'never-custodian']
         },
         leaderboardData: {
-          $contains: month
+          $contains: lbstr
         }
       })
       .where(x => {
@@ -27,7 +27,7 @@ module.exports = {
         else return false
       })
       .sort((a, b) => {
-        return b.leaderboardData[month] - a.leaderboardData[month]
+        return b.leaderboardData[lbstr] - a.leaderboardData[lbstr]
       })
       .limit(10)
       .data()
