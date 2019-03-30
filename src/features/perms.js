@@ -12,7 +12,10 @@ const adminroles = [
   '268815286067527690' // Discord Employee
 ]
 
-const custodianrole = '268815388882632704'
+const custodianrole = [
+  '268815388882632704',
+  '518849859822813206' // STAGING
+]
 // no need to add the other custodian roles, everyone has this role regardless
 
 const db = require('../databases/lokijs')
@@ -32,8 +35,8 @@ module.exports = (level, user, msg) => {
   if (userdata.blocked) return false // blocked users dont get to run commands
   if (userdata.entitlements.includes('never-custodian')) return level === 0
   // check role permissions now
-  if (modroles.some(x => user.roles.includes(x))) return level <= 2
   if (adminroles.some(x => user.roles.includes(x))) return level <= 3
-  if (user.roles.includes(custodianrole)) return level <= 1
+  if (modroles.some(x => user.roles.includes(x))) return level <= 2
+  if (custodianrole.some(x => user.roles.includes(x))) return level <= 1
   return level === 0
 }
