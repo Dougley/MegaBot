@@ -284,6 +284,15 @@ module.exports = {
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return new Topic(res.body, res.body.topic)
+  },
+  createSubscription: async (postid, userid) => {
+    const user = await getUserDetails(userid)
+    const res = await schedule(() => SA
+      .post(`${ROOT_URL}/community/posts/${postid}/subscriptions.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .send({ subscription: { user_id: user.id } }))
+    logger.http(res.body)
+    return res.body
   }
 }
 
