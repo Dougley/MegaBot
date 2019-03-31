@@ -6,7 +6,7 @@ const dlog = require('../dlog')
 const db = require('../../databases/lokijs')
 
 module.exports = async (question, user, emoji, msg, userID) => {
-  if (!perms(2, user, msg, 'admin-commands')) return
+  if (!perms(2, user, msg)) return
   if (emoji.id === ids.emojis.confirm.id) {
     dlog(5, {
       user: user,
@@ -133,7 +133,10 @@ const getAllVotes = async (id) => {
   let keepGoing = true
   let page = 1
   while (keepGoing) {
-    let data = await zd.getVotes(id, page)
+    let data = await zd.getVotes(id, {
+      page: page,
+      priority: 9
+    })
     await votes.push.apply(votes, data)
     if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
@@ -147,7 +150,8 @@ const getAllComments = async (id) => {
   let page = 1
   while (keepGoing) {
     let data = await zd.listComments(id, {
-      page: page
+      page: page,
+      priority: 9
     })
     await comments.push.apply(comments, data)
     if (data[0] && data[0].pagination.nextPage !== null) page++

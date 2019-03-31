@@ -146,12 +146,21 @@ module.exports = {
   /**
    * Get all votes for a submission
    * @param {Number | String} id - The ID of the submission
-   * @param {Number} page - Pagination, the page number to get
+   * @param {Object} opts - Options to pass to Zendesk
+   * @param {Number} [opts.page=1] - Pagination, which page of data to get
+   * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
+   * @param {Number} [opts.priority=5] - The priority this request should run at, must be a number from 0 to 9
    * @returns {Promise<Vote[]>}
    */
-  getVotes: async (id, page = 1) => {
-    const res = await schedule(() => SA
-      .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
+  getVotes: async (id, opts) => {
+    const options = {
+      per_page: 20,
+      page: 1,
+      priority: 5,
+      ...opts
+    }
+    const res = await schedule({ priority: options.priority || 5 }, () => SA
+      .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return res.body.votes.map(x => new Vote(res.body, x))
@@ -164,6 +173,7 @@ module.exports = {
    * @param {Array | String} [opts.include=users] - Array or comma separated string of types to sideload alongside this request
    * @param {Number} [opts.page=1] - Pagination, which page of data to get
    * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
+   * @param {Number} [opts.priority=5] - The priority this request should run at, must be a number from 0 to 9
    * @returns {Promise<Comment[]>} - Zendesk response
    */
   listComments: async (id, opts) => {
@@ -172,10 +182,11 @@ module.exports = {
       includes: 'users',
       page: 1,
       per_page: 20,
+      priority: 5,
       ...opts
     }
     if (Array.isArray(options.includes)) options.includes = options.includes.join(',')
-    const res = await schedule(() => SA
+    const res = await schedule({ priority: options.priority || 5 }, () => SA
       .get(`${ROOT_URL}/community/${options.type}/${id}/comments.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
