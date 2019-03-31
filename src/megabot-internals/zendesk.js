@@ -285,6 +285,12 @@ module.exports = {
     logger.http(res.body)
     return new Topic(res.body, res.body.topic)
   },
+  /**
+   * Create a subscription to a submission
+   * @param {String | Number} postid - The ID of the submission to subscribe to
+   * @param {String} userid - The Discord ID of the user you're acting on behalf on
+   * @returns {Promise<Object>} - Zendesk response
+   */
   createSubscription: async (postid, userid) => {
     const user = await getUserDetails(userid)
     const res = await schedule(() => SA
