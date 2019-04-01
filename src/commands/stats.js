@@ -51,7 +51,7 @@ function generateEmbed (userdata, data) {
         },
         {
           name: `Total EXP earned in ${format(new Date(), 'MMMM')}`,
-          value: data.leaderboardData[lbstr],
+          value: (data.leaderboardData[lbstr] || 0),
           inline: true
         },
         {
