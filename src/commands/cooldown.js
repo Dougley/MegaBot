@@ -3,23 +3,24 @@ const ids = require('../megabot-internals/ids')
 const { formatDistance } = require('date-fns')
 
 module.exports = {
-  meta: {
-    level: 0,
-    alias: ['caps']
-  },
-  fn: (msg) => {
-    const data = db.getUser(msg.author.id)
-    const transactions = data.transactions.filter(x => {
-      const then = new Date(x.time)
+    meta: {
+      level: 0,
+      alias: ['caps']
+    },
+    fn: (msg) => {
+      const data = db.getUser(msg.author.id)
+      const transactions = data.transactions.filter(x => {
+        const then = new Date(x.time)
 
-    msg.author.getDMChannel().then(async c => {
-      if (data.entitlements.includes('fake-stats')) msg.channel.createMessage(`<@${msg.author.id}>, an unexpected error occurred while getting your stats, try again later.`)
-      await c.createMessage(generateEmbed(msg.author, data))
-      if (msg.channel.guild) return msg.delete()
-      if (!data.entitlements.includes('fake-stats')) await msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
-    }).catch(() => {
-      msg.channel.createMessage("Failed to DM you, make sure you've enabled them")
-    })
+      msg.author.getDMChannel().then(async c => {
+        if (data.entitlements.includes('fake-stats')) msg.channel.createMessage(`<@${msg.author.id}>, an unexpected error occurred while getting your stats, try again later.`)
+        await c.createMessage(generateEmbed(msg.author, data))
+        if (msg.channel.guild) return msg.delete()
+        if (!data.entitlements.includes('fake-stats')) await msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
+      }).catch(() => {
+        msg.channel.createMessage("Failed to DM you, make sure you've enabled them")
+      })
+    }
   }
 }
 
