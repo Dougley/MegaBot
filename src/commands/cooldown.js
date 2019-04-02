@@ -25,6 +25,10 @@ function generateEmbed (userdata, data) {
     const now = new Date()
     return then.getDate() === now.getDate()
   })
+  const voteResults = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
+  const commentResults = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
+  const dupeResults = transactions.filter(x => /Merged a suggestion/.test(x.reason))
+  const submitResults = transactions.filter(x => /Submitted suggestion/.test(x.reason))
   return {
     embed: {
       title: `${userdata.username}'s cooldowns`,
@@ -44,15 +48,15 @@ function generateEmbed (userdata, data) {
         },
         {
           name: 'Comments',
-          value: commentsResults.length + '/' + MB_CONSTANTS.limits.comments
+          value: commentResults.length + '/' + MB_CONSTANTS.limits.comments
         },
         {
           name: 'Dupe',
-          value: voteResults.length + '/' + MB_CONSTANTS.limits.dupe
+          value: dupeResults.length + '/' + MB_CONSTANTS.limits.dupe
         },
         {
           name: 'Submit',
-          value: voteResults.length + '/' + MB_CONSTANTS.limits.submit
+          value: submitResults.length + '/' + MB_CONSTANTS.limits.submit
         }
       ]
     }
