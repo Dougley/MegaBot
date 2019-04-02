@@ -1,6 +1,5 @@
 const db = require('../databases/lokijs')
 const ids = require('../megabot-internals/ids')
-const { formatDistance } = require('date-fns')
 
 module.exports = {
   meta: {
@@ -26,10 +25,6 @@ function generateEmbed (userdata, data) {
     const now = new Date()
     return then.getDate() === now.getDate()
   })
-  const voteResults = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
-  const commentResults = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
-  const dupeResults = transactions.filter(x => /Merged a suggestion/.test(x.reason))
-  const submitResults = transactions.filter(x => /Submitted suggestion/.test(x.reason))
   return {
     embed: {
       title: `${userdata.username}'s cooldowns`,
@@ -45,20 +40,20 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'Votes',
-          value: voteResults.length + "/" + MB_CONSTANTS.limits.votes
+          value: voteResults.length + '/' + MB_CONSTANTS.limits.votes
         },
         {
           name: 'Comments',
-          value: commentsResults.length + "/" + MB_CONSTANTS.limits.comments
+          value: commentsResults.length + '/' + MB_CONSTANTS.limits.comments
         },
-         {
+        {
           name: 'Dupe',
-          value: voteResults.length + "/" + MB_CONSTANTS.limits.dupe
+          value: voteResults.length + '/' + MB_CONSTANTS.limits.dupe
         },
         {
           name: 'Submit',
-          value: voteResults.length + "/" + MB_CONSTANTS.limits.submit
-        },
+          value: voteResults.length + '/' + MB_CONSTANTS.limits.submit
+        }
       ]
     }
   }
