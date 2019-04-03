@@ -44,19 +44,23 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'Votes',
-          value: voteResults.length + '/' + MB_CONSTANTS.limits.votes
+          value: voteResults.length + '/' + MB_CONSTANTS.limits.votes,
+          inline: true
         },
         {
           name: 'Comments',
-          value: commentResults.length + '/' + MB_CONSTANTS.limits.comments
+          value: commentResults.length + '/' + MB_CONSTANTS.limits.comments,
+          inline: true
         },
         {
           name: 'Dupe',
-          value: dupeResults.length + '/' + MB_CONSTANTS.limits.dupe
+          value: dupeResults.length + '/' + MB_CONSTANTS.limits.dupe,
+          inline: true
         },
         {
           name: 'Submit',
-          value: submitResults.length + '/' + MB_CONSTANTS.limits.submit
+          value: submitResults.length + '/' + MB_CONSTANTS.limits.submit,
+          inline: true
         }
       ]
     }
