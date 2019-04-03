@@ -33,7 +33,7 @@ function generateEmbed (userdata, data) {
     embed: {
       title: `${userdata.username}'s cooldowns`,
       timestamp: new Date(),
-      color: 0xa09edd,
+      color: 0x15f106,
       footer: {
         icon_url: global.bot.user.dynamicAvatarURL('png', 32),
         text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`
