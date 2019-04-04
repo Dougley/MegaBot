@@ -24,10 +24,10 @@ function generateEmbed (userdata, data) {
     const now = new Date()
     return then.getDate() === now.getDate()
   })
-  const voteResults = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason))
-  const commentResults = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason))
-  const dupeResults = transactions.filter(x => /Merged a suggestion/.test(x.reason))
-  const submitResults = transactions.filter(x => /Submitted suggestion/.test(x.reason))
+  const voteResults = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason)).length
+  const commentResults = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason)).length
+  const dupeResults = transactions.filter(x => /Merged a suggestion/.test(x.reason)).length
+  const submitResults = transactions.filter(x => /Submitted suggestion/.test(x.reason)).length
   return {
     embed: {
       title: `${userdata.username}'s cooldowns`,
@@ -43,22 +43,22 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'Votes',
-          value: voteResults.length + '/' + MB_CONSTANTS.limits.votes,
+          value: `${MB_CONSTANTS.limits.vote - voteResults}/${MB_CONSTANTS.limits.vote}`,
           inline: true
         },
         {
           name: 'Comments',
-          value: commentResults.length + '/' + MB_CONSTANTS.limits.comments,
+          value: `${MB_CONSTANTS.limits.comment - commentResults}/${MB_CONSTANTS.limits.comment}`,
           inline: true
         },
         {
           name: 'Dupe',
-          value: dupeResults.length + '/' + MB_CONSTANTS.limits.dupe,
+          value: `${MB_CONSTANTS.limits.dupe - dupeResults}/${MB_CONSTANTS.limits.dupe}`,
           inline: true
         },
         {
           name: 'Submit',
-          value: submitResults.length + '/' + MB_CONSTANTS.limits.submit,
+          value: `${MB_CONSTANTS.limits.submit - submitResults}/${MB_CONSTANTS.limits.submit}`,
           inline: true
         }
       ]
