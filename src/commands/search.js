@@ -23,6 +23,7 @@ const generateEmbed = (data) => {
       description: data.map(x => `[${x.title}](${x.htmlUrl})`).join('\n')
       footer: {
         text: 'Showing the top 5 results. Visit https://feedback.discordapp.com/ for the full results'
+      }
     }
   }
 }
