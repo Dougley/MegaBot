@@ -20,7 +20,10 @@ const generateEmbed = (data) => {
     content: 'Found the following suggestions',
     embed: {
       color: 0x008080,
-      description: data.map(x => `[${x.title}](${x.htmlUrl})`).join('\n')
+      description: data.map(x => `[${x.title}](${x.htmlUrl})`).join('\n'),
+      footer: {
+        text: 'Showing the top 5 results. Visit https://feedback.discordapp.com/ for the full results'
+      }
     }
   }
 }
