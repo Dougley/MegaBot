@@ -6,7 +6,8 @@ const inquire = require('../megabot-internals/controllers/inquirer')
 module.exports = {
   meta: {
     level: 1,
-    timeout: 10
+    timeout: 10,
+    alias: ['tr']
   },
   fn: async (msg, suffix) => {
     try {
