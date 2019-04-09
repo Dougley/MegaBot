@@ -43,22 +43,22 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'Votes',
-          value: `${MB_CONSTANTS.limits.vote - voteResults}/${MB_CONSTANTS.limits.vote}`,
+          value: `${voteResults}/${MB_CONSTANTS.limits.vote}`,
           inline: true
         },
         {
           name: 'Comments',
-          value: `${MB_CONSTANTS.limits.comment - commentResults}/${MB_CONSTANTS.limits.comment}`,
+          value: `${commentResults}/${MB_CONSTANTS.limits.comment}`,
           inline: true
         },
         {
           name: 'Dupe',
-          value: `${MB_CONSTANTS.limits.dupe - dupeResults}/${MB_CONSTANTS.limits.dupe}`,
+          value: `${dupeResults}/${MB_CONSTANTS.limits.dupe}`,
           inline: true
         },
         {
           name: 'Submit',
-          value: `${MB_CONSTANTS.limits.submit - submitResults}/${MB_CONSTANTS.limits.submit}`,
+          value: `${submitResults}/${MB_CONSTANTS.limits.submit}`,
           inline: true
         }
       ]
