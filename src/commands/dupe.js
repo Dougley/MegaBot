@@ -28,7 +28,11 @@ module.exports = {
       ...generateEmbed(dupe, target)
     })
     await stall(2000)
-    INQ.awaitReaction([ID.emojis.dismiss, ID.emojis.confirm], x, msg.author.id).then(z => {
+    let emojis = [ID.emojis.dismiss, ID.emojis.confirm]
+      .map((a) => ({ sort: Math.random(), value: a }))
+      .sort((a, b) => a.sort - b.sort)
+      .map((a) => a.value)
+    INQ.awaitReaction(emojis, x, msg.author.id).then(z => {
       if (z.id === ID.emojis.confirm.id) {
         AQ.createMergeRequest(dupe, target, msg.author).then((c) => {
           x.edit({ content: 'Dupe request submitted',
