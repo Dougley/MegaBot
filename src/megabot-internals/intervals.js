@@ -51,6 +51,12 @@ module.exports = [
     logger.trace(data)
     if (data.length > 0) {
       logger.debug(`Removing ${data.length} stale users.`)
+      data.forEach(async (x) => {
+        const rewards = Object.keys(require('./rewards').roles)
+        const member = await global.bot.guilds.get(ids.guild).getRESTMember(x.wb_id)
+        const roles = member.roles.filter(x => rewards.includes(x))
+        roles.forEach(x => member.removeRole(x, 'Member considered stale'))
+      })
       db.findAndRemove('users', query)
     }
   }, 86400000), // 1 day

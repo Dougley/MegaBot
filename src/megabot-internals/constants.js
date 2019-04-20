@@ -36,7 +36,7 @@ module.exports = {
   },
   rewards: {
     submit: 10,
-    report: 5,
+    report: 8,
     dupe: 20,
     vote: 2,
     comment: 5,

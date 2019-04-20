@@ -191,14 +191,15 @@ module.exports = {
    * Bump the last seen date for someone
    * This also rewards the daily bonus if needed
    * @param {String} id - ID of the user to bump
+   * @param {Boolean} [reward=true] - If true, try to grant a daily reward
    * @return {Promise<void>}
    */
-  touch: async (id) => {
+  touch: async (id, reward = true) => {
     const data = database.getUser(id)
     const then = new Date(data.properties.lastSeen)
     const now = new Date()
     data.properties.lastSeen = Date.now()
-    if (then.getDate() !== now.getDate()) giveEXP(id, MB_CONSTANTS.rewards.daily, 'Daily login bonus')
+    if (reward && then.getDate() !== now.getDate()) giveEXP(id, MB_CONSTANTS.rewards.daily, 'Daily login bonus')
   }
 }
 

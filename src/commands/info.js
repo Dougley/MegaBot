@@ -23,7 +23,7 @@ module.exports = {
           zd_id: parseInt(id)
         }]
       })
-      const ddlete = DB.findSync('system', {
+      const dupedelete = DB.findSync('system', {
         type: 'dupe-delete',
         zd_id: parseInt(id)
       })
@@ -32,7 +32,7 @@ module.exports = {
         if (reqs) {
           if (reqs.type === 3) str = `This suggestion is ${reqs.ids.dupe === parseInt(id) ? `set to be merged into ${reqs.ids.target}` : `being targeted as a master for ${reqs.ids.dupe}`}`
           else if (reqs.type === 2) str = 'This suggestion is marked for deletion'
-        } else if (ddlete) str = 'This suggestion is queued to be deleted due to a successful merge'
+        } else if (dupedelete) str = 'This suggestion is queued to be deleted due to a successful merge'
         else str = 'This suggestion is normal' // required, cant leave embed fields unfinished
         return msg.channel.createMessage({
           embed: {

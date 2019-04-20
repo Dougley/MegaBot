@@ -20,7 +20,7 @@ module.exports = async (ctx) => {
         zd.getSubmission(msg.content.match(MB_CONSTANTS.submissionRegex)[1]).then(() => inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.submissionRegex)[1])).catch(() => {})
       }
     }
-    if (perms(0, msg.member, msg)) touch(msg.author.id)
+    if (perms(0, msg.member, msg)) touch(msg.author.id, !msg.member.roles.includes(ids.custodianRole))
   }
   if (msg.content.startsWith(prefix)) {
     let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
