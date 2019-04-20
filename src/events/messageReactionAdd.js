@@ -32,11 +32,10 @@ module.exports = async (ctx) => {
 
   const user = msg.channel.guild.members.get(userID) ? msg.channel.guild.members.get(userID) : await msg.channel.guild.getRESTMember(userID)
 
-  // bump activity
-  if (perms(0, user, msg)) touch(user.id, !user.roles.includes(ids.custodianRole))
-
   db.getQuestion(msg.id).then(question => {
     if (!question) return
+    // bump activity
+    if (perms(0, user, msg)) touch(user.id, !user.roles.includes(ids.custodianRole))
     if (question.expire) {
       const then = new Date(question.expire)
       const now = new Date()
