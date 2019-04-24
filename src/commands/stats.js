@@ -14,7 +14,8 @@ module.exports = {
       await c.createMessage(generateEmbed(msg.author, data))
       if (msg.channel.guild) return msg.delete()
       if (!data.entitlements.includes('fake-stats')) await msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
-    }).catch(() => {
+    }).catch(e => {
+      logger.error(e)
       msg.channel.createMessage("Failed to DM you, make sure you've enabled them")
     })
   }
