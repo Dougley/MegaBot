@@ -5,6 +5,7 @@ const top10 = require('./controllers/top10')
 const ar = require('./controllers/autorole')
 const feed = require('./controllers/feed')
 const lb = require('./controllers/leaderboard')
+const dlog = require('./dlog')
 const notifs = require('../features/notifications')
 
 logger.debug('Setting intervals')
@@ -52,10 +53,15 @@ module.exports = [
     if (data.length > 0) {
       logger.debug(`Removing ${data.length} stale users.`)
       data.forEach(async (x) => {
-        const rewards = Object.keys(require('./rewards').roles)
-        const member = await global.bot.guilds.get(ids.guild).getRESTMember(x.wb_id)
-        const roles = member.roles.filter(x => rewards.includes(x))
-        roles.forEach(x => member.removeRole(x, 'Member considered stale'))
+        try {
+          const rewards = Object.keys(require('./rewards').roles)
+          const member = await global.bot.guilds.get(ids.guild).getRESTMember(x.wb_id)
+          const roles = member.roles.filter(x => rewards.includes(x))
+          dlog(4, {
+            message: `About to remove roles from ${member.username}#${member.discriminator}. For reference later, they've accrued a total of ${x.properties.exp} EXP, and had ${roles.length} roles`
+          })
+          roles.forEach(x => member.removeRole(x, 'Member considered stale'))
+        } catch (e) { logger.warn(`Can't derole ${x.wb_id}: ${e.message}`) }
       })
       db.findAndRemove('users', query)
     }

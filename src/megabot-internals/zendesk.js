@@ -4,7 +4,7 @@ const DB = require('../databases/redis')
 
 const ROOT_URL = `${process.env.ZENDESK_ROOT_URL}/api/v2`
 const schedule = async (...args) => {
-  if (typeof args[0] === 'object') args[0] = { expiration: 2500, ...args[0] }
+  if (typeof args[0] === 'object') args[0] = { expiration: 10000, ...args[0] }
   else args.unshift({ expiration: 10000 })
   return MB_CONSTANTS.limiter.schedule(...args)
 }
@@ -40,6 +40,46 @@ module.exports = {
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return res.body.posts.map(x => new Submission(res.body, x))
+  },
+  /**
+   * List submissions from a user
+   * @param {Number | String} id - The Zendesk ID of the user
+   * @param {Object} opts - Optional params to pass to Zendesk
+   * @returns {Promise<Submission[]>}
+   */
+  getSubmissionsFromUser: async (id, opts = {}) => {
+    const defaults = {
+      sort_by: 'created_at',
+      include: 'users',
+      page: 1,
+      per_page: 20,
+      ...opts
+    }
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/users/${id}/posts.json?${QS.stringify(defaults)}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.http(res.body)
+    return res.body.posts.map(x => new Submission(res.body, x))
+  },
+  /**
+   * List comments from a user
+   * @param {Number | String} id - The Zendesk ID of the user
+   * @param {Object} opts - Optional params to pass to Zendesk
+   * @returns {Promise<Comment[]>}
+   */
+  getCommentsFromUser: async (id, opts = {}) => {
+    const defaults = {
+      sort_by: 'created_at',
+      include: 'users',
+      page: 1,
+      per_page: 20,
+      ...opts
+    }
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/users/${id}/comments.json?${QS.stringify(defaults)}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.http(res.body)
+    return res.body.comments.map(x => new Comment(res.body, x))
   },
   /**
    * Get information about a single submission
@@ -310,7 +350,7 @@ async function getUserDetails (id) {
     return JSON.parse(cache)
   }
   const data = await schedule(() => SA
-    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ query: id })}`)
+    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ external_id: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   logger.trace(data.body)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
