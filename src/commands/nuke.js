@@ -59,7 +59,7 @@ const getAllComments = async (id) => {
       page: page,
       priority: 9
     })
-    await votes.push.apply(votes, data)
+    await votes.push.apply(votes, data.filter(c => !c.official))
     if (data[0] && data[0].pagination.nextPage !== null) page++
     else keepGoing = false
   }
