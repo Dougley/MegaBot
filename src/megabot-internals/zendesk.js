@@ -345,7 +345,7 @@ module.exports = {
   * @param {String | Number} postid - The ID of the submission to get subscription details for
   * @returns {Promise<Object>} - Zendesk response
   */
-  getSubscription: async (postid) => {
+  getSubscriptions: async (postid) => {
     const res = await schedule(() => SA
       .get(`${ROOT_URL}/community/posts/${postid}/subscriptions.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
