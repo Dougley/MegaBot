@@ -343,7 +343,7 @@ module.exports = {
   /**
   * Get a list of user subscriptions to a post
   * @param {String | Number} postid - The ID of the submission to get subscription details for
-  * @returns {Promise<Object>} - Zendesk response
+  * @returns {Promise<Object[]>} - Zendesk response
   */
   getSubscriptions: async (postid) => {
     const res = await schedule(() => SA
