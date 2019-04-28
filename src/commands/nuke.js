@@ -32,7 +32,7 @@ module.exports = {
         }
       })
       const reply = await awaitReaction([ids.emojis.confirm, ids.emojis.dismiss], message, msg.author.id)
-      if (reply.id === ids.emojis.confirm) {
+      if (reply.id === ids.emojis.confirm.id) {
         message.edit('Alright, queueing up content to be deleted.')
         await dlog(4, {
           message: `${msg.author.username}#${msg.author.discriminator} has purged all content from a Zendesk user with ID ${user.id}`
