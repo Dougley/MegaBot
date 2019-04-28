@@ -11,7 +11,7 @@ module.exports = {
     try {
       msg.channel.sendTyping()
       const suggestion = await ZD.getSubmission(id)
-      await ZD.deleteSubscription(suggestion.id, msg.subscription.id)
+      await ZD.deleteSubscription(suggestion.id, subscription.id)
       msg.channel.createMessage({
         content: "You're no longer subscribed to this suggestion.",
         embed: {
