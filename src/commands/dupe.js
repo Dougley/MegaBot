@@ -6,7 +6,8 @@ const ID = require('../megabot-internals/ids')
 
 module.exports = {
   meta: {
-    level: 1
+    level: 1,
+    alias: ['d']
   },
   fn: async (msg, suffix) => {
     const chunks = suffix.split(' ')
