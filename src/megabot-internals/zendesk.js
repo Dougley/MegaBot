@@ -350,6 +350,8 @@ module.exports = {
     const res = await schedule(() => SA
       .delete(`${ROOT_URL}/community/posts/${postid}/subscriptions/${subscriptionid}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+        logger.http(res.body)
+    return res.body
   }
 }
 
