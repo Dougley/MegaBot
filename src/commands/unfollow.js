@@ -13,7 +13,7 @@ module.exports = {
       const suggestion = await ZD.getSubmission(id)
       await ZD.deleteSubscription(suggestion.id, msg.author.id)
       msg.channel.createMessage({
-        content: "You're no longer subscribed to this suggestion, emails for it should stop soon.",
+        content: "You're no longer subscribed to this suggestion.",
         embed: {
           title: suggestion.title,
           url: suggestion.htmlUrl,
