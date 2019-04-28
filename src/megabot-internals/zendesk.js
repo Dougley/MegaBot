@@ -341,6 +341,18 @@ module.exports = {
     return res.body
   },
   /**
+  * Get a list of user subscriptions to a post
+  * @param {String | Number} postid - The ID of the submission to get subscription details for
+  * @returns {Promise<Object>} - Zendesk response
+  */
+    getSubscription: async (postid) => {
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/posts/${postid}/subscriptions.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.http(res.body)
+    return (res.body,res.body.subscription)
+  },
+  /**
   * Delete a subscription to a submission
    * @param {String | Number} postid - The ID of the submission to unsubscribe from
    * @param {String} userid - The Discord ID of the user you're acting on behalf on
