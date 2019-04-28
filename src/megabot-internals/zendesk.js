@@ -346,13 +346,10 @@ module.exports = {
    * @param {String} userid - The Discord ID of the user you're acting on behalf on
    * @returns {Promise<Object>} - Zendesk response
    */
-  deleteSubscription: async (postid, userid, subscriptionid) => {
-    const user = await getUserDetails(userid)
+  deleteSubscription: async (postid, subscriptionid) => {
     const res = await schedule(() => SA
       .delete(`${ROOT_URL}/community/posts/${postid}/subscriptions/${subscriptionid}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
-    logger.http(res.body)
-    return res.body
   }
 }
 
