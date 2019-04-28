@@ -93,7 +93,7 @@ module.exports = {
   createFeedvote: async (msg, id) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
-    msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
+    // msg.addReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`)
     const ins = {
       expire: Date.now() + (604800000 * 2), // expire in 2 weeks
       type: 1,

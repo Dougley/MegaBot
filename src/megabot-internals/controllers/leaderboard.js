@@ -10,14 +10,14 @@ module.exports = {
   update: async () => {
     const channel = bot.getChannel(ids.leaderboard)
     const editable = (await channel.getMessages()).filter(x => x.author.id === bot.user.id)
-    const month = (new Date()).getMonth()
+    const lbstr = `${(new Date()).getMonth()}-${(new Date()).getUTCFullYear()}`
     const users = db.chain('users')
       .find({
         entitlements: {
           $containsNone: ['no-leaderboard', 'never-custodian']
         },
         leaderboardData: {
-          $contains: month
+          $contains: lbstr
         }
       })
       .where(x => {
@@ -27,7 +27,7 @@ module.exports = {
         else return false
       })
       .sort((a, b) => {
-        return b.leaderboardData[month] - a.leaderboardData[month]
+        return b.leaderboardData[lbstr] - a.leaderboardData[lbstr]
       })
       .limit(10)
       .data()
@@ -35,7 +35,7 @@ module.exports = {
     users.forEach(async data => {
       let x = toedit.pop()
       const user = bot.users.get(data.wb_id) ? bot.users.get(data.wb_id) : await bot.getRESTUser(data.wb_id)
-      if (x) x.edit(generateEmbed(data, user, users.indexOf(data) + 1))
+      if (x) x.edit(generateEmbed(data, user, users.indexOf(data) + 1, lbstr))
       else channel.createMessage(generateEmbed(data, user, users.indexOf(data) + 1))
     })
     if (toedit.length > 0) toedit.forEach(x => x.delete())
@@ -57,9 +57,8 @@ const getColor = (pos) => {
   }
 }
 
-const generateEmbed = (data, user, position) => {
+const generateEmbed = (data, user, position, str) => {
   const { format } = require('date-fns')
-  const month = (new Date()).getMonth()
   return {
     embed: {
       color: getColor(position),
@@ -72,7 +71,7 @@ const generateEmbed = (data, user, position) => {
       fields: [
         {
           name: `EXP gained in ${format(new Date(), 'MMMM')}`,
-          value: data.leaderboardData[month]
+          value: data.leaderboardData[str]
         }
       ]
     }

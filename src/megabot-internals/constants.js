@@ -27,7 +27,7 @@ module.exports = {
       .replace(/\|/g, '\\|')
   },
   thresholds: {
-    reports: 4, // 3 + 1, megabots reactions also count
+    reports: 7,
     custodian: 150
   },
   timeouts: {
@@ -36,12 +36,12 @@ module.exports = {
   },
   rewards: {
     submit: 10,
-    report: 5,
+    report: 8,
     dupe: 20,
     vote: 2,
     comment: 5,
     daily: 25,
-    commentRemove: 3
+    commentRemove: 6
   },
   limits: {
     vote: 5,

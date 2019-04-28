@@ -114,3 +114,16 @@ aPromise().then(async result => {
   console.log(anotherresult)
 }).catch(console.error)
 ```
+
+```js
+// 💯 great!
+(async () => { // top-level async is used as an example, its not required
+  try {
+    const result = await aPromise()
+    const anotherresult = await anotherPromise(result)
+    console.log(anotherresult)
+  } catch (e) { 
+    console.error(e) 
+  }
+})()
+```

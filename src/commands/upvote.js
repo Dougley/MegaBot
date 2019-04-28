@@ -21,7 +21,10 @@ module.exports = {
         embed: {
           title: x.title,
           url: x.htmlUrl,
-          color: 0x3498db
+          color: 0x3498db,
+          footer: {
+            text: `ID: ${x.id}`
+          }
         }
       })
     }).catch(e => {

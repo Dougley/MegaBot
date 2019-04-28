@@ -18,6 +18,11 @@ module.exports = {
       zd_id: suggestion.id,
       type: 2
     }) && process.env.NODE_ENV !== 'debug') return
+    const feedmsg = await db.find('questions', {
+      zd_id: suggestion.id,
+      type: 1
+    })
+    if (feedmsg) bot.addMessageReaction(ids.feed, feedmsg.wb_id, `${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
     const channel = bot.getChannel(ids.queue)
     const creator = await zd.getUser(suggestion.authorId)
     channel.createMessage({
@@ -119,7 +124,7 @@ module.exports = {
    * @param {Submission} dupe - The suggestion that should be merged
    * @param {Submission} target - The suggestion to merge the dupe into
    * @param {User} user - Eris user object of the user that started this action
-   * @return {Promise<void>}
+   * @return {Promise<Object>} - Resulting database object
    */
   createMergeRequest: async (dupe, target, user) => {
     if (!(dupe instanceof Submission) || !(target instanceof Submission)) throw new TypeError("Didn't supply Submission objects")
@@ -129,7 +134,7 @@ module.exports = {
       type: 3
     }) && process.env.NODE_ENV !== 'debug') return
     const channel = bot.getChannel(ids.queue)
-    channel.createMessage({
+    const message = await channel.createMessage({
       content: `${user.username}#${user.discriminator} wishes to merge the following suggestions:`,
       embed: {
         color: 0x7a01fa,
@@ -155,25 +160,24 @@ module.exports = {
           }
         ]
       }
-    }).then(x => {
-      xp.holdEXP(x.id, {
-        users: [user.id],
-        gain: MB_CONSTANTS.rewards.dupe,
-        type: 3,
-        message: 'Merged a suggestion',
-        ids: {
-          dupe: dupe.id,
-          target: target.id
-        }
-      })
-      inq.startAdminMergeRequest({
-        userID: user.id,
-        type: 3,
-        ids: {
-          dupe: dupe.id,
-          target: target.id
-        }
-      }, x)
     })
+    xp.holdEXP(message.id, {
+      users: [user.id],
+      gain: MB_CONSTANTS.rewards.dupe,
+      type: 3,
+      message: 'Merged a suggestion',
+      ids: {
+        dupe: dupe.id,
+        target: target.id
+      }
+    })
+    return inq.startAdminMergeRequest({
+      userID: user.id,
+      type: 3,
+      ids: {
+        dupe: dupe.id,
+        target: target.id
+      }
+    }, message)
   }
 }

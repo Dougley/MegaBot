@@ -11,6 +11,7 @@ for (const cmd in commands) {
     result[cmd] = commands[cmd]
     if (commands[cmd].meta.alias) {
       for (const x of commands[cmd].meta.alias) {
+        if (x.length < 1) global.logger.error(`Aliases must be at least 1 character, an alias from ${cmd} is not`, true)
         if (commands[x]) global.logger.error(`Cannot set alias ${x}, there's a command with this name.`, true)
         if (aliases.has(x)) global.logger.error(`Cannot set ${x} as an alias of ${cmd}, it's already in use by ${aliases.get(x)}.`, true)
         aliases.set(x, cmd)

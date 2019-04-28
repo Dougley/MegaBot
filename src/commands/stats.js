@@ -1,6 +1,6 @@
 const db = require('../databases/lokijs')
 const ids = require('../megabot-internals/ids')
-const { formatDistance } = require('date-fns')
+const { formatDistance, format } = require('date-fns')
 
 module.exports = {
   meta: {
@@ -14,7 +14,8 @@ module.exports = {
       await c.createMessage(generateEmbed(msg.author, data))
       if (msg.channel.guild) return msg.delete()
       if (!data.entitlements.includes('fake-stats')) await msg.addReaction(`${ids.emojis.confirm.name}:${ids.emojis.confirm.id}`)
-    }).catch(() => {
+    }).catch(e => {
+      logger.error(e)
       msg.channel.createMessage("Failed to DM you, make sure you've enabled them")
     })
   }
@@ -30,6 +31,7 @@ function generateEmbed (userdata, data) {
       $contains: userdata.id
     }
   })
+  const lbstr = `${(new Date()).getMonth()}-${(new Date()).getUTCFullYear()}`
   return {
     embed: {
       title: `${userdata.username}'s stats`,
@@ -45,7 +47,13 @@ function generateEmbed (userdata, data) {
       fields: [
         {
           name: 'EXP',
-          value: data.properties.exp
+          value: data.properties.exp,
+          inline: true
+        },
+        {
+          name: `Total EXP earned in ${format(new Date(), 'MMMM')}`,
+          value: (data.leaderboardData[lbstr] || 0),
+          inline: true
         },
         {
           name: 'Pending transactions',

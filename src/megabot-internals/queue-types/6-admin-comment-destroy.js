@@ -6,7 +6,7 @@ const dlog = require('../dlog')
 const db = require('../../databases/lokijs')
 
 module.exports = async (question, user, emoji, msg) => {
-  if (!perms(2, user, msg, 'admin-commands')) return
+  if (!perms(2, user, msg)) return
   if (emoji.id === ids.emojis.confirm.id) {
     dlog(5, {
       user: user,

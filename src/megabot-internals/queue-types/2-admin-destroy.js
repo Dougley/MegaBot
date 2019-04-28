@@ -27,10 +27,15 @@ module.exports = async (question, user, emoji, msg) => {
       action: 'dismissed',
       zd_id: question.zd_id
     })
+    const embed = msg.embeds[0]
     msg.edit({
       content: 'Report dismissed, left card untouched.',
       embed: null
     }).then(x => {
+      bot.createMessage(ids.deniedFeed, {
+        content: `${user.username} denied the following deletion request`,
+        embed: embed
+      })
       xp.processHolds(msg.id, 2)
       setTimeout(() => {
         x.delete()

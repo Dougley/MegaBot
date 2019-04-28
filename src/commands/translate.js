@@ -1,11 +1,13 @@
 const ZD = require('../megabot-internals/zendesk')
 const TL = require('@vitalets/google-translate-api')
 const DB = require('../databases/lokijs')
+const inquire = require('../megabot-internals/controllers/inquirer')
 
 module.exports = {
   meta: {
     level: 1,
-    timeout: 10
+    timeout: 10,
+    alias: ['tr']
   },
   fn: async (msg, suffix) => {
     try {
@@ -31,7 +33,7 @@ module.exports = {
             text: suggestion.sideloads.topics[0].name
           }
         }
-      })
+      }).then(x => inquire.createChatvote(x, suggestion.id))
     } catch (e) {
       return msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
     }

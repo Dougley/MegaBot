@@ -4,8 +4,8 @@ const DB = require('../databases/redis')
 
 const ROOT_URL = `${process.env.ZENDESK_ROOT_URL}/api/v2`
 const schedule = async (...args) => {
-  if (typeof args[0] === 'object') args[0] = { expiration: 2500, ...args[0] }
-  else args.unshift({ expiration: 2500 })
+  if (typeof args[0] === 'object') args[0] = { expiration: 10000, ...args[0] }
+  else args.unshift({ expiration: 10000 })
   return MB_CONSTANTS.limiter.schedule(...args)
 }
 
@@ -40,6 +40,46 @@ module.exports = {
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return res.body.posts.map(x => new Submission(res.body, x))
+  },
+  /**
+   * List submissions from a user
+   * @param {Number | String} id - The Zendesk ID of the user
+   * @param {Object} opts - Optional params to pass to Zendesk
+   * @returns {Promise<Submission[]>}
+   */
+  getSubmissionsFromUser: async (id, opts = {}) => {
+    const defaults = {
+      sort_by: 'created_at',
+      include: 'users',
+      page: 1,
+      per_page: 20,
+      ...opts
+    }
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/users/${id}/posts.json?${QS.stringify(defaults)}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.http(res.body)
+    return res.body.posts.map(x => new Submission(res.body, x))
+  },
+  /**
+   * List comments from a user
+   * @param {Number | String} id - The Zendesk ID of the user
+   * @param {Object} opts - Optional params to pass to Zendesk
+   * @returns {Promise<Comment[]>}
+   */
+  getCommentsFromUser: async (id, opts = {}) => {
+    const defaults = {
+      sort_by: 'created_at',
+      include: 'users',
+      page: 1,
+      per_page: 20,
+      ...opts
+    }
+    const res = await schedule(() => SA
+      .get(`${ROOT_URL}/community/users/${id}/comments.json?${QS.stringify(defaults)}`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
+    logger.http(res.body)
+    return res.body.comments.map(x => new Comment(res.body, x))
   },
   /**
    * Get information about a single submission
@@ -146,12 +186,21 @@ module.exports = {
   /**
    * Get all votes for a submission
    * @param {Number | String} id - The ID of the submission
-   * @param {Number} page - Pagination, the page number to get
+   * @param {Object} opts - Options to pass to Zendesk
+   * @param {Number} [opts.page=1] - Pagination, which page of data to get
+   * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
+   * @param {Number} [opts.priority=5] - The priority this request should run at, must be a number from 0 to 9
    * @returns {Promise<Vote[]>}
    */
-  getVotes: async (id, page = 1) => {
-    const res = await schedule(() => SA
-      .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify({ page: page })}`)
+  getVotes: async (id, opts) => {
+    const options = {
+      per_page: 20,
+      page: 1,
+      priority: 5,
+      ...opts
+    }
+    const res = await schedule({ priority: options.priority || 5 }, () => SA
+      .get(`${ROOT_URL}/community/posts/${id}/votes.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return res.body.votes.map(x => new Vote(res.body, x))
@@ -164,6 +213,7 @@ module.exports = {
    * @param {Array | String} [opts.include=users] - Array or comma separated string of types to sideload alongside this request
    * @param {Number} [opts.page=1] - Pagination, which page of data to get
    * @param {Number} [opts.per_page=20] - Pagination, how many records to return per page
+   * @param {Number} [opts.priority=5] - The priority this request should run at, must be a number from 0 to 9
    * @returns {Promise<Comment[]>} - Zendesk response
    */
   listComments: async (id, opts) => {
@@ -172,10 +222,11 @@ module.exports = {
       includes: 'users',
       page: 1,
       per_page: 20,
+      priority: 5,
       ...opts
     }
     if (Array.isArray(options.includes)) options.includes = options.includes.join(',')
-    const res = await schedule(() => SA
+    const res = await schedule({ priority: options.priority || 5 }, () => SA
       .get(`${ROOT_URL}/community/${options.type}/${id}/comments.json?${QS.stringify(options)}`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
@@ -273,6 +324,21 @@ module.exports = {
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
     return new Topic(res.body, res.body.topic)
+  },
+  /**
+   * Create a subscription to a submission
+   * @param {String | Number} postid - The ID of the submission to subscribe to
+   * @param {String} userid - The Discord ID of the user you're acting on behalf on
+   * @returns {Promise<Object>} - Zendesk response
+   */
+  createSubscription: async (postid, userid) => {
+    const user = await getUserDetails(userid)
+    const res = await schedule(() => SA
+      .post(`${ROOT_URL}/community/posts/${postid}/subscriptions.json`)
+      .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
+      .send({ subscription: { user_id: user.id } }))
+    logger.http(res.body)
+    return res.body
   }
 }
 
@@ -284,7 +350,7 @@ async function getUserDetails (id) {
     return JSON.parse(cache)
   }
   const data = await schedule(() => SA
-    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ query: id })}`)
+    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ external_id: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   logger.trace(data.body)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
