@@ -13,7 +13,7 @@ module.exports = {
   createChatvote: (msg, id, reportable = true) => {
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
     msg.addReaction(`${ids.emojis.downvote.name}:${ids.emojis.downvote.id}`)
-    if (reportable) {
+    if (reportable && msg.author.id === global.bot.user.id) {
       if (!db.findSync('questions', { // prevent duplicates
         type: 2,
         zd_id: parseInt(id)
