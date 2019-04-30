@@ -22,7 +22,7 @@ const generateEmbed = (data, suffix) => {
       color: 0x008080,
       description: data.map(x => `[${x.title}](${x.htmlUrl}) - ${x.id}`).join('\n') +
         '\n\n' +
-        `[Full results](${process.env.ZENDESK_ROOT_URL}/hc/en-us/search?utf8=✓?${require('querystring').stringify({ query: suffix })})`,
+        `[Full results](${process.env.ZENDESK_ROOT_URL}/hc/en-us/search?utf8=✓&${require('querystring').stringify({ query: suffix })})`,
       footer: {
         text: `Showing the top 5 results.`
       }
