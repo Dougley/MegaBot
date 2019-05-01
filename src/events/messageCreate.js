@@ -14,8 +14,8 @@ module.exports = async (ctx) => {
   if (msg.channel.guild) {
     if (!msg.content.startsWith(prefix)) {
       if (msg.content.match(MB_CONSTANTS.commentRegex)) {
-        const matches = [...msg.content.match((MB_CONSTANTS.commentRegex))]
-        zd.getComment(matches[1], matches[2]).then(() => inq.createCommentReporter(msg, matches[2], matches[1])).catch(() => {})
+        // const matches = [...msg.content.match((MB_CONSTANTS.commentRegex))]
+        // zd.getComment(matches[1], matches[2]).then(() => inq.createCommentReporter(msg, matches[2], matches[1])).catch(() => {})
       } else if (msg.content.match(MB_CONSTANTS.submissionRegex)) {
         zd.getSubmission(msg.content.match(MB_CONSTANTS.submissionRegex)[1]).then(() => inq.createChatvote(msg, msg.content.match(MB_CONSTANTS.submissionRegex)[1])).catch(() => {})
       }

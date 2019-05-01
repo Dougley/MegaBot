@@ -22,17 +22,18 @@ module.exports = async (question, user, emoji, msg, userID) => {
       question.userVotes[userID] = x.id
     })
   } else if (emoji.id === ids.emojis.report.id) {
-    // this is likely the report reaction
-    if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
-    else {
-      dlog(2, {
-        user: user,
-        action: 'report',
-        zd_id: question.zd_id
-      })
-      if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports) {
-        if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
-        queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']), msg)
+    if (question.acceptReports !== undefined && question.acceptReports === true) {
+      if (!perms(1, user, msg)) return msg.removeReaction(`${ids.emojis.report.name}:${ids.emojis.report.id}`, userID)
+      else {
+        dlog(2, {
+          user: user,
+          action: 'report',
+          zd_id: question.zd_id
+        })
+        if (msg.reactions[`${ids.emojis.report.name}:${ids.emojis.report.id}`].count === MB_CONSTANTS.thresholds.reports) {
+          if (ids.emojis.reported) msg.addReaction(`${ids.emojis.reported.name}:${ids.emojis.reported.id}`)
+          queue.createDeletionRequest(await zd.getSubmission(question.zd_id, ['users', 'topics']), msg)
+        }
       }
     }
   }

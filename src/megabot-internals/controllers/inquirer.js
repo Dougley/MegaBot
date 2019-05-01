@@ -25,7 +25,8 @@ module.exports = {
       type: 4,
       wb_id: msg.id,
       zd_id: id,
-      userVotes: []
+      userVotes: [],
+      acceptReports: (reportable && msg.author.id === global.bot.user.id)
     }
     return db.create('questions', ins)
   },
