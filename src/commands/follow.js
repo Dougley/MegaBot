@@ -2,7 +2,7 @@ const ZD = require('../megabot-internals/zendesk')
 
 module.exports = {
   meta: {
-    level: 1,
+    level: 0,
     timeout: 5,
     alias: ['subscribe']
   },
