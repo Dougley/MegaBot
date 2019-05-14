@@ -10,48 +10,42 @@ module.exports = {
     alias: ['d']
   },
   fn: async (msg, suffix) => {
-    const chunks = suffix.split(' ')
-    let dupe, target
+    const message = await msg.channel.createMessage('Working on it...')
     try {
-      dupe = await ZD.getSubmission(MB_CONSTANTS.submissionRegex.test(chunks[0]) ? chunks[0].match(MB_CONSTANTS.submissionRegex)[1] : chunks[0], ['users', 'topics'])
-      target = await ZD.getSubmission(MB_CONSTANTS.submissionRegex.test(chunks[1]) ? chunks[1].match(MB_CONSTANTS.submissionRegex)[1] : chunks[1], ['users', 'topics'])
-    } catch (e) {
-      return msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
-    }
-    if (dupe.id === target.id) return msg.channel.createMessage("Can't merge 2 of the same suggestions!")
-    if (DB.findSync('questions', {
-      'ids.dupe': dupe.id,
-      type: 3
-    })) return msg.channel.createMessage(`A dupe request targeting ${dupe.id} was already submitted`)
-    if (dupe.status === 'answered' && !process.env.UNRESTRICTED_DUPE) return msg.channel.createMessage("You can't merge a suggestion that's marked as `Answered`. If you feel this is in error, contact Dannysaur")
-    const x = await msg.channel.createMessage({
-      content: 'This merge request will result in this suggestion when approved, is this correct?',
-      ...generateEmbed(dupe, target)
-    })
-    await stall(2000)
-    let emojis = [ID.emojis.dismiss, ID.emojis.confirm]
-      .map((a) => ({ sort: Math.random(), value: a }))
-      .sort((a, b) => a.sort - b.sort)
-      .map((a) => a.value)
-    INQ.awaitReaction(emojis, x, msg.author.id).then(z => {
-      if (z.id === ID.emojis.confirm.id) {
-        AQ.createMergeRequest(dupe, target, msg.author).then((c) => {
-          x.edit({ content: 'Dupe request submitted',
-            embed: {
-              description: `Dupe: [${dupe.title}](${dupe.htmlUrl})\nTarget: [${target.title}](${target.htmlUrl})`,
-              footer: {
-                text: `Dupe ID: ${c['$loki']} - Revoke with !revoke ${c['$loki']}`
-              }
-            }
-          })
+      const chunks = suffix.split(' ')
+      if (chunks.length < 2) return message.edit('Invalid formatting')
+      if (chunks.length > 6) return message.edit("Can't multimerge more than 5 suggestions!")
+      const target = await ZD.getSubmission(MB_CONSTANTS.determineID(chunks.pop()), ['users', 'topics'])
+      if (chunks.includes(target.id.toString())) return message.edit("You've included the target ID in your dupes")
+      const dupes = await Promise.all(chunks.map(x => ZD.getSubmission(MB_CONSTANTS.determineID(x), ['users', 'topics'])))
+      if (dupes.some(x => x.status === 'answered')) return message.edit('Some of your dupes are marked as answered, you cannot merge those')
+      if (dupes.some(x => DB.findSync('questions', { 'ids.dupe': x.id, type: 3 }))) return message.edit('Some of your dupes are already being merged')
+      await message.edit({
+        content: 'Is this correct?',
+        ...generateEmbed(dupes, target)
+      })
+      await stall(2000)
+      let emojis = [ID.emojis.dismiss, ID.emojis.confirm]
+        .map((a) => ({ sort: Math.random(), value: a }))
+        .sort((a, b) => a.sort - b.sort)
+        .map((a) => a.value)
+      const response = await INQ.awaitReaction(emojis, message, msg.author.id)
+      if (response.id === ID.emojis.confirm.id) {
+        const ids = (await Promise.all(dupes.map(x => AQ.createMergeRequest(x, target, msg.author)))).map(x => x['$loki'])
+        await message.edit({ content: 'Dupe request submitted',
+          embed: {
+            description: `Duping ${dupes.length} suggestions into ${target.id}\nDupe IDs: ${ids.join(', ')}`
+          }
         })
-      } else if (z.id === ID.emojis.dismiss.id) {
-        x.edit({ content: 'Dupe request cancelled', embed: null })
+      } else {
+        message.edit({ content: 'Dupe request cancelled', embed: null })
       }
-    }).catch(z => {
-      if (z.message === 'Timed out') return x.edit({ content: 'You took too long to answer, operation cancelled.', embed: null })
-      else logger.error(z)
-    })
+    } catch (e) {
+      return message.edit({
+        content: MB_CONSTANTS.generateErrorMessage(e),
+        embed: null
+      })
+    }
   }
 }
 
@@ -61,7 +55,14 @@ const stall = (timeout) => {
   })
 }
 
-const generateEmbed = (dupe, target) => {
+/**
+ * @param {Submission[]} dupes
+ * @param {Submission} target
+ * @returns {Object}
+ */
+const generateEmbed = (dupes, target) => {
+  const sum = (dupes.map(x => x.voteSum).reduce((a, b) => a + b, 0)) + target.voteSum
+  const count = (dupes.map(x => x.voteCount).reduce((a, b) => a + b, 0)) + target.voteCount
   return {
     embed: {
       author: {
@@ -78,7 +79,7 @@ const generateEmbed = (dupe, target) => {
       fields: [
         {
           name: 'Votes - Opinion',
-          value: `${target.voteCount + dupe.voteCount} - ${target.voteSum + dupe.voteSum}`,
+          value: `${count} - ${sum}`,
           inline: true
         }
       ]
