@@ -24,6 +24,12 @@ function generateEmbed (userdata, data) {
     const now = new Date()
     return then.getDate() === now.getDate()
   })
+  const future = new Date()
+  const { formatDistance } = require('date-fns')
+  future.setHours(24, 0, 0, 0)
+  const resettime = formatDistance(future, new Date(), {
+    addSuffix: true
+  })
   const voteResults = transactions.filter(x => /Voted on ([0-9])+/.test(x.reason)).length
   const commentResults = transactions.filter(x => /Commented on ([0-9])+/.test(x.reason)).length
   const dupeResults = transactions.filter(x => /Merged a suggestion/.test(x.reason)).length
@@ -35,7 +41,7 @@ function generateEmbed (userdata, data) {
       color: 0x15f106,
       footer: {
         icon_url: global.bot.user.dynamicAvatarURL('png', 32),
-        text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version}`
+        text: `MegaBot ${process.env.NODE_ENV === 'debug' ? 'Development version' : 'v' + require('../../package').version} - Caps reset ${resettime}`
       },
       thumbnail: {
         url: `https://cdn.discordapp.com/avatars/${userdata.id}/${userdata.avatar}.png`
