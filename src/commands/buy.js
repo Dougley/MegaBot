@@ -29,7 +29,7 @@ module.exports = {
             user.addRole(role, 'Role bought')
             xp.applyEXP(msg.author.id, -Math.abs(rewards.roles[role]), 'Bought a role')
             if (role !== ids.custodianRole) bot.createMessage(ids.custodianChannel, `<@${msg.author.id}> has entered the ranks of **${bot.guilds.get(ids.guild).roles.get(role).name}**!`)
-            else bot.createMessage(ids.custodianChannel, `Please welcome <@${msg.author.id}> to the custodians!`)
+            else bot.createMessage(ids.custodianChannel, `Please congratulate <@${msg.author.id}> on being custodiated!`)
             return msg.channel.createMessage('You successfully bought a new role!')
           } else {
             return msg.channel.createMessage("You currently don't have enough EXP to buy that role :(")
