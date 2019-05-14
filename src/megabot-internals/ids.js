@@ -13,11 +13,11 @@ const debug = {
   emojis: {
     confirm: {
       id: '459710143484002304',
-      name: 'yes'
+      name: 'gearYes'
     },
     dismiss: {
       id: '459710143370756096',
-      name: 'no'
+      name: 'gearNo'
     },
     upvote: {
       id: '512217422418280448',
