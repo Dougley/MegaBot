@@ -32,9 +32,26 @@ module.exports = {
       const response = await INQ.awaitReaction(emojis, message, msg.author.id)
       if (response.id === ID.emojis.confirm.id) {
         const ids = (await Promise.all(dupes.map(x => AQ.createMergeRequest(x, target, msg.author)))).map(x => x['$loki'])
-        await message.edit({ content: 'Dupe request submitted',
+        await message.edit({
+          content: 'Dupe request submitted',
           embed: {
-            description: `Duping ${dupes.length} suggestions into ${target.id}\nDupe IDs: ${ids.join(', ')}`
+            fields: [
+              {
+                name: 'Dupes',
+                value: dupes.map(x => `[${x.title}](${x.htmlUrl})`).join('\n')
+              },
+              {
+                name: 'Target',
+                value: `[${target.title}](${target.htmlUrl})`
+              }
+            ],
+            author: {
+              name: msg.author.username,
+              icon_url: msg.author.dynamicAvatarURL()
+            },
+            footer: {
+              text: `Dupe IDs: ${ids.join(', ')}`
+            }
           }
         })
       } else {
