@@ -15,4 +15,4 @@
 
 **Does your pull request solve an open issue? If yes, please mention what one**
 
-> For example, "closes #10"
+> See https://help.github.com/en/articles/closing-issues-using-keywords
