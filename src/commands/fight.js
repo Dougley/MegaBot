@@ -20,7 +20,7 @@ const templates = [
   '{s} tricked {r} into waking up the Sleeping Pizza. The Sleeping Pizza does not like being woken up, so it turned both {s} and {r} into Calzone Pizza. Rest In Pepperoni.',
   '{s} went to tackle {r}, but they did a dank meme and lowkey dabbed out of the way',
   '{s} hit the Smash ball, but fell off the stage before they could use it on {r}',
-  '{s} threw a pokeball at {r}, but it was only a Goldeen',
+  '{s} threw a pokeball at {r}, but it was only a Goldeen'
 ]
 
 module.exports = {
