@@ -17,7 +17,7 @@ const templates = [
   '{s} tried to modify the Dupe Bomber 3000 to take down {r} with tons of dupe reports, but Dannysaur got there first and denied them all... Which broke the machine.',
   '{s} Mega Evolved and tried to wipe out {r} with Hyper Beam! But {r} used Mimic and reversed it back onto {s} instead!',
   '{s} threw a snowball at {r} but unfortunately it hits a window at Discord HQ. Oops',
-  '{s} tricked {r} into waking up the Sleeping Pizza. The Sleeping Pizza does not like being woken up, so it turned both {s} and {r} into Calzone Pizza. Rest In Pepperoni.'
+  '{s} tricked {r} into waking up the Sleeping Pizza. The Sleeping Pizza does not like being woken up, so it turned both {s} and {r} into Calzone Pizza. Rest In Pepperoni.',
   '{s} went to tackle {r}, but they did a dank meme and lowkey dabbed out of the way',
   '{s} hit the Smash ball, but fell off the stage before they could use it on {r}',
   '{s} threw a pokeball at {r}, but it was only a Goldeen',
