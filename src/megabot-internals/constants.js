@@ -24,7 +24,7 @@ limiter.on('retry', () => { logger.warn('Retrying a previously failed job...') }
 module.exports = {
   submissionRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?/,
   commentRegex: /https?:\/\/[\w.]+\/hc\/[-a-zA-Z]+\/community\/posts\/(\d{12,})(?:-[\w-]+)?\/comments\/(\d{12,})/,
-  inviteRegex: /(?:https?:\/\/)?discord(\.gg|app\.com\/invite)\/([A-Za-z0-9-_]+)/g,
+  inviteRegex: /(?:https?:\/\/)?discord(\.gg|app\.com\/invite)\/((?!discord-feedback)[A-Za-z0-9-_]+)/g,
   isID: (input) => { return /\d{12,}/.test(input) },
   determineID: function (input) {
     if (this.submissionRegex.test(input)) return input.match(this.submissionRegex)[1]
