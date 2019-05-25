@@ -42,7 +42,11 @@ module.exports = {
                 name: 'Comments',
                 value: x.commentCount,
                 inline: true
-              }
+              },
+              {
+                name: 'Additional info',
+                value: str
+              }              
             ]
           }
         }).then(z => { inquire.createChatvote(z, x.id) })
