@@ -13,6 +13,12 @@ module.exports = {
     const id = (DB.chain('questions').find({ type: 1 }).simplesort('expire', { desc: true }).data()[0]).zd_id
     if (MB_CONSTANTS.isID(id)) {
       ZD.getSubmission(id, ['users', 'topics']).then(x => {
+        let str
+        if (reqs) {
+          if (reqs.type === 3) str = `This suggestion is ${reqs.ids.dupe === parseInt(id) ? `set to be merged into ${reqs.ids.target}` : `being targeted as a master for ${reqs.ids.dupe}`}`
+          else if (reqs.type === 2) str = 'This suggestion is marked for deletion'
+        } else if (dupedelete) str = 'This suggestion is queued to be deleted due to a successful merge'
+        else str = 'This suggestion is normal' // required, cant leave embed fields unfinished
         return msg.channel.createMessage({
           embed: {
             color: 0x34f4de,
