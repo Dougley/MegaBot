@@ -1,6 +1,7 @@
 const supers = [
   '80413600807657472', // Dannysaur
   '107904023901777920' // Dougley
+  '298618155281154058' // Ghoul
 ]
 
 const modroles = [
