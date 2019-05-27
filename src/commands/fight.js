@@ -1,3 +1,5 @@
+const {applyEXP} = require('../features/exp')
+
 const templates = [
   '{s} tried to throw a snowball at {r} but it hits Dabbit\'s car, and Dabbit is not pleased!',
   '{s} tackled {r} down with a fish.',
@@ -26,13 +28,13 @@ const templates = [
 module.exports = {
   meta: {
     level: 1,
-    noDM: true,
-    cost: 2
+    noDM: true
   },
   fn: async (msg, suffix) => {
     if (!/<@!?([0-9]*)>/.test(suffix)) return msg.channel.createMessage('Please mention someone!')
     let id = suffix.match(/<@!?([0-9]*)>/)[1]
     if (id === msg.author.id) return msg.channel.createMessage("Can't execute this action on yourself")
+    applyEXP(msg.author.id, -Math.abs(2), `Used fight`)
     const user = bot.users.get(id) || await bot.getRESTUser(id)
     const random = templates[Math.floor(Math.random() * templates.length)].replace(/{s}/g, msg.author.username).replace(/{r}/g, user.username)
     msg.channel.createMessage(MB_CONSTANTS.sanitize(random))
