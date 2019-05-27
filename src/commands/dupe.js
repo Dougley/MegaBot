@@ -19,7 +19,7 @@ module.exports = {
       if (chunks.includes(target.id.toString())) return message.edit("You've included the target ID in your dupes")
       const dupes = await Promise.all(chunks.map(x => ZD.getSubmission(MB_CONSTANTS.determineID(x), ['users', 'topics'])))
       if (dupes.some(x => x.status === 'answered')) return message.edit('Some of your dupes are marked as answered, you cannot merge those')
-      if (dupes.some(x => DB.findSync('questions', { 'ids.dupe': x.id, type: 3 }))) return message.edit('Some of your dupes are already being merged')
+      if (dupes.some(x => DB.findSync('questions', { 'ids.dupe': x.id, type: 3 }))) return message.edit('One or more of your dupes have already been submitted by another Custodian')
       await message.edit({
         content: 'Is this correct?',
         ...generateEmbed(dupes, target)
