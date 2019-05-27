@@ -1,4 +1,4 @@
-const {applyEXP} = require('../features/exp')
+const { applyEXP } = require('../features/exp')
 
 const templates = [
   '{s} tried to throw a snowball at {r} but it hits Dabbit\'s car, and Dabbit is not pleased!',

@@ -1,4 +1,4 @@
-const {applyEXP} = require('../features/exp')
+const { applyEXP } = require('../features/exp')
 
 const templates = [
   '{s} gave {r} an awkward hug.',
