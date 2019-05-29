@@ -4,7 +4,7 @@ module.exports = {
   meta: {
     level: 0,
     timeout: 5,
-    alias: ['subscribe']
+    alias: ['subscribe', 'fo']
   },
   fn: async (msg, suffix) => {
     const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
@@ -13,7 +13,7 @@ module.exports = {
       const suggestion = await ZD.getSubmission(id)
       await ZD.createSubscription(suggestion.id, msg.author.id)
       msg.channel.createMessage({
-        content: "You're now subscribed to this suggestion, any updates will be sent to your email.",
+        content: "You're now following this suggestion. Any updates or comments will be sent to your email.",
         embed: {
           title: suggestion.title,
           url: suggestion.htmlUrl,
