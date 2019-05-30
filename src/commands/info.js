@@ -6,7 +6,7 @@ module.exports = {
   meta: {
     level: 0,
     timeout: 10,
-    alias: ['url' , 'i']
+    alias: ['url', 'i']
   },
   fn: async (msg, suffix) => {
     if (MB_CONSTANTS.commentRegex.test(suffix)) {
