@@ -13,7 +13,7 @@ module.exports = {
     const message = await msg.channel.createMessage('Working on it...')
     try {
       const chunks = suffix.split(' ')
-      if (chunks.length < 2) return message.edit('Invalid formatting')
+      if (chunks.length < 2) return message.edit('Invalid formatting. Please make sure you have left a space between each suggestion ID.')
       if (chunks.length > 6) return message.edit("Can't multimerge more than 5 suggestions!")
       const target = await ZD.getSubmission(MB_CONSTANTS.determineID(chunks.pop()), ['users', 'topics'])
       if (chunks.includes(target.id.toString())) return message.edit("You've included the target ID in your dupes")
