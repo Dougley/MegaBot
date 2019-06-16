@@ -4,7 +4,6 @@ const db = require('../databases/lokijs')
 const top10 = require('./controllers/top10')
 const ar = require('./controllers/autorole')
 const feed = require('./controllers/feed')
-const lb = require('./controllers/leaderboard')
 const dlog = require('./dlog')
 const notifs = require('../features/notifications')
 
@@ -105,11 +104,6 @@ module.exports = [
   setInterval(() => {
     logger.debug('Refreshing top10')
     top10.regenerate()
-  }, 3600000), // 1 hour
-
-  setInterval(() => {
-    logger.debug('Refreshing leaderboard')
-    lb.update()
   }, 3600000), // 1 hour
 
   setInterval(() => {
