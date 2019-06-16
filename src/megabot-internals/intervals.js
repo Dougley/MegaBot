@@ -95,7 +95,7 @@ module.exports = [
         }
       })
     })
-  }, 120000), // 2 minutes
+   }, 120000), // 2 minutes
 
   setInterval(() => {
     logger.debug('Dispatching notifications')
@@ -105,11 +105,6 @@ module.exports = [
   setInterval(() => {
     logger.debug('Refreshing top10')
     top10.regenerate()
-  }, 3600000), // 1 hour
-
-  setInterval(() => {
-    logger.debug('Refreshing leaderboard')
-    lb.update()
   }, 3600000), // 1 hour
 
   setInterval(() => {
