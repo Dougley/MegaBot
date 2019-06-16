@@ -106,7 +106,7 @@ module.exports = [
     logger.debug('Refreshing top10')
     top10.regenerate()
   }, 3600000), // 1 hour
-  
+
   setInterval(() => {
     logger.debug('Refreshing feed')
     feed.refresh()
