@@ -108,11 +108,6 @@ module.exports = [
   }, 3600000), // 1 hour
 
   setInterval(() => {
-    logger.debug('Refreshing leaderboard')
-    lb.update()
-  }, 3600000), // 1 hour
-
-  setInterval(() => {
     logger.debug('Refreshing feed')
     feed.refresh()
   }, MB_CONSTANTS.timeouts.feedScrape),
