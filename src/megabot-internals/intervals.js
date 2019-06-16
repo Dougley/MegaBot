@@ -94,7 +94,7 @@ module.exports = [
         }
       })
     })
-   }, 120000), // 2 minutes
+  }, 120000), // 2 minutes
 
   setInterval(() => {
     logger.debug('Dispatching notifications')
