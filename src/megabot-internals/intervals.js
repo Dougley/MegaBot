@@ -4,7 +4,6 @@ const db = require('../databases/lokijs')
 const top10 = require('./controllers/top10')
 const ar = require('./controllers/autorole')
 const feed = require('./controllers/feed')
-const lb = require('./controllers/leaderboard')
 const dlog = require('./dlog')
 const notifs = require('../features/notifications')
 
