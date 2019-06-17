@@ -363,7 +363,7 @@ module.exports = {
       .get(`${ROOT_URL}/community/posts/${postid}/subscriptions/$subscriptionid}.json`)
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
     logger.http(res.body)
-    return (res.body, res.body.subscription)
+    return (res.body, res.body.subscriptions)
   },
   /**
   * Delete a subscription to a submission
