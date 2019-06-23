@@ -3,15 +3,15 @@
 Please follow these rules when making contributions to this repository.
 
 # Preface
-This project is not affiliated with Discord, therefor any contributions are made with the understanding that it is freely given without any promise whatsoever of reward from the company.
+This project is not affiliated with Discord; therefore, any contributions are made with the understanding that it is freely given without any promise whatsoever of reward from the company.
 
 # Unwanted contributions
 
 1. Changes to ESLint configuration without justifiable reason
-2. New commands that are confusing to use for end users, exceptions can be made for mod-only commands on a case by case basis
+2. New commands that are confusing to use for end users; exceptions can be made for mod-only commands on a case by case basis
 3. Breaking changes to already existing commands, unless strictly necessary 
 4. Unnecessarily large restructurings of code
-5. Additions of extra emoji's as reactions without justifiable reason
+5. Additions of extra emojis as reactions without justifiable reason
 6. Retooling of rewards for the EXP system
 
 # Code rules
@@ -23,7 +23,7 @@ Please keep in mind that we might ask you to confirm if this is the case.
 
 ### ESLint
 
-ESLint handles our style enforcement, when making contributions, **please confirm your code adheres to the style**, otherwise we're less inclined to merge it.   
+ESLint handles our style enforcement; when making contributions, **please confirm your code adheres to the style**, otherwise we're less inclined to merge it.   
 To verify your code adheres to our styleguide, run `npm test` in the project root.
 
 # Code practices
@@ -36,13 +36,13 @@ The exception to this rule is the Redis driver.
 
 ### Global objects
 
-Avoid polluting the global namespace unnecessarily, if something is not likely to be frequently used across the project, don't add it.   
+Avoid polluting the global namespace unnecessarily; if something is not likely to be frequently used across the project, don't add it.   
 
 ### Reactions
 Reactions should be added by an intermediary method, preferably in `megabot-internals/inquirer.js`
 
 ### Queuing abstractions
-**Never** write queue methods inside the function you're using, please make abstractions in `megabot-internals/admin-queue.js` or `megabot-internals/inquirer.js`
+**Never** write queue methods inside the function you're using. Please make abstractions in `megabot-internals/admin-queue.js` or `megabot-internals/inquirer.js`
 
 ```js
 // ✗ bad
@@ -82,7 +82,7 @@ return someString.split(' ') // the first function can be on the same line
 
 ### Embeds vs text
 
-Prefer returning embeds if the data you're using is suited for it, single strings can be returned plain.    
+Prefer returning embeds if the data you're using is suited for it; single strings can be returned plain.    
 Try to use embeds to usefully enrich your returned data, see `commands/upvote.js` for an example.    
 
 ### Promises and async
