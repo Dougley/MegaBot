@@ -8,6 +8,7 @@ const ids = require('../megabot-internals/ids')
 const zd = require('../megabot-internals/zendesk')
 
 module.exports = async (ctx) => {
+  let cmd;
   const msg = ctx[0]
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
@@ -23,7 +24,11 @@ module.exports = async (ctx) => {
     if (perms(0, msg.member, msg)) touch(msg.author.id, !msg.member.roles.includes(ids.custodianRole))
   }
   if (msg.content.startsWith(prefix)) {
-    let cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
+    if (msg.content.indexOf(prefix) === 0 && commands[cmd]) {
+      cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
+    }
+    else return msg.channel.createMessage("I'm currently unable to process your request, try again later")
+
     if (alias.has(cmd)) cmd = alias.get(cmd)
     if (commands[cmd]) {
       if (MB_CONSTANTS.limiter.stopped) {
