@@ -7,12 +7,12 @@ module.exports = {
     alias: ['unsubscribe'] // ?
   },
   fn: async (msg, suffix) => {
-    const id = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
+    const suggestionId = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
     try {
       msg.channel.sendTyping()
-      const suggestion = await ZD.getSubmission(+suffix)
+      const suggestion = await ZD.getSubmission(+suggestionId)
       await ZD.deleteSubscription(suggestion.id, msg.author.id)
-      
+
       msg.channel.createMessage({
         content: "You're no longer following this suggestion.",
         embed: {

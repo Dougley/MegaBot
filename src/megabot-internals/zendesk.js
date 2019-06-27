@@ -347,11 +347,9 @@ module.exports = {
    * @returns {Promise<Object>} - Zendesk response
    */
   deleteSubscription: async (postid, userid) => {
-    const user = await getUserDetails(userid)
     const res = await schedule(() => SA
       .delete(`${ROOT_URL}/community/posts/${postid}/subscriptions/${userid}.json`))
       .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY)
-      //.send({ subscription: { user_id: user.id } }))
     return res.body
   }
 }

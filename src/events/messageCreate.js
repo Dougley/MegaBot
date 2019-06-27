@@ -8,7 +8,7 @@ const ids = require('../megabot-internals/ids')
 const zd = require('../megabot-internals/zendesk')
 
 module.exports = async (ctx) => {
-  let cmd;
+  let cmd
   const msg = ctx[0]
   if (msg.author.bot) return
   const prefix = process.env.BOT_PREFIX
