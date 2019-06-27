@@ -27,7 +27,8 @@ module.exports = async (ctx) => {
     if (msg.content.indexOf(prefix) === 0 && commands[cmd]) {
       cmd = msg.content.substr(prefix.length).split(' ')[0].toLowerCase()
     }
-    else return msg.channel.createMessage("I'm currently unable to process your request, try again later")
+    else
+      return msg.channel.createMessage("I'm currently unable to process your request, try again later")
 
     if (alias.has(cmd)) cmd = alias.get(cmd)
     if (commands[cmd]) {
