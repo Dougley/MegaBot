@@ -6,7 +6,7 @@ const templates = [
   '{s} gave {r} a friendly little hug.',
   '{s} tried to give {r} a hug but was denied.',
   '{s} tackle-hugs {r}.',
-  '{s} gave {r} a bog standard hug',
+  '{s} gave {r} a big standard hug',
   '{r} accidentally reported the wrong thing so {s} gave them a hug to stop {r} from crying',
   '{s} gives {r} a cereal soupy hug',
   '{s} hugged {r} so hard, they exploded in a cloud of pepperonis',
