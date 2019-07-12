@@ -4,7 +4,7 @@ module.exports = {
   meta: {
     level: 0,
     timeout: 5,
-    alias: ['unsubscribe'] // ?
+    alias: ['unsubscribe']
   },
   fn: async (msg, suffix) => {
     const suggestionId = suffix.match(MB_CONSTANTS.submissionRegex) ? suffix.match(MB_CONSTANTS.submissionRegex)[1] : suffix
