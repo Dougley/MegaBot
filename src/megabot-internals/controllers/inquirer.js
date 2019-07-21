@@ -13,7 +13,7 @@ module.exports = {
   createChatvote: (msg, id, reportable = true) => {
     const existing = db.findSync('questions', {
         zd_id: parseInt(id)
-     }))
+     })
     if (existing && (Date.now() - existing.meta.created) < 30000) return // If there's a document created less than 30 seconds ago with the same ID, we don't want to create a chatvote
       
     msg.addReaction(`${ids.emojis.upvote.name}:${ids.emojis.upvote.id}`)
