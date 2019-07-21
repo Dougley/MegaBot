@@ -77,7 +77,7 @@ module.exports = {
         return "I haven't found anything using your input. Please make sure you haven't made a typo"
       }
       case 'Missing Latest' : {
-        return "This post is either being held for review or has been removed."
+        return 'This post is either being held for review or has been removed.'
       }
       case 'Internal Server Error': {
         return "Zendesk didn't respond properly for whatever reason, please try again later.\nThis issue might be related to problems over at Zendesk, please check https://status.zendesk.com"
