@@ -46,8 +46,8 @@ module.exports = {
             ]
           }
         }).then(z => { inquire.createChatvote(z, x.id) })
-      }).catch(e => {
-        return msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
+      }).catch(() => {
+        return msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage('Missing Latest'))
       })
     } else return msg.channel.createMessage('You can only use this command to return info on suggestions!')
   }
