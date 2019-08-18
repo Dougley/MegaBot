@@ -19,7 +19,7 @@ module.exports = {
           discordId: msg.author.id,
           id: id
         }, {
-          body: 'Hey! Thanks for wanting to report a potential Terms of Service violation, but unfortunately, this site is not the correct place to do so. Before reporting, please read this article on how to correctly report users and/or servers properly: https://dis.gd/report. You can open a ticket here: https://dis.gd/request.'
+          body: MB_CONSTANTS.strings.tsComment
         })
       }
     }).then(() => {
@@ -41,7 +41,7 @@ module.exports = {
           fields: [
             {
               name: `${msg.author.username} commented on this:`,
-              value: 'Hey! Thanks for wanting to report a potential Terms of Service violation, but unfortunately, this site is not the correct place to do so. Before reporting, please read this article on how to correctly report users and/or servers properly: https://dis.gd/report. You can open a ticket here: https://dis.gd/request.'
+              value: MB_CONSTANTS.strings.tsComment
             }
           ]
         }

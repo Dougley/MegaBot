@@ -19,7 +19,7 @@ module.exports = {
           discordId: msg.author.id,
           id: id
         }, {
-          body: 'Hello there! I\'m sorry you\'re having that problem! If you would like help troubleshooting you\'re issue, please contact Discord support here: https://dis.gd/contact.'
+          body: MB_CONSTANTS.strings.supportComment
         })
       }
     }).then(() => {
@@ -41,7 +41,7 @@ module.exports = {
           fields: [
             {
               name: `${msg.author.username} commented on this:`,
-              value: 'Hello there! I\'m sorry you\'re having that problem! If you would like help troubleshooting you\'re issue, please contact Discord support here: https://dis.gd/contact.'
+              value: MB_CONSTANTS.strings.supportComment
             }
           ]
         }

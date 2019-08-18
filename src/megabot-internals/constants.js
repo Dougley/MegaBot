@@ -66,7 +66,10 @@ module.exports = {
   limiter: limiter,
   strings: {
     dupe: (x) => `Hi there! This suggestion is the same as ${process.env.ZENDESK_ROOT_URL}/hc/en-us/community/posts/${x} so in an effort to keep duplicates out and keep everything neat and tidy, we're going to merge this ticket into that suggestion. This ticket will be deleted automatically after a week.`,
-    custodianInvite: "Hey there! Just wanted to let you know we've seen you around in DFeedback, being awesome, and you've accrued enough experience to buy the coveted Custodian role! It gives you access to more channels, new commands and an absolutely awesome community! Just use this command `!buy roles 1` in this bot's DMs to buy it!"
+    custodianInvite: "Hey there! Just wanted to let you know we've seen you around in DFeedback, being awesome, and you've accrued enough experience to buy the coveted Custodian role! It gives you access to more channels, new commands and an absolutely awesome community! Just use this command `!buy roles 1` in this bot's DMs to buy it!",
+    supportComment: 'Hello there! I\'m sorry you\'re having that problem! If you would like help troubleshooting you\'re issue, please contact Discord support here: https://dis.gd/contact.',
+    tsComment: 'Hey! Thanks for wanting to report a potential Terms of Service violation, but unfortunately, this site is not the correct place to do so. Before reporting, please read this article on how to correctly report users and/or servers properly: https://dis.gd/report. You can open a ticket here: https://dis.gd/request.',
+    questionComment: 'Hi! If you have a general question about Discord, please contact Discord support here: https://dis.gd/contact or on Twitter @discordapp.'
   },
   generateErrorMessage: (e) => {
     switch (e.message) {
@@ -74,23 +77,23 @@ module.exports = {
         return `Seems this is the first time you're using the feedback system, please login first at ${process.env.ZENDESK_ROOT_URL}/hc/en-us/signin for everything to work properly.\nIf you just recently signed in for the first time, it might take a minute for me to detect it.`
       }
       case 'Not Found' : {
-        return "I haven't found anything using your input. Please make sure you haven't made a typo"
+        return "I haven't found anything using your input. Please make sure you haven't made a typo."
       }
       case 'Internal Server Error': {
-        return "Zendesk didn't respond properly for whatever reason, please try again later.\nThis issue might be related to problems over at Zendesk, please check https://status.zendesk.com"
+        return "Zendesk didn't respond properly for whatever reason; please try again later.\nThis issue might be related to problems over at Zendesk; please check https://status.zendesk.com"
       }
       case 'Suggestion closed': {
-        return "The suggestion you're trying to execute this action on, is closed"
+        return "The suggestion you're trying to execute this action on has been closed."
       }
       case 'Invalid ID' : {
-        return "Some ID's you've entered are malformed, please double check them"
+        return "Some or all of the IDs you've entered are malformed. Please double check them and try again."
       }
       case 'Timed out' : {
-        return 'You took too long to respond to this, please try again'
+        return 'You took too long to respond to this; please try again.'
       }
       default: {
         logger.error(e)
-        return "Something went wrong, and I'm not exactly sure what, try again later"
+        return "Something went wrong, and I'm not exactly sure what. Try again later."
       }
     }
   }
