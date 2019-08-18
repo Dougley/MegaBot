@@ -35,8 +35,8 @@ module.exports = {
         }
       }).then(x => inquire.createChatvote(x, suggestion.id))
     } catch (e) {
-      if (e.message === 'Not Found') return createMessage('This post is either being held for review or has been removed.')
-      else createMessage(MB_CONSTANTS.generateErrorMessage(e))
+      if (e.message === 'Not Found') return msg.channel.createMessage('This post is either being held for review or has been removed.')
+      else msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
     }
   }
 }
