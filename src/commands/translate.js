@@ -35,7 +35,7 @@ module.exports = {
         }
       }).then(x => inquire.createChatvote(x, suggestion.id))
     } catch (e) {
-      return msg.channel.createMessage(MB_CONSTANTS.generateErrorMessage(e))
+      return msg.channel.createMessage("This post is either being held for review or has been removed, or Google Translate broke.")
     }
   }
 }
