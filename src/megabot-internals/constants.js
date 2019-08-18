@@ -74,23 +74,23 @@ module.exports = {
         return `Seems this is the first time you're using the feedback system, please login first at ${process.env.ZENDESK_ROOT_URL}/hc/en-us/signin for everything to work properly.\nIf you just recently signed in for the first time, it might take a minute for me to detect it.`
       }
       case 'Not Found' : {
-        return "I haven't found anything using your input. Please make sure you haven't made a typo"
+        return "I haven't found anything using your input. Please make sure you haven't made a typo."
       }
       case 'Internal Server Error': {
-        return "Zendesk didn't respond properly for whatever reason, please try again later.\nThis issue might be related to problems over at Zendesk, please check https://status.zendesk.com"
+        return "Zendesk didn't respond properly for whatever reason; please try again later.\nThis issue might be related to problems over at Zendesk; please check https://status.zendesk.com"
       }
       case 'Suggestion closed': {
-        return "The suggestion you're trying to execute this action on, is closed"
+        return "The suggestion you're trying to execute this action on has been closed."
       }
       case 'Invalid ID' : {
-        return "Some ID's you've entered are malformed, please double check them"
+        return "Some or all of the IDs you've entered are malformed. Please double check them and try again."
       }
       case 'Timed out' : {
-        return 'You took too long to respond to this, please try again'
+        return 'You took too long to respond to this; please try again.'
       }
       default: {
         logger.error(e)
-        return "Something went wrong, and I'm not exactly sure what, try again later"
+        return "Something went wrong, and I'm not exactly sure what. Try again later."
       }
     }
   }
