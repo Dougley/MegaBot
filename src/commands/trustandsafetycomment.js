@@ -2,7 +2,7 @@ const ZD = require('../megabot-internals/zendesk')
 
 module.exports = {
   meta: {
-    level: 0,
+    level: 1,
     alias: ['tsc', 'trustcomment', 'tscom']
   },
   fn: async (msg, suffix) => {
