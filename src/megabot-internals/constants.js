@@ -27,8 +27,8 @@ module.exports = {
   inviteRegex: /(?:https?:\/\/)?discord(\.gg|app\.com\/invite)\/([A-Za-z0-9-_]+)/g,
   isID: (input) => { return /\d{12,}/.test(input) },
   determineID: function (input) {
-    if (this.submissionRegex.test(input)) return input.match(this.submissionRegex)[1]
-    else if (this.commentRegex.test(input)) return input.match(this.submissionRegex).slice(1)
+    if (this.commentRegex.test(input)) return [...input.match(this.commentRegex).slice(1)]
+    else if (this.submissionRegex.test(input)) return input.match(this.submissionRegex)[1]
     else if (this.isID(input)) return input
     else return new TypeError('Invalid ID')
   },

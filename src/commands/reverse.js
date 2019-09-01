@@ -13,7 +13,8 @@ module.exports = {
         const zduser = await ZD.getUser(comment.authorId)
         const duser = await bot.getRESTUser(zduser.external_id)
         await resp.edit({
-          embed: generateEmbed(duser, zduser)
+          content: '',
+          ...generateEmbed(duser, zduser)
         })
       } catch (e) {
         await resp.edit('Something went wrong! :(')
@@ -25,7 +26,8 @@ module.exports = {
         const zduser = await ZD.getUser(suggestion.authorId)
         const duser = await bot.getRESTUser(zduser.external_id)
         await resp.edit({
-          embed: generateEmbed(duser, zduser)
+          content: '',
+          ...generateEmbed(duser, zduser)
         })
       } catch (e) {
         await resp.edit('Something went wrong! :(')
