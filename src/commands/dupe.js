@@ -20,12 +20,8 @@ module.exports = {
       const dupes = await Promise.all(chunks.map(x => ZD.getSubmission(MB_CONSTANTS.determineID(x), ['users', 'topics'])))
       if (dupes.some(x => x.status === 'answered')) return message.edit('Some of your dupes are marked as answered, you cannot merge those')
       if (dupes.some(x => DB.findSync('questions', { 'ids.dupe': x.id, type: 3 }))) return message.edit('One or more of your dupes may have been submitted by yourself or another Custodian. Please double check the IDs and try again.')
-      for (const submission of dupes) {
-        let zendeskUser = await ZD.searchUser(msg.author.id);
-        if (submission.authorId === zendeskUser) {
-          return msg.edit('One of more of your dupes have been submitted by you, please double check the IDs and try again.');
-        }
-      }
+      const zduser = await ZD.searchUser(msg.author.id)
+      if (dupes.some(x => x.authorId === zduser.id)) return message.edit('One of more of your dupes were created by you, double check your IDs and try again.')
       await message.edit({
         content: 'Is this correct?',
         ...generateEmbed(dupes, target)
