@@ -350,7 +350,7 @@ async function getUserDetails (id) {
     return JSON.parse(cache)
   }
   const data = await schedule(() => SA
-    .get(`${ROOT_URL}/users/search.json?${QS.stringify({ external_id: id })}`)
+    .get(`${ROOT_URL}/users/search.json?${QS.stringify(process.env.DEBUG_USER_SEARCH_OVERRIDE ? { query: id } : { external_id: id })}`)
     .auth(`${process.env.ZENDESK_DEFAULT_ACTOR}/token`, process.env.ZENDESK_API_KEY))
   logger.trace(data.body)
   if (process.env.NODE_ENV === 'debug' && process.env.DEBUG_USER_SEARCH_OVERRIDE && data.body.count !== 0) return data.body.users[0]
