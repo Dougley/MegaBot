@@ -3,7 +3,7 @@ This repository holds the code for the bot used in the [Discord Feedback](https:
 
 ## Installation
 Please note that this is a highly specialized project, we won't guarantee compatibility with your environment/setup.    
-That being said, at least Node.js v8 or higher is required due to the use of modern JavaScript. An example `.env` configuration file can be found in the project root, edit it accordingly and **save it as `.env`, not `.env.example`**
+That being said, at least Node.js v10 or higher is required due to the use of modern JavaScript. An example `.env` configuration file can be found in the project root, edit it accordingly and **save it as `.env`, not `.env.example`**
 
 ## Testing
 ```
