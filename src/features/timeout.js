@@ -6,7 +6,7 @@ module.exports = {
    * @param {String | Number} id - ID of the object to calculate timeout for, can be anything but should ideally be a user ID
    * @param {String} handle - Name of the command to calculate timeout for
    * @param {Number} time - Time in seconds this command should timeout for
-   * @return {Boolean}
+   * @return {Boolean | Number}
    */
   calculate: (id, handle, time) => {
     const now = new Date()

@@ -30,7 +30,7 @@ module.exports = {
     if (!(e instanceof Error)) { // in case strings get logged as errors, for whatever reason
       exit ? log(chalk`{bold.black.bgRed FATAL}: ${e}`) : log(chalk`{bold.red ERROR}: ${e}`)
     } else {
-      sentry.captureException(e)
+      if (sentry) sentry.captureException(e)
       exit ? log(chalk`{bold.black.bgRed FATAL}: ${e.stack ? e.stack : e.message}`) : log(chalk`{bold.red ERROR}: ${e.stack ? e.stack : e.message}`)
     }
     if (exit) process.exit(1)

@@ -59,8 +59,8 @@ module.exports = [
           dlog(4, {
             message: `About to remove roles from ${member.username}#${member.discriminator} (\`${x.wb_id}\`). For reference later, they've accrued a total of ${x.properties.exp} EXP, and had ${roles.length} roles`
           })
-          roles.forEach(x => member.removeRole(x, 'Member considered stale'))
-        } catch (e) { logger.warn(`Can't derole ${x.wb_id}: ${e.message}`) }
+          await Promise.all(roles.map(x => global.bot.removeGuildMemberRole(ids.guild, member.user.id, x, 'Member considered stale')))
+        } catch (e) { logger.error(e) }
       })
       db.findAndRemove('users', query)
     }
