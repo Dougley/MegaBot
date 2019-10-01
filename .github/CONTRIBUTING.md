@@ -3,28 +3,32 @@
 Please follow these rules when making contributions to this repository.
 
 # Preface
-This project is not affiliated with Discord; therefore, any contributions are made with the understanding that it is freely given without any promise whatsoever of reward from the company.
+While (parts of) this project might be used officially by Discord, the project is not affiliated or otherwise associated with Discord. Any contributions to this project are with the understanding that Discord has no obligation to reward or otherwise compensate you for any contributions made to this repository.
+
+However, as a contributor, you're expected to uphold the [Code of Conduct](https://github.com/Dougley/MegaBot/blob/master/.github/CODE_OF_CONDUCT.md) from this project, and the [Discord Community Guidelines](https://discordapp.com/guidelines).
 
 # Unwanted contributions
 
 1. Changes to ESLint configuration without justifiable reason
-2. New commands that are confusing to use for end users; exceptions can be made for mod-only commands on a case by case basis
+2. New commands that are confusing to use for end-users; exceptions can be made for mod-only commands on a case by case basis
 3. Breaking changes to already existing commands, unless strictly necessary 
 4. Unnecessarily large restructurings of code
 5. Additions of extra emojis as reactions without justifiable reason
-6. Retooling of rewards for the EXP system
+6. Changes to rewards related to the EXP system
 
 # Code rules
 
 ### Verified as working
 
-All code contributed to this repository should be verified as working, meaning you've tested the functionality at least once and didn't encounter unexpected behaviour.   
-Please keep in mind that we might ask you to confirm if this is the case.
+If you're making a pull request, your code is supposed to have been tested to the best of your ability. We understand that running the project is a trivial task to people without access to a Zendesk deployment, however, we still expect your code to be tested to a certain degree.    
+Do not expect project managers to test your code for you.
 
 ### ESLint
 
-ESLint handles our style enforcement; when making contributions, **please confirm your code adheres to the style**, otherwise we're less inclined to merge it.   
-To verify your code adheres to our styleguide, run `npm test` in the project root.
+If you're making a pull request, your code is required to adhere to our styleguide, [StandardJS](https://standardjs.com/).  
+Before submitting your pull request please make sure your code is correctly formatted.    
+To verify your code adheres to our styleguide, run `npm test` in the project root.    
+**Pull requests with style exceptions will not be merged.**
 
 # Code practices
 
@@ -36,7 +40,9 @@ The exception to this rule is the Redis driver.
 
 ### Global objects
 
-Avoid polluting the global namespace unnecessarily; if something is not likely to be frequently used across the project, don't add it.   
+Generally, the global namespace is not supposed to be extended or otherwise mutated to prevent pollution.    
+However, exceptions are made for modules that are commonly used across the project.     
+Whether or not the module is commonly used is highly subjective and might vary each instance.
 
 ### Reactions
 Reactions should be added by an intermediary method, preferably in `megabot-internals/inquirer.js`
@@ -82,8 +88,7 @@ return someString.split(' ') // the first function can be on the same line
 
 ### Embeds vs text
 
-Prefer returning embeds if the data you're using is suited for it; single strings can be returned plain.    
-Try to use embeds to usefully enrich your returned data, see `commands/upvote.js` for an example.    
+When working with Zendesk data, try to return embeds whenever possible, and display as much valuable data in those embeds as possible (eg. number of votes, the category of the suggestion, etc)
 
 ### Promises and async
 
