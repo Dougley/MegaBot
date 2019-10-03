@@ -13,19 +13,26 @@ module.exports = {
     const message = await msg.channel.createMessage('Working on it...')
     try {
       const chunks = suffix.split(' ')
-      if (chunks.length < 2) return message.edit("Invalid formatting, make sure there's a space between each ID.")
-      if (chunks.length > 6) return message.edit("Can't multimerge more than 5 suggestions!")
+      if (chunks.length < 2) return await message.edit("Invalid formatting, make sure there's a space between each ID.")
+      if (chunks.length > 6) return await message.edit("Can't multimerge more than 5 suggestions!")
       const target = await ZD.getSubmission(MB_CONSTANTS.determineID(chunks.pop()), ['users', 'topics'])
-      if (chunks.includes(target.id.toString())) return message.edit("You've included the target ID in your dupes")
       const dupes = await Promise.all(chunks.map(x => ZD.getSubmission(MB_CONSTANTS.determineID(x), ['users', 'topics'])))
-      if (dupes.some(x => x.status === 'answered')) return message.edit('Some of your dupes are marked as answered, you cannot merge those')
-      if (dupes.some(x => DB.findSync('questions', { 'ids.dupe': x.id, type: 3 }))) return message.edit('One or more of your dupes may have been submitted by yourself or another Custodian. Please double check the IDs and try again.')
       const zduser = await ZD.searchUser(msg.author.id)
-      if (dupes.some(x => x.authorId === zduser.id)) return message.edit('One of more of your dupes were created by you, double check your IDs and try again.')
-      await message.edit({
-        content: 'Is this correct?',
-        ...generateEmbed(dupes, target)
-      })
+      const result = { pass: [], fail: [] }
+      for (const x of dupes) {
+        if (x.id === target.id || result.pass.some(z => z.id === x.id)) result.fail.push(`${x.id} [Duplicate ID]`)
+        else if (x.status === 'answered') result.fail.push(`${x.id} [Suggestion answered]`)
+        else if (DB.findSync('questions', { 'ids.dupe': x.id, type: 3 })) result.fail.push(`${x.id} [Already submitted]`)
+        else if (x.authorId === zduser.id) result.fail.push(`${x.id} [Own suggestion]`)
+        else result.pass.push(x)
+      }
+      if (result.pass.length === 0) return await message.edit('Your merge request resulted in no usable results!\n```ini\n' + result.fail.join('\n') + '```')
+      else {
+        await message.edit({
+          content: (result.fail.length > 0 ? '\n⚠ **Warning**, some IDs were automatically removed due to rule violations:\n```ini\n' + result.fail.join('\n') + '```' : 'Is this correct?'),
+          ...generateEmbed(result.pass, target)
+        })
+      }
       await stall(2000)
       let emojis = [ID.emojis.dismiss, ID.emojis.confirm]
         .map((a) => ({ sort: Math.random(), value: a }))
@@ -33,14 +40,14 @@ module.exports = {
         .map((a) => a.value)
       const response = await INQ.awaitReaction(emojis, message, msg.author.id)
       if (response.id === ID.emojis.confirm.id) {
-        const ids = (await Promise.all(dupes.map(x => AQ.createMergeRequest(x, target, msg.author)))).map(x => x['$loki'])
+        const ids = (await Promise.all(result.pass.map(x => AQ.createMergeRequest(x, target, msg.author)))).map(x => x['$loki'])
         await message.edit({
           content: 'Dupe request submitted',
           embed: {
             fields: [
               {
                 name: 'Dupes',
-                value: dupes.map(x => `[${x.title}](${x.htmlUrl})`).join('\n')
+                value: result.pass.map(x => `[${x.title}](${x.htmlUrl})`).join('\n')
               },
               {
                 name: 'Target',
@@ -57,7 +64,7 @@ module.exports = {
           }
         })
       } else {
-        message.edit({ content: 'Dupe request cancelled', embed: null })
+        await message.edit({ content: 'Dupe request cancelled', embed: null })
       }
     } catch (e) {
       return message.edit({
