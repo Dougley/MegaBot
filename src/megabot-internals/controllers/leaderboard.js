@@ -14,7 +14,7 @@ module.exports = {
     const users = db.chain('users')
       .find({
         entitlements: {
-          $containsNone: ['no-leaderboard', 'never-custodian']
+          $containsNone: ['no-leaderboard', 'never-custodian', 'no-leaderboard-selfassign']
         },
         leaderboardData: {
           $contains: lbstr

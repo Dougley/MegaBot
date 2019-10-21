@@ -44,7 +44,7 @@ module.exports = [
         }
       }, {
         entitlements: {
-          $size: 0
+          $containsNone: ['never-custodian']
         }
       }]
     }
