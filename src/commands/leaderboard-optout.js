@@ -9,7 +9,7 @@ module.exports = {
   },
   fn: async (msg) => {
     const info = await db.getUser(msg.author.id)
-    const m = await msg.channel.createMessage(`You're currently opted ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out' : 'in'} to the leaderboard, do you want to change this?`)
+    const m = await msg.channel.createMessage(`You're currently opted ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard, do you want to change this?`)
     const reaction = await awaitReaction([ID.emojis.dismiss, ID.emojis.confirm], m, msg.author)
     if (reaction.id === ID.emojis.confirm.id) {
       if (info.entitlements.contains('no-leaderboard-selfassign')) {
@@ -20,7 +20,7 @@ module.exports = {
       await db.edit(msg.author.id, info)
       await m.edit(`Opted ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out' : 'in'}`)
       await dlog(4, {
-        message: `${msg.author.username}#${msg.author.discriminator} (\`${msg.author.id}\`) opted themselves ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out' : 'in'} from the leaderboard`
+        message: `${msg.author.username}#${msg.author.discriminator} (\`${msg.author.id}\`) opted themselves ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard`
       })
     } else await m.edit('Cancelled')
   }
