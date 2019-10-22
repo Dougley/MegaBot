@@ -5,7 +5,7 @@ const { Message } = require('eris')
 
 module.exports = {
   /**
-   * Refreshes the feed
+   * Refreshes the feed and set playing status
    * This gets recent submissions and posts them to the feed channel
    * This method is intended to run in an interval
    * @returns {Promise<void>}
@@ -19,6 +19,10 @@ module.exports = {
     }
     const data = await zd.getSubmissions({
       include: 'users,topics'
+    })
+    await bot.editStatus('online', {
+      name: `${data[0].pagination.count} suggestions`,
+      type: 3 // watching
     })
     const unknown = data.filter(filterer)
     unknown.reverse().forEach(x => { // we reverse this for reverse chronological order (newest last)
