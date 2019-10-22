@@ -44,8 +44,10 @@ module.exports = [
         }
       }, {
         entitlements: {
-          $containsNone: ['never-custodian']
+          $containsNone: ['never-custodian', 'no-prune']
         }
+      }, {
+        blocked: false
       }]
     }
     const data = db.findManySync('users', query)
