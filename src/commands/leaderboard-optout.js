@@ -9,18 +9,18 @@ module.exports = {
   },
   fn: async (msg) => {
     const info = await db.getUser(msg.author.id)
-    const m = await msg.channel.createMessage(`You're currently opted ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard, do you want to change this?`)
-    const reaction = await awaitReaction([ID.emojis.dismiss, ID.emojis.confirm], m, msg.author)
+    const m = await msg.channel.createMessage(`You're currently opted ${info.entitlements.includes('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard, do you want to change this?`)
+    const reaction = await awaitReaction([ID.emojis.dismiss, ID.emojis.confirm], m, msg.author.id)
     if (reaction.id === ID.emojis.confirm.id) {
-      if (info.entitlements.contains('no-leaderboard-selfassign')) {
+      if (info.entitlements.includes('no-leaderboard-selfassign')) {
         info.entitlements.splice(info.entitlements.indexOf('no-leaderboard-selfassign'), 1)
       } else {
         info.entitlements.push('no-leaderboard-selfassign')
       }
       await db.edit(msg.author.id, info)
-      await m.edit(`Opted ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out' : 'in'}`)
+      await m.edit(`Opted ${info.entitlements.includes('no-leaderboard-selfassign') ? 'out' : 'in'}`)
       await dlog(4, {
-        message: `${msg.author.username}#${msg.author.discriminator} (\`${msg.author.id}\`) opted themselves ${info.entitlements.contains('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard`
+        message: `${msg.author.username}#${msg.author.discriminator} (\`${msg.author.id}\`) opted themselves ${info.entitlements.includes('no-leaderboard-selfassign') ? 'out from' : 'in to'} the leaderboard`
       })
     } else await m.edit('Cancelled')
   }
