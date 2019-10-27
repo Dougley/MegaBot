@@ -22,7 +22,7 @@ module.exports = {
     })
     await bot.editStatus('online', {
       name: `${data[0].pagination.count} suggestions`,
-      type: 3 // watching
+      type: 2 // Listening to
     })
     const unknown = data.filter(filterer)
     unknown.reverse().forEach(x => { // we reverse this for reverse chronological order (newest last)
