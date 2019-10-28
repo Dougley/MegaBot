@@ -6,7 +6,7 @@ const { awaitReaction } = require('../megabot-internals/controllers/inquirer')
 module.exports = {
   meta: {
     level: 1,
-    aliases: ['leaderboard-toggle']
+    alias: ['leaderboard-toggle']
   },
   fn: async (msg) => {
     const info = await db.getUser(msg.author.id)
