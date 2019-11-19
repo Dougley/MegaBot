@@ -14,9 +14,6 @@ module.exports = {
         color: 0x31c670,
         image: {
           url: start
-        },
-        footer: {
-          text: fact
         }
       }
     })
