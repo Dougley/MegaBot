@@ -18,7 +18,7 @@
   "homepage": "https://github.com/Dougley/MBv2#readme",
   "dependencies": {
     "@sentry/integrations": "^5.6.1",
-    "@sentry/node": "^5.7.0",
+    "@sentry/node": "^5.30.0",
     "@vitalets/google-translate-api": "^2.9.0",
     "bottleneck": "^2.19.5",
     "chalk": "^2.4.2",
